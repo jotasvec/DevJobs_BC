@@ -1,6 +1,7 @@
 import React, { useId, useMemo, useState } from 'react'
 import JobsList from './JobsList'
-import JobsData from '../data.json'
+import JobsData from '../../data.json'
+import SearchField from '../SearchField'
 
 
 const Jobs = () => {
@@ -23,8 +24,8 @@ const Jobs = () => {
 
     const handleChange = (event) => {
  
-
         const formData = new FormData(event.currentTarget);
+        // NOTE: if I take options out of the form tag, this won't work, in that case, change it to the names
         setFilters({
             search: formData.get(searchInputID),
             technology: formData.get(technologyID),
@@ -39,7 +40,7 @@ const Jobs = () => {
         return JobsData.filter(job => {
             const text =  job.descripcion.toLowerCase() + job.titulo.toLowerCase()
             //Matches
-             const matchesLocation = !filters.location ||  job.data.modalidad.toLowerCase().includes(filters.location);
+            const matchesLocation = !filters.location ||  job.data.modalidad.toLowerCase().includes(filters.location);
             const matchesTech = !filters.technology ||  job.data.technology.includes(filters.technology);
             const matchesLevel = !filters.level ||  job.data.nivel.includes(filters.level);
             const matchesSearch = !filters.search || text.toLowerCase().includes(filters.search );
@@ -55,17 +56,7 @@ const Jobs = () => {
             <h2>Find your next Job</h2>
             <p>Explore thousands oportunities on the tech industry</p>
             <form onSubmit={handleSearchSubmit} onChange={handleChange} id="jobs-search-form" action="" role="search">
-                <div className="search-bar">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round"
-                        className="icon icon-tabler icons-tabler-outline icon-tabler-search">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
-                        <path d="M21 21l-6 -6" />
-                    </svg>
-                    <input name={searchInputID} required type="text" placeholder="search jobs" />
-                    <button type='submit'>search</button>
-                </div>
+                <SearchField searchInputID={searchInputID} />
                 <div className="jobs-filter">
                     <select name={technologyID} id="filter-tech">
                         <option value="">Tech</option>

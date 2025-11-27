@@ -1,0 +1,45 @@
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-block: 2rem;
+
+    a{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        text-decoration: none;
+        color: var(--text-muted);
+        border-radius: 0.3rem;
+        transition: all 0.3s;
+
+        &:hover{
+            background-color: white;
+
+        }
+
+    } 
+}
+
+.paginationRow{
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-block: 2rem; 
+}
+
+.isActive{
+    background-color: var(--primary-light);
+    color: var(--text-primary);
+    font-weight: var(--font-weight-700);
+    pointer-events: none;
+}
+
+.disabled{
+    opacity: 0.5;
+    pointer-events: none;
+    background-color: #3b4550;
+    background: none;
+}
