@@ -2,53 +2,27 @@ import React, { useId, useMemo, useState } from 'react'
 import JobsList from './JobsList'
 import JobsData from '../../data.json'
 import SearchField from '../SearchField'
+import { useFilters } from '../../hooks/useFilters'
 
 
 const Jobs = () => {
-    const [filters, setFilters] = useState({
-        search: "",
-        technology: "",
-        location: "",
-        level: "",
-    })
     const searchInputID = useId()
     const technologyID = useId()
     const locationID = useId()
     const levelID = useId()
-
-    const handleSearchSubmit = (event) =>{
-        event.preventDefault();
-        setFilters({...search})
-        console.log('filters', filters)
-    }
+    const [formData, setFormData] = useState( new FormData())
 
     const handleChange = (event) => {
- 
-        const formData = new FormData(event.currentTarget);
+        setFormData(FormData(event.currentTarget));
         // NOTE: if I take options out of the form tag, this won't work, in that case, change it to the names
-        setFilters({
-            search: formData.get(searchInputID),
-            technology: formData.get(technologyID),
-            location: formData.get(locationID),
-            level: formData.get(levelID),
-        })
-        
-
     }
 
-    const filteredJobs = useMemo(() => {
-        return JobsData.filter(job => {
-            const text =  job.descripcion.toLowerCase() + job.titulo.toLowerCase()
-            //Matches
-            const matchesLocation = !filters.location ||  job.data.modalidad.toLowerCase().includes(filters.location);
-            const matchesTech = !filters.technology ||  job.data.technology.includes(filters.technology);
-            const matchesLevel = !filters.level ||  job.data.nivel.includes(filters.level);
-            const matchesSearch = !filters.search || text.toLowerCase().includes(filters.search );
-            
-            return matchesLocation && matchesTech && matchesLevel && matchesSearch;
-        
-        });
-    }, [filters])
+    const { filters, searchInput, updateSearch, handleSearchSubmit, filteredJobs } = useFilters({
+        search: formData.get(searchInputID),
+        technology: formData.get(technologyID),
+        location: formData.get(locationID),
+        level: formData.get(levelID),
+    }, JobsData)
 
   return (
     <>
