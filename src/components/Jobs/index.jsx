@@ -1,38 +1,38 @@
-import React, { useId, useMemo, useState } from 'react'
 import JobsList from './JobsList'
 import JobsData from '../../data.json'
 import SearchField from '../SearchField'
 import { useFilters } from '../../hooks/useFilters'
+// import { useEffect, useState } from 'react'
 
 
 const Jobs = () => {
-    const searchInputID = useId()
-    const technologyID = useId()
-    const locationID = useId()
-    const levelID = useId()
-    const [formData, setFormData] = useState( new FormData())
-
-    const handleChange = (event) => {
-        setFormData(FormData(event.currentTarget));
-        // NOTE: if I take options out of the form tag, this won't work, in that case, change it to the names
-    }
-
-    const { filters, searchInput, updateSearch, handleSearchSubmit, filteredJobs } = useFilters({
-        search: formData.get(searchInputID),
-        technology: formData.get(technologyID),
-        location: formData.get(locationID),
-        level: formData.get(levelID),
-    }, JobsData)
+    const {  
+        filters,
+        loading,
+        jobs,
+        page,
+        updateField,
+        handleSearchChange,
+        setPage } = useFilters()
+    /*     const handleChange = (event) => {
+        updateField(event);
+        
+    } */
+    
 
   return (
     <>
         <section className='jobs-search'>
             <h2>Find your next Job</h2>
             <p>Explore thousands oportunities on the tech industry</p>
-            <form onSubmit={handleSearchSubmit} onChange={handleChange} id="jobs-search-form" action="" role="search">
-                <SearchField searchInputID={searchInputID} />
+            <SearchField 
+                value={filters.search}
+                onChange={handleSearchChange} 
+                onSubmit={ () => setPage(1) }  // Since handleSearchChange already resets the page on keystroke, we can simply ensure the page resets on submit for better UX.
+                />
+            <form onChange={updateField} id="jobs-search-form" action="" role="search">
                 <div className="jobs-filter">
-                    <select name={technologyID} id="filter-tech">
+                    <select name="technology" id="filter-tech">
                         <option value="">Tech</option>
                         <optgroup label="most popular">
                             <option value="javascript">JavaScript</option>
@@ -49,7 +49,7 @@ const Jobs = () => {
                         <option value="ruby">Ruby</option>
                         <option value="php">PHP</option>
                     </select>
-                    <select name={locationID} id="filter-location" >
+                    <select name="location" id="filter-location" >
                         <option value="">Location</option>
                         <option value="remoto">Remoto</option>
                         <option value="cdmx">Ciudad de México</option>
@@ -57,7 +57,7 @@ const Jobs = () => {
                         <option value="monterrey">Monterrey</option>
                         <option value="barcelona">Barcelona</option>
                     </select>
-                    <select name={levelID} id="filter-experience">
+                    <select name="level" id="filter-experience">
                         <option value="">Experience</option>
                         <option value="junior">junior</option>
                         <option value="mid">Mid-Level</option>
@@ -67,7 +67,12 @@ const Jobs = () => {
                 </div>   
             </form>
         </section>
-        <JobsList filteredList={filteredJobs} />
+        {
+            loading 
+                ?  <h1>Loading Jobs ... </h1>
+                : <JobsList filteredList={jobs} currentPage={page} setPage={setPage} />
+        }
+        
     </>
   )
 }

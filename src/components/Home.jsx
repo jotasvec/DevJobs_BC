@@ -1,21 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
 import SearchField from './SearchField'
 import { useRouter } from '../hooks/useRouter'
 
 const Home = () => {
     const { navigateTo } = useRouter()
+    const [text, setText] = useState("")
 
-    const handleSearchOnSubmit = (event) => {
-        event.preventDefault();
-        const formData = new FormData(event.currentTarget);
-        const searchQuery = formData.get('search');
-        const url = searchQuery 
-            ? `/jobs?text=${encodeURIComponent(searchQuery) }` 
+    const handleSearchOnSubmit = (searchQuery) => {
+        const url = text 
+            ? `/jobs?search=${encodeURIComponent(searchQuery) }` 
             : '/jobs';
         navigateTo(url)
-            
-
-
     }
 
   return (
@@ -24,10 +19,11 @@ const Home = () => {
             <img src="/background.webp" alt="Dev Jobs" width="200" />
             <h1>Find your dream Job</h1>
             <p>Join to our community and find the next big step on your career</p>
-            <form onSubmit={handleSearchOnSubmit}>
-                <SearchField searchInputID='search'/>
-            </form>
-        </section>
+            <SearchField 
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                onSubmit={handleSearchOnSubmit}    />
+            </section>
         <section className='features'>
             <div className='features-top'>
                 <h2>Why DevJobs</h2>
