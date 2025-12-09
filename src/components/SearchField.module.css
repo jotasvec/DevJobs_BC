@@ -1,0 +1,33 @@
+.searchBar{
+    max-width: 42rem;
+    width: 100%;
+    margin: 0 auto;
+    padding: .5rem;
+    display: flex;
+    align-items: center;
+    background-color: var(--input-bg);
+    border-radius: .5rem;
+
+    & input[type="text"]{
+        /* width: 70%; */
+        background-color: transparent;
+        flex: 1;
+        border: none;
+        outline: none;
+        color: var(--text-primary);
+        padding: 0.75rem 0.5rem;
+        font-size: 1rem;
+        font-family: inherit;
+    }
+
+    & input[type="text"]::placeholder{
+        color: #64748b;
+    }
+    svg{
+        color: #64748b;
+        margin-left: .5rem;
+    }
+    & > button {
+        background-color: var(--primary-light);
+    }
+}

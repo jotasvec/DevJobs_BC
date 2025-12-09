@@ -1,4 +1,5 @@
 import React from 'react'
+import styles from "./SearchField.module.css"
 
 const SearchField = ({ onChange, onSubmit, value }) => {
   const handleOnChange = (event) => {
@@ -9,7 +10,7 @@ const SearchField = ({ onChange, onSubmit, value }) => {
     onSubmit(value)
   }
   return (
-    <form className="search-bar" action=""  onSubmit={handleOnSubmit}>
+    <form className={styles.searchBar} action=""  onSubmit={handleOnSubmit}>
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round"
           className="icon icon-tabler icons-tabler-outline icon-tabler-search">

@@ -182,8 +182,15 @@ header div{
     }
 }
 
+main{
+    text-align: center;
+    margin: auto;
+    max-width: 80rem; /* 1280px */
+    width: 100%;
+}
+
 /* Hero */
-main > .hero{
+.hero{
     height: 500px;
     text-align: center;
     display: flex;
@@ -206,49 +213,30 @@ main > .hero{
     }
 }
 
-/* Search Form */
-form {
+#jobs-search-form{
     max-width: 42rem;
-    width: 100%;
-    margin: 0 auto;
-    padding-inline: 1rem;
-    
-    & > div{
-        padding: .3rem;
-        display: flex;
-        align-items: center;
-        background-color: var(--input-bg);
-        border-radius: .5rem;
-    }
-    & span{
-        padding-left: 0.75rem;
-        color: var(--text-muted);
-        display: flex;
-        align-items: center;
-        flex-shrink: 0; 
-    }
+    padding: .5rem;
+    display: flex;
+    justify-self: center;
 
-    & input[type="text"]{
-        flex: 1;
-        background-color: transparent;
-        border: none;
-        outline: none;
-        color: var(--text-primary);
-        padding: 0.75rem 0.5rem;
-        font-size: 1rem;
-        font-family: inherit;
-    
-    }
-    & input[type="text"]::placeholder{
-        color: #64748b;
-    }
-    svg{
-        color: #64748b;
-        margin-left: .5rem;
-    }
-
-    
 }
+/* select {
+  padding: 0.625rem 1.25rem;
+  background-color: #242d3a;
+  border: 0;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  color: #ddd;
+  cursor: pointer;
+  transition: all 0.2s;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  padding-right: 2.5rem;
+
+} */
+
 select,
 button {
     padding: 0.65rem 1.3rem;
@@ -277,6 +265,7 @@ button {
         pointer-events: none;
     }
 }
+
 
 /* Features Section */
 .features {
@@ -376,11 +365,21 @@ footer {
     display: flex;
     flex-direction: column;
     gap: 2rem;
+
+    h2{
+        padding: 1rem;
+        margin: 1rem;
+    }
     
     .job-result-article {
         display: flex;
         align-items: start;
         gap: 1rem;
+
+        & > div {
+            text-align: justify;
+            margin-right: 1rem;
+        }
 
         small {
             font-size: 0.875rem;

@@ -10,13 +10,15 @@ import { Route } from './router/Route.jsx'
 
 function App() {
   return (
-    <main>
+    <>
       <Header />
-      <Route path='/' children={<Home />} />
-      <Route path='/jobs' children={<Jobs />} />
+      <main>
+        <Route path='/' children={<Home />} />
+        <Route path='/jobs' children={<Jobs />} />
+        
+      </main>
       <Footer />
-      
-    </main>
+    </>
   )
 }
 

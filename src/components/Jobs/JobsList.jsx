@@ -33,7 +33,7 @@ const JobsList = ({ filteredList, currentPage, setPage }) => {
                 <div className="jobs-result-list">
                     {
                         totalArticles === 0 && (
-                            <p style={{ textAlign: 'center', padding: '2rem', textWrap: 'balance' }}>
+                            <p style={{ textAlign: 'center', padding: '2rem', textWrap: 'balance', border:'2px solid var(--border)', borderRadius: '1rem'  }}>
                                 Couldn't found jobs that matches with the search criteria.
                             </p>
                         )

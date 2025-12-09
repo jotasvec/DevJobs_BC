@@ -2,15 +2,18 @@ import JobsList from './JobsList'
 import JobsData from '../../data.json'
 import SearchField from '../SearchField'
 import { useFilters } from '../../hooks/useFilters'
+import { useRef } from 'react'
 // import { useEffect, useState } from 'react'
 
 
 const Jobs = () => {
+    const inputRef = useRef()
     const {  
         filters,
         loading,
         jobs,
         page,
+        rawSearchText,
         updateField,
         handleSearchChange,
         setPage } = useFilters()
@@ -18,7 +21,11 @@ const Jobs = () => {
         updateField(event);
         
     } */
-    
+    const clearInputs = () => {
+        //e.preventDefault()
+        inputRef.current.value = ""
+        updateField(inputRef)
+    }
 
   return (
     <>
@@ -26,13 +33,13 @@ const Jobs = () => {
             <h2>Find your next Job</h2>
             <p>Explore thousands oportunities on the tech industry</p>
             <SearchField 
-                value={filters.search}
+                value={rawSearchText}
                 onChange={handleSearchChange} 
                 onSubmit={ () => setPage(1) }  // Since handleSearchChange already resets the page on keystroke, we can simply ensure the page resets on submit for better UX.
                 />
             <form onChange={updateField} id="jobs-search-form" action="" role="search">
                 <div className="jobs-filter">
-                    <select name="technology" id="filter-tech">
+                    <select name="technology" id="filter-tech" defaultValue={filters.technology}>
                         <option value="">Tech</option>
                         <optgroup label="most popular">
                             <option value="javascript">JavaScript</option>
@@ -49,7 +56,7 @@ const Jobs = () => {
                         <option value="ruby">Ruby</option>
                         <option value="php">PHP</option>
                     </select>
-                    <select name="location" id="filter-location" >
+                    <select name="location" id="filter-location" defaultValue={filters.location} >
                         <option value="">Location</option>
                         <option value="remoto">Remoto</option>
                         <option value="cdmx">Ciudad de México</option>
@@ -57,14 +64,15 @@ const Jobs = () => {
                         <option value="monterrey">Monterrey</option>
                         <option value="barcelona">Barcelona</option>
                     </select>
-                    <select name="level" id="filter-experience">
+                    <select name="level" id="filter-experience" defaultValue={filters.level}>
                         <option value="">Experience</option>
                         <option value="junior">junior</option>
                         <option value="mid">Mid-Level</option>
                         <option value="senior">Senior</option>
                         <option value="lead">lead</option>
                     </select>
-                </div>   
+                    <button onClick={clearInputs} >Clear</button>   
+                </div>
             </form>
         </section>
         {

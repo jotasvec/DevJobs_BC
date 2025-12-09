@@ -2,14 +2,20 @@ import React, { useEffect, useState } from 'react'
 // import React, { useEffect, useMemo, useState } from 'react'
 
 const useFilters = () => {
-    const searchParams = new URLSearchParams(window.location.search)
+        
+    const [rawSearchText, setRawSearchText] = useState(() => {
+        const searchParams = new URLSearchParams(window.location.search)
+        return searchParams.get('search') || ""
+    })
+
     const [filters, setFilters] = useState({
-        search: searchParams.get('search') || "",
+        search: rawSearchText, 
         technology: "",
         location: "",
         level: "",
     }) 
 
+    // Filter change
     const updateField = (event) =>{
         const { name, value } = event.target;
         setFilters(prev => ({
@@ -19,15 +25,27 @@ const useFilters = () => {
         setPage(1)
 
     }
- 
+    
+    // Search on Submit
     const handleSearchChange = (event) =>{
-        const { value } = event.target;
-        setFilters(prev => ({
-            ...prev,
-            search: value.toLowerCase(),
-        }))
-        setPage(1)
+        setRawSearchText(event.target.value.toLowerCase())
     }
+    
+    //Debounced 
+    useEffect(() => {
+        const handlerTimeOut = setTimeout(() =>{
+            setFilters(prev => ({
+                ...prev,
+                search: rawSearchText,
+            }));
+            setPage(1)
+        }, 400);
+    
+      return () => {
+        clearTimeout(handlerTimeOut)
+      };
+    }, [rawSearchText]);
+    
 
     // === Fetching === 
     // total - limit and offset for pagination
@@ -88,6 +106,7 @@ const useFilters = () => {
         jobs,
         page,
         limit,
+        rawSearchText,
         updateField,
         handleSearchChange,
         setPage,
