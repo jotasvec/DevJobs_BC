@@ -21,10 +21,11 @@ const SearchField = ({ onChange, onSubmit, value }) => {
       <input 
         name="search" 
         type="text"
-        value={value} 
+        value={value}
         placeholder="search jobs" 
         onChange={handleOnChange} 
-        required 
+        required
+        autoComplete='off'
       />
       <button type='submit'>Search</button>
     </form>

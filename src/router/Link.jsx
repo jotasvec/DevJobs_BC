@@ -8,7 +8,12 @@ export const Link = ({href, children, ...restProps}) => {
         navigateTo(href);
     }
     return (
-    <a href={href} {...restProps} onClick={handleClick}>
+    <a 
+      style={{textDecoration: 'none', textDecorationColor: '#FFF', color: '#FFF'}}
+      href={href} 
+      {...restProps} 
+      onClick={handleClick}
+    >
        {children} 
     </a>
   )

@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import '../App.css';
 import Avatar from './Avatar';
 import { Link } from '../router/Link.jsx';

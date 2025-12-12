@@ -1,4 +1,6 @@
 import React, { useState } from 'react'
+import { Link } from '../../router/Link';
+
 
 const JobCard = ({ card }) => {
     const [isApplied, setIsApplied] =  useState(false)
@@ -16,7 +18,7 @@ const JobCard = ({ card }) => {
         data-technology={card.data.technology}
         >
         <div>
-            <h3>{card.titulo}</h3>
+            <Link href='/jobsdetails' ><h3>{card.titulo}</h3></Link> 
             <small>{card.empresa} | {card.ubicacion}</small>
             <p>{card.descripcion}</p>
         </div>
