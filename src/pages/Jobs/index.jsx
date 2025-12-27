@@ -1,7 +1,8 @@
 import JobsList from './JobsList'
-import JobsData from '../../data.json'
-import SearchField from '../SearchField'
-import { useFilters } from '../../hooks/useFilters'
+// import JobsData from '../../data.json'
+import SearchField from '../../components/SearchField'
+import { useFilters } from "../../hooks/useFilters";
+
 import { useRef } from 'react'
 // import { useEffect, useState } from 'react'
 

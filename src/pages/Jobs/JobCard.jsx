@@ -18,7 +18,7 @@ const JobCard = ({ card }) => {
         data-technology={card.data.technology}
         >
         <div>
-            <Link href='/jobsdetails' ><h3>{card.titulo}</h3></Link> 
+            <Link href={`/jobs/${card.id}`} ><h3>{card.titulo}</h3></Link> 
             <small>{card.empresa} | {card.ubicacion}</small>
             <p>{card.descripcion}</p>
         </div>

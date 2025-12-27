@@ -1,12 +1,14 @@
 import Footer from './components/Footer.jsx'
 import Header from './components/Header.jsx'
-import Jobs from './components/Jobs/index.jsx'
-import Home from './components/Home.jsx'
-import NotFound from './components/NotFound.jsx'
+import Jobs from './pages/Jobs/index.jsx';
+
+import Home from './pages/Home.jsx'
+import { Route, Routes } from "react-router";
+import NotFound from './pages/NotFound.jsx'
 
 // import { useRouter } from './hooks/useRouter.jsx'
-import { Route } from './router/Route.jsx'
-import JobsDetails from './components/JobsDetails.jsx'
+// import { Route } from './router/Route.jsx' created by us, no longer used, learning porpuses
+import JobsDetails from './pages/Detail/JobsDetails.jsx'
 
 
 
@@ -15,10 +17,13 @@ function App() {
     <>
       <Header />
       <main>
-        <Route path='/' children={<Home />} />
-        <Route path='/jobs' children={<Jobs />} />
-        <Route path='/jobsdetails' children={<JobsDetails />} />
-        
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/jobs' element={<Jobs />} />
+          <Route path='/jobs/:jobID' element={<JobsDetails />} />
+          {/* <Route path='/jobsdetails' element={<JobsDetails />} /> */}
+          <Route path='*' element={ <NotFound /> } />
+        </Routes>
       </main>
       <Footer />
     </>

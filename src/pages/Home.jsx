@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import SearchField from './SearchField'
+import SearchField from '../components/SearchField'
 import { useRouter } from '../hooks/useRouter'
 
 const Home = () => {
