@@ -1,57 +1,74 @@
-import React, { useEffect, useState } from 'react'
-//import { useSearchParams } from 'react-router'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router'
+
+
 
 const useFilters = () => {
-    
-    const [rawSearchText, setRawSearchText] = useState(() => {
-        const searchParams = new URLSearchParams(window.location.search)
-        return searchParams.get('search') || ""
-    })
+    const [searchParams, setSearchParams] = useSearchParams()
 
-    const [filters, setFilters] = useState({
-        search: rawSearchText, 
-        technology: "",
-        location: "",
-        level: "",
-    }) 
+    // total - limit and offset for pagination
+    const limit = 4;
+    const page = Number(searchParams.get('page') || 1)
+
+
+    const filters = useMemo(() => ({
+        search: searchParams.get('search') ?? "", 
+        technology: searchParams.get('technology') ?? "",
+        location: searchParams.get('location') ?? "",
+        level: searchParams.get('level') ?? "",
+    }), [searchParams]) 
+
+    const updateParams = useCallback((newParams) => {
+        setSearchParams(prev => {
+            const next = new URLSearchParams(prev)
+            Object.entries(newParams).forEach(([key, value]) => {
+                value 
+                ? next.set(key, value)
+                : next.delete(key);
+            });
+            return next
+        }, {replace: true} )
+    },[setSearchParams]);
+
+    // === Clear Filters ===
+    const clearFilters = () => {
+    // Reset local input
+        setRawSearchText("");
+        setSearchParams({ page: 1 });
+    };
 
     // Filter change
     const updateField = (event) =>{
         const { name, value } = event.target;
-        setFilters(prev => ({
-            ...prev,
+        updateParams({
             [name]: value.toLowerCase(),
-        }))
-        setPage(1)
+            page: 1
+        })
+    }
 
-    }
-    
+    const setPage = (page) => updateParams({ page: page})
+
     // Search on Submit
-    const handleSearchChange = (event) =>{
-        setRawSearchText(event.target.value.toLowerCase())
-    }
+    const [rawSearchText, setRawSearchText] = useState(filters.search)
+    const handleSearchChange = (event) =>setRawSearchText(event.target.value.toLowerCase())
     
-    //Debounced 
+    //=== Debounced ===
     useEffect(() => {
+        if (rawSearchText === filters.search) return;
         const handlerTimeOut = setTimeout(() =>{
-            setFilters(prev => ({
-                ...prev,
-                search: rawSearchText,
-            }));
-            setPage(1)
+            updateParams({
+                search: rawSearchText.toLowerCase() || undefined,
+                page: 1
+            })
         }, 400);
     
       return () => {
         clearTimeout(handlerTimeOut)
       };
-    }, [rawSearchText]);
+    }, [rawSearchText, updateParams, filters.search ]);
     
 
     // === Fetching === 
-    // total - limit and offset for pagination
-    const limit = 4;
-    const [page, setPage] = useState(1)
-
     // jobs list 
     const [jobs, setJobs] = useState({})
     const [loading, setLoading] = useState(true)
@@ -63,13 +80,12 @@ const useFilters = () => {
             // Set Query Params
             const params = new URLSearchParams({
                 limit,
-                offset: (page - 1) * limit
-
+                offset: (page - 1) * limit,
             });
-            if (filters.search) params.append('text', filters.search)
-            if (filters.technology) params.append('technology', filters.technology)
-            if (filters.location) params.append('type', filters.location)
-            if (filters.level) params.append('level', filters.level)
+            if (filters.search) params.set('text', filters.search)
+            if (filters.technology) params.set('technology', filters.technology)
+            if (filters.location) params.set('type', filters.location)
+            if (filters.level) params.set('level', filters.level)
 
             const response = await fetch(`https://jscamp-api.vercel.app/api/jobs?${params.toString()}`)
             const data = await response.json()
@@ -110,6 +126,7 @@ const useFilters = () => {
         updateField,
         handleSearchChange,
         setPage,
+        clearFilters
         /* filteredJobs */
     };
 }
