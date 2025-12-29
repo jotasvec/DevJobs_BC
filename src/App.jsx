@@ -9,6 +9,7 @@ import NotFound from './pages/NotFound.jsx'
 // import { useRouter } from './hooks/useRouter.jsx'
 // import { Route } from './router/Route.jsx' created by us, no longer used, learning porpuses
 import JobsDetails from './pages/Detail/JobsDetails.jsx'
+import SignIn from './pages/signIn/index.jsx';
 
 
 
@@ -23,6 +24,8 @@ function App() {
           <Route path='/jobs/:jobID' element={<JobsDetails />} />
           {/* <Route path='/jobsdetails' element={<JobsDetails />} /> */}
           <Route path='*' element={ <NotFound /> } />
+          <Route path='/signin' element={<SignIn />} />
+
         </Routes>
       </main>
       <Footer />

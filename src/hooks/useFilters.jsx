@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
-// import React, { useEffect, useMemo, useState } from 'react'
+//import { useSearchParams } from 'react-router'
 
 const useFilters = () => {
-        
+    
     const [rawSearchText, setRawSearchText] = useState(() => {
         const searchParams = new URLSearchParams(window.location.search)
         return searchParams.get('search') || ""

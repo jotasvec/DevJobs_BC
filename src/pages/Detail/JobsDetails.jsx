@@ -21,7 +21,7 @@ const JobSection = ({title, content = ""}) =>{
                     ? <p>{content}</p> 
                     : <ul>
                         {list.map(element => (
-                            <li> <CircleCheck /> {element} </li>
+                            <li> <CircleCheck /> {element.replace('- ', '')} </li>
                         ))}
                     </ul>
 

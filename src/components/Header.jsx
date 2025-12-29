@@ -20,7 +20,7 @@ const Header = () => {
         </nav>
         <div>
             <a href="" target="_blank" rel="noopener noreferrer">Post a Job</a>
-            <a href="" target="_blank" rel="noopener noreferrer">SignIn</a>
+            <Link href="/signin" rel="noopener noreferrer">SignIn</Link>
             <Avatar username="jotasvec" service="x"/>
             
             {/* example another company avatar avatar */}
