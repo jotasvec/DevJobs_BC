@@ -169,6 +169,12 @@ nav{
         }
     }
 }
+.navlink-active{
+    color: var(--primary-light) !important; 
+    pointer-events: none; /* Desactiva el clic */
+    opacity: 0.6; /* Se ve un poco más apagado */
+    user-select: none; /* Evita seleccionar el texto */
+}
 
 header div{
     display: flex;

@@ -85,13 +85,15 @@ const JobsDetails = () => {
         )
     }
 
+    if(loading){
+        return (
+            <h1>Loading Job ... </h1>
+        )
+    }
 
   return (
     <>
-        {
-            loading 
-                ?  <h1>Loading Job ... </h1> : 
-            <div className={styles.jobsDetails} >
+        <div className={styles.jobsDetails} >
             <nav style={{ textAlign: 'left', marginLeft: '-2rem' }}> <small> <Link href="/jobs">Jobs</Link> / {job.titulo} </small> </nav>
             <section className={styles.jobTitle}>
                 <div>
@@ -117,7 +119,6 @@ const JobsDetails = () => {
             
             </section> */}
         </div>
-        }
         <div className={styles.bottomButton}>
             <button >Apply Now!</button>
         </div>
