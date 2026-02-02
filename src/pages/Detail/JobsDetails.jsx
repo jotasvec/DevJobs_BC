@@ -2,6 +2,7 @@ import styles from './JobsDetails.module.css';
 import { Link } from '../../router/Link';
 import { useParams, useNavigate } from 'react-router';
 import { useEffect, useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
 
 const CircleCheck = () =>{
     return (
@@ -11,8 +12,6 @@ const CircleCheck = () =>{
 
 const JobSection = ({title, content = ""}) =>{
     const list = content.split('\n')
-    console.log('list', list)
-
     return (
         <section className="">
             <h3> {title} </h3>
@@ -20,8 +19,8 @@ const JobSection = ({title, content = ""}) =>{
                 list.length === 1 
                     ? <p>{content}</p> 
                     : <ul>
-                        {list.map(element => (
-                            <li> <CircleCheck /> {element.replace('- ', '')} </li>
+                        {list.map((element, id) => (
+                            <li key={id} > <CircleCheck /> {element.replace('- ', '')} </li>
                         ))}
                     </ul>
 
@@ -37,6 +36,22 @@ const JobSection = ({title, content = ""}) =>{
      )
 }
 
+
+const ApplyButton = () =>{
+    const { isLoggedIn } = useAuth()
+    
+    return (
+        <button disabled={!isLoggedIn} 
+            style={{ textAlign:'center' }} >
+            {
+                isLoggedIn 
+                    ? 'Apply Now!'
+                    : 'Login to Apply'
+            }
+            
+        </button>
+    )
+}
 
 const JobsDetails = () => {
     const { jobID } = useParams(); 
@@ -100,7 +115,7 @@ const JobsDetails = () => {
                     <h2>{job.titulo}</h2>
                     <small>{job.empresa} | {job.ubicacion} </small>
                 </div>
-                <button className=''>Apply Now!</button>
+                <ApplyButton />
             </section>
  
             <JobSection title="Description" content={job.content?.description} />
@@ -120,7 +135,7 @@ const JobsDetails = () => {
             </section> */}
         </div>
         <div className={styles.bottomButton}>
-            <button >Apply Now!</button>
+            <ApplyButton />
         </div>
     </>
   )

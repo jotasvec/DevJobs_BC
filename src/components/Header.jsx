@@ -1,9 +1,10 @@
 import '../App.css';
 import Avatar from './Avatar';
 import { Link, NavLink } from '../router/Link.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
 
 const Header = () => {
-
+    const { isLoggedIn } = useAuth()
   return (
     <header>
         <Link href="/" style={{textDecoration: 'none'}}>
@@ -20,8 +21,12 @@ const Header = () => {
         </nav>
         <div>
             <a href="" target="_blank" rel="noopener noreferrer">Post a Job</a>
-            <NavLink href="/signin" rel="noopener noreferrer">SignIn</NavLink>
-            <Avatar username="jotasvec" service="x"/>
+            {
+                isLoggedIn 
+                    ? <Avatar username="jotasvec" service="x"/>
+                    : <NavLink href="/signin" rel="noopener noreferrer">SignIn</NavLink>
+            }
+            
             
             {/* example another company avatar avatar 
             <Avatar service="youtube" username="youtube" /> 

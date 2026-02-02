@@ -87,7 +87,8 @@ const useFilters = () => {
             if (filters.location) params.set('type', filters.location)
             if (filters.level) params.set('level', filters.level)
 
-            const response = await fetch(`https://jscamp-api.vercel.app/api/jobs?${params.toString()}`)
+            //const response = await fetch(`https://jscamp-api.vercel.app/api/jobs?${params.toString()}`)
+            const response = await fetch(`http://localhost:3050/jobs?${params.toString()}`)
             const data = await response.json()
             setJobs(data)
         } catch (error) {

@@ -19,6 +19,7 @@ const HomePage = lazy( () => import('./pages/Home.jsx') )
 const Jobs = lazy(()=> import('./pages/Jobs/index.jsx'))
 const JobsDetails = lazy(()=> import('./pages/Detail/JobsDetails.jsx'))
 const SignIn = lazy(()=> import('./pages/signIn/index.jsx'))
+const SignUp = lazy(()=> import('./pages/signUp/index.jsx'))
 const NotFound = lazy(()=> import('./pages/NotFound.jsx'))
 
 
@@ -42,6 +43,7 @@ function App() {
               {/* <Route path='/jobsdetails' element={<JobsDetails />} /> */}
               <Route path='*' element={ <NotFound /> } />
               <Route path='/signin' element={<SignIn />} />
+              <Route path='/signup' element={<SignUp />} />
 
             </Routes>
         </Suspense>
