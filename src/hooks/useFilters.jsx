@@ -84,7 +84,7 @@ const useFilters = () => {
             });
             if (filters.search) params.set('text', filters.search)
             if (filters.technology) params.set('technology', filters.technology)
-            if (filters.location) params.set('type', filters.location)
+            if (filters.location) params.set('location', filters.location)
             if (filters.level) params.set('level', filters.level)
 
             //const response = await fetch(`https://jscamp-api.vercel.app/api/jobs?${params.toString()}`)
