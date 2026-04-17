@@ -1,0 +1,39 @@
+# Database
+*.db
+*.sqlite
+*.sqlite3
+jobs.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.sw?
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Dependencies (root)
+node_modules/
+
+# Build outputs
+dist
+dist-ssr
+*.local
