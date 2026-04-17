@@ -1,9 +1,10 @@
 import '../App.css';
 import Avatar from './Avatar';
-import { Link } from '../router/Link.jsx';
+import { Link, NavLink } from '../router/Link.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
 
 const Header = () => {
-
+    const { isLoggedIn } = useAuth()
   return (
     <header>
         <Link href="/" style={{textDecoration: 'none'}}>
@@ -13,19 +14,23 @@ const Header = () => {
             </h2>
         </Link>
         <nav>
-            <Link href="/" rel="noopener noreferrer">Start</Link>
-            <Link href="/jobs"  rel="noopener noreferrer">Jobs</Link>
+            <NavLink href="/" rel="noopener noreferrer">Start</NavLink>
+            <NavLink href="/jobs"  rel="noopener noreferrer">Jobs</NavLink>
             <a href="" target="_blank" rel="noopener noreferrer">Companies</a>
             <a href="" target="_blank" rel="noopener noreferrer">Salaries</a>
         </nav>
         <div>
             <a href="" target="_blank" rel="noopener noreferrer">Post a Job</a>
-            <a href="" target="_blank" rel="noopener noreferrer">SignIn</a>
-            <Avatar username="jotasvec" service="x"/>
+            {
+                isLoggedIn 
+                    ? <Avatar username="jotasvec" service="x"/>
+                    : <NavLink href="/signin" rel="noopener noreferrer">SignIn</NavLink>
+            }
             
-            {/* example another company avatar avatar */}
+            
+            {/* example another company avatar avatar 
             <Avatar service="youtube" username="youtube" /> 
-            {/* <debjobs-avatar
+            <debjobs-avatar
                 service="x"
                 username="jotasvec"
                 size="35"

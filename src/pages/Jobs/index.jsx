@@ -1,13 +1,9 @@
 import JobsList from './JobsList'
-import JobsData from '../../data.json'
-import SearchField from '../SearchField'
-import { useFilters } from '../../hooks/useFilters'
-import { useRef } from 'react'
-// import { useEffect, useState } from 'react'
-
+// import JobsData from '../../data.json'
+import SearchField from '../../components/SearchField'
+import { useFilters } from "../../hooks/useFilters";
 
 const Jobs = () => {
-    const inputRef = useRef()
     const {  
         filters,
         loading,
@@ -16,16 +12,9 @@ const Jobs = () => {
         rawSearchText,
         updateField,
         handleSearchChange,
-        setPage } = useFilters()
-    /*     const handleChange = (event) => {
-        updateField(event);
-        
-    } */
-    const clearInputs = () => {
-        //e.preventDefault()
-        inputRef.current.value = ""
-        updateField(inputRef)
-    }
+        setPage,
+        clearFilters } = useFilters()
+
 
   return (
     <>
@@ -37,9 +26,9 @@ const Jobs = () => {
                 onChange={handleSearchChange} 
                 onSubmit={ () => setPage(1) }  // Since handleSearchChange already resets the page on keystroke, we can simply ensure the page resets on submit for better UX.
                 />
-            <form onChange={updateField} id="jobs-search-form" action="" role="search">
+            <for onChange={updateField} m id="jobs-search-form" action="" role="search">
                 <div className="jobs-filter">
-                    <select name="technology" id="filter-tech" defaultValue={filters.technology}>
+                    <select name="technology" id="filter-tech" onChange={updateField}  value={filters.technology}>
                         <option value="">Tech</option>
                         <optgroup label="most popular">
                             <option value="javascript">JavaScript</option>
@@ -56,7 +45,7 @@ const Jobs = () => {
                         <option value="ruby">Ruby</option>
                         <option value="php">PHP</option>
                     </select>
-                    <select name="location" id="filter-location" defaultValue={filters.location} >
+                    <select name="location" id="filter-location" onChange={updateField}  value={filters.location} >
                         <option value="">Location</option>
                         <option value="remoto">Remoto</option>
                         <option value="cdmx">Ciudad de México</option>
@@ -64,16 +53,16 @@ const Jobs = () => {
                         <option value="monterrey">Monterrey</option>
                         <option value="barcelona">Barcelona</option>
                     </select>
-                    <select name="level" id="filter-experience" defaultValue={filters.level}>
+                    <select name="level" id="filter-experience" onChange={updateField}  value={filters.level}>
                         <option value="">Experience</option>
                         <option value="junior">junior</option>
                         <option value="mid">Mid-Level</option>
                         <option value="senior">Senior</option>
                         <option value="lead">lead</option>
                     </select>
-                    <button onClick={clearInputs} >Clear</button>   
+                    <button onClick={clearFilters} >Clear</button>   
                 </div>
-            </form>
+            </for>
         </section>
         {
             loading 
