@@ -116,7 +116,7 @@ const useFilters = () => {
     }, [filters, JobsData])
 
     console.log('filteredJobs', filteredJobs) */
-
+    
     return {
         filters,
         loading,

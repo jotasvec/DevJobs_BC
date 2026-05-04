@@ -31,7 +31,7 @@ jobsRouter.get('/', (req, res) => {
 })
 // it can be -> jobsRouter.get('/', JobsController.getAll())
 // get ID
-jobsRouter.get('/:id', JobsController.getId)
+jobsRouter.get('/:id', JobsController.getJobById)
 
 // Create new job
 jobsRouter.post('/', validateOnCreate, JobsController.createNewJob)

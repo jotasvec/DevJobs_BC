@@ -13,14 +13,14 @@ const JobCard = ({ card }) => {
   return (
     <article 
         className='job-result-article' 
-        data-location={card.data.modalidad}
-        data-level={card.data.nivel}
+        data-location={card.data.modality}
+        data-level={card.data.level}
         data-technology={card.data.technology}
         >
         <div>
-            <Link href={`/jobs/${card.id}`} ><h3>{card.titulo}</h3></Link> 
-            <small>{card.empresa} | {card.ubicacion}</small>
-            <p>{card.descripcion}</p>
+            <Link href={`/jobs/${card.id}`} ><h3>{card.title}</h3></Link> 
+            <small>{card.company} | {card.location}</small>
+            <p>{card.description}</p>
         </div>
         <button 
             className={buttonClass} 
