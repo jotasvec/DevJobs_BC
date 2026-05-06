@@ -37,11 +37,11 @@ export class JobsController{
 
     static async updateJob(req, res){
         const { id } = req.params;
-        const { title, company, location, description, modality, level, technologies, content } = req.body;
+        const { title, company, location, description, data, content } = req.body;
 
-        if (!title || !company || !location || !description || !modality || !level || !technologies || !content) return res.status(400).json({ error: "Missing requiered fields for full update"})
+        if (!title || !company || !location || !description || !data || !content) return res.status(400).json({ error: "Missing requiered fields for full update"})
 
-        const updateJob = await JobModel.updateJob(id, { title, company, location, description, modality, level, technologies, content })
+        const updateJob = await JobModel.updateJob(id, { title, company, location, description, data, content })
         
         return updateJob
             ? res.json(updateJob) 

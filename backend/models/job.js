@@ -218,9 +218,11 @@ export class JobModel{
 
     }
 
-    static async updateJob(id, data) {
+    static async updateJob(id, dataToUpdate) {
+        let updateJobTechnology = null
+        let updateJobContent = null
         
-        const { title, company, location, description, modality, level, technologies, content } = data
+        const { title, company, location, description, data, content } = dataToUpdate
         const query = `
             UPDATE jobs SET 
             title = ?, 
@@ -231,19 +233,21 @@ export class JobModel{
             level = ? 
             WHERE id = ?
         `
-        const updateJobData = await db.prepare(query).run(title, company, location, description, modality, level, id)
+        const updateJobData = db.prepare(query).run(title, company, location, description, data?.modality, data?.level, id)
 
         // if changes is 0 -> ID doesn't exist
         if (updateJobData.changes === 0) throw new Error("Entity not found");
        
-        if(technologies) {
-            const techQuery = `
-                UPDATE job_technologies SET
-                technology = ?
-                WHERE job_id = ?
-            `
+
+        if (data?.technologies && Array.isArray(data.technologies)) {
+            // Delete existing technologies
+            const deleteResult = db.prepare("DELETE FROM job_technologies WHERE job_id = ?").run(id)
             
-            const updateJobTechnology = await db.prepare(techQuery).run(technologies, id)
+            // Insert new technologies
+            updateJobTechnology = db.prepare("INSERT INTO job_technologies (id, job_id, technology) VALUES (?, ?, ?)")
+            for (const tech of data.technologies) {
+                updateJobTechnology.run(crypto.randomUUID(), id, tech)
+            }
         }
 
         if (content) {
@@ -257,28 +261,119 @@ export class JobModel{
                 about = ?
                 WHERE job_id = ?
             `
-            const updateJobContent = await db.prepare(contentQuery).run(description, responsibilities, requirements, about, id)
+            updateJobContent = db.prepare(contentQuery).run(description, responsibilities, requirements, about, id)
         }
             
         
-        return {updateJobData, updateJobTechnology, updateJobContent}    
+        return { 
+            updateJobData, 
+            updateJobTechnology : updateJobTechnology || { changes: 0}, 
+            updateJobContent : updateJobContent || { changes: 0}
+        }    
         
         
     }
 
-    static async partialUpdateJob(id, fields){
-        const keys = Object.keys(fields);
-        if (keys.length === 0) return null;
-
-        const setClause = keys.map(key => `${key} = ?`).join(',')
-
-        const values = Object.values(fields)
-        values.push(id) // id at the end
-
-        const query = `UPDATE jobs SET ${setClause} WHERE id = ?`;
-        const partialUpdate = db.prepare(query).run(...values);
+    // Helper function to build and execute dynamic updates
+    static #buildAndExecuteUpdate(tableName, id, fieldsObj) {
+        const fields = []
+        const fieldNames = []
+        const params = []
         
-        return partialUpdate
+        for (const [key, value] of Object.entries(fieldsObj)) {
+            if (value !== undefined && value !== null) {
+                fields.push(`${key} = ?`)
+                fieldNames.push(key)
+                params.push(value)
+            }
+        }
+        
+        if (fields.length === 0) return { success: false }
+        
+        const whereClause = tableName === 'job_technologies' ? 'job_id' : 'id'
+        const query = `UPDATE ${tableName} SET ${fields.join(', ')} WHERE ${whereClause} = ?`
+        params.push(id)
+        
+        const result = db.prepare(query).run(...params)
+        
+        return {
+            success: true,
+            changes: result.changes,
+            fields: fieldNames
+        }
+    }
+
+    static async partialUpdateJob(id, fields) {
+        const { title, company, location, description, data, content } = fields
+
+        const partialUpdateDetails = {
+            job: { success: false, changes: 0, fields: [] },
+            jobContent: { success: false, changes: 0, fields: [] },
+            jobTechnologies: { success: false, changes: 0, fields: [] }
+        }
+
+        // Prepare job fields object (top-level + nested data)
+        const jobFields = {
+            title,
+            company,
+            location,
+            description,
+            ...(data?.level && { level: data.level }),
+            ...(data?.modality && { modality: data.modality })
+        }
+
+        // Execute job update using helper
+        const jobResult = this.#buildAndExecuteUpdate('jobs', id, jobFields)
+        partialUpdateDetails.job = jobResult
+
+        // Handle content updates
+        if (content) {
+            const contentResult = this.#buildAndExecuteUpdate('job_contents', id, content)
+            partialUpdateDetails.jobContent = contentResult
+        }
+
+        // Handle technologies - replace all
+        if (data?.technologies && Array.isArray(data.technologies)) {
+            db.prepare("DELETE FROM job_technologies WHERE job_id = ?").run(id)
+            
+            let insertedCount = 0
+            const insertTech = db.prepare("INSERT INTO job_technologies (id, job_id, technology) VALUES (?, ?, ?)")
+            for (const tech of data.technologies) {
+                insertTech.run(crypto.randomUUID(), id, tech)
+                insertedCount++
+            }
+            
+            partialUpdateDetails.jobTechnologies = {
+                success: true,
+                changes: insertedCount,
+                fields: data.technologies
+            }
+        }
+
+        // If no valid updates, return early
+        const hasUpdates = partialUpdateDetails.job.success || 
+                          partialUpdateDetails.jobContent.success || 
+                          partialUpdateDetails.jobTechnologies.success
+
+        if (!hasUpdates) return {
+            success: false,
+            message: "No valid fields to update",
+            update: partialUpdateDetails
+        }
+
+        // Calculate total changes
+        const totalChanges = 
+            partialUpdateDetails.job.changes + 
+            partialUpdateDetails.jobContent.changes + 
+            partialUpdateDetails.jobTechnologies.changes
+
+        return {
+            success: true,
+            totalChanges,
+            message: "Job updated successfully",
+            updates: partialUpdateDetails
+        }
+
     }
 
     static async deleteJob(id){
