@@ -4,12 +4,27 @@ import { DEFAULTS as DEF } from "../config.js";
 
 
 export class JobModel{
+    
+    static #resolveTechnologyId(techNameOrId) {
+        if (!techNameOrId) return null
+        
+        if (techNameOrId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+            return techNameOrId
+        }
+        
+        const tech = db.prepare(
+            'SELECT id FROM technologies WHERE LOWER(name) = ?'
+        ).get(techNameOrId.toLowerCase())
+        
+        return tech?.id || null
+    }
+
     static async getAll({text, title, level, technology, location, modality, limit = DEF.LIMIT_PAGINATION, offset = DEF.LIMIT_OFFSET}){
         // let fileteredJobs = jobs;
         // base query
         let query = `
             SELECT j.*,
-                json_group_array(jt.technology) as technologies,
+                json_group_array(t.name) as technologies,
                 json_object (
                     'description', jc.description, 
                     'responsibilities', jc.responsibilities,
@@ -18,6 +33,7 @@ export class JobModel{
                     ) as content
             FROM jobs j
             LEFT JOIN job_technologies jt ON j.id = jt.job_id
+            LEFT JOIN technologies t ON jt.technology_id = t.id
             LEFT JOIN job_contents jc ON j.id = jc.job_id
         `
 
@@ -42,7 +58,7 @@ export class JobModel{
         }
 
         if(technology) {
-            conditions.push("j.id IN ( SELECT job_id FROM job_technologies WHERE technology LIKE ? )")
+            conditions.push("j.id IN ( SELECT job_id FROM job_technologies jt JOIN technologies t ON jt.technology_id = t.id WHERE t.name LIKE ? )")
             params.push(`%${technology}%`)
         }
         if(location) {
@@ -124,7 +140,7 @@ export class JobModel{
         // return jobs.find(job => job.id === id)
         const query = `
             SELECT j.*,
-                json_group_array(jt.technology) as technologies,
+                json_group_array(t.name) as technologies,
                 json_object (
                     'description', jc.description, 
                     'responsibilities', jc.responsibilities,
@@ -134,6 +150,7 @@ export class JobModel{
             FROM jobs j
             LEFT JOIN job_technologies jt ON j.id = jt.job_id
             LEFT JOIN job_contents jc ON j.id = jc.job_id
+            LEFT JOIN technologies t ON jt.technology_id = t.id
             WHERE j.id = ?
             GROUP BY j.id
         `    
@@ -175,14 +192,33 @@ export class JobModel{
             INSERT INTO jobs (id, title, company, location, description, modality, level, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `)
-        const inserTechnology = db.prepare(`
-            INSERT INTO job_technologies (id, job_id, technology)
+        const insertJobTechnology = db.prepare(`
+            INSERT INTO job_technologies (id, job_id, technology_id)
             VALUES (?, ?, ?)
         `)
         const insertContent = db.prepare(`
             INSERT INTO job_contents (id, job_id, description, responsibilities, requirements, about)
             VALUES (?, ?, ?, ?, ?, ?)
         `)
+
+        // Validate technologies and get IDs
+        const techErrors = []
+        const techIds = []
+        
+        if(technologies && Array.isArray(technologies)){
+            for(const tech of technologies){
+                const techId = this.#resolveTechnologyId(tech)
+                if (techId) {
+                    techIds.push(techId)
+                } else {
+                    techErrors.push(tech)
+                }
+            }
+            
+            if (techErrors.length > 0) {
+                throw new Error(`Technologies not found: ${techErrors.join(', ')}. Use GET /technologies to see available options.`)
+            }
+        }
 
         const transaction = db.transaction(() => {
             // insert job
@@ -201,12 +237,12 @@ export class JobModel{
             }
 
             // Insert technologies, 
-            if(technologies && Array.isArray(technologies)){
-                for(const tech of technologies){
-                    inserTechnology.run(
+            if(techIds.length > 0){
+                for(const techId of techIds){
+                    insertJobTechnology.run(
                         crypto.randomUUID(),
                         id,
-                        tech
+                        techId
                     )
                 }
             }
@@ -240,14 +276,33 @@ export class JobModel{
        
 
         if (data?.technologies && Array.isArray(data.technologies)) {
+            // Validate technologies and get IDs
+            const techErrors = []
+            const techIds = []
+            
+            for (const tech of data.technologies) {
+                const techId = this.#resolveTechnologyId(tech)
+                if (techId) {
+                    techIds.push(techId)
+                } else {
+                    techErrors.push(tech)
+                }
+            }
+            
+            if (techErrors.length > 0) {
+                throw new Error(`Technologies not found: ${techErrors.join(', ')}. Use GET /technologies to see available options.`)
+            }
+            
             // Delete existing technologies
-            const deleteResult = db.prepare("DELETE FROM job_technologies WHERE job_id = ?").run(id)
+            db.prepare("DELETE FROM job_technologies WHERE job_id = ?").run(id)
             
             // Insert new technologies
-            updateJobTechnology = db.prepare("INSERT INTO job_technologies (id, job_id, technology) VALUES (?, ?, ?)")
-            for (const tech of data.technologies) {
-                updateJobTechnology.run(crypto.randomUUID(), id, tech)
+            const insertTech = db.prepare("INSERT INTO job_technologies (id, job_id, technology_id) VALUES (?, ?, ?)")
+            for (const techId of techIds) {
+                insertTech.run(crypto.randomUUID(), id, techId)
             }
+            
+            updateJobTechnology = { changes: techIds.length }
         }
 
         if (content) {
@@ -334,12 +389,37 @@ export class JobModel{
 
         // Handle technologies - replace all
         if (data?.technologies && Array.isArray(data.technologies)) {
-            db.prepare("DELETE FROM job_technologies WHERE job_id = ?").run(id)
             
+            // Validate and resolve technologies
+            const techErrors = []
+            const techIds = []
+            
+            for (const techName of data.technologies) {
+                const techId = this.#resolveTechnologyId(techName)
+                if (techId) {
+                    techIds.push(techId)
+                } else {
+                    techErrors.push(techName)
+                }
+            }
+            
+            // If there are unknown technologies, return error
+            if (techErrors.length > 0) {
+                return {
+                    success: false,
+                    error: "Technology not found",
+                    unknownTechnologies: techErrors,
+                    message: `Technologies not found: ${techErrors.join(', ')}. Use GET /technologies to see available options.`,
+                    updates: partialUpdateDetails
+                }
+            }
+
+            // Delete old and insert new
+            db.prepare("DELETE FROM job_technologies WHERE job_id = ?").run(id)
             let insertedCount = 0
-            const insertTech = db.prepare("INSERT INTO job_technologies (id, job_id, technology) VALUES (?, ?, ?)")
-            for (const tech of data.technologies) {
-                insertTech.run(crypto.randomUUID(), id, tech)
+            const insertTech = db.prepare("INSERT INTO job_technologies (id, job_id, technology_id) VALUES (?, ?, ?)")
+            for (const techId of techIds) {
+                insertTech.run(crypto.randomUUID(), id, techId)
                 insertedCount++
             }
             

@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import { DEFAULTS as DEF } from "./config.js";
 import { jobsRouter } from "./routes/jobs.js";
+import { technologiesRouter } from "./routes/technologies.js";
 import { corsMiddleware } from "./middlewares/cors.js";
 
 const PORT = process.env.PORT || DEF.PORT;
@@ -34,6 +35,9 @@ app.get('/health', (req, res) => {
 // Jobs Router
 app.use('/jobs', jobsRouter)
 
+// Technologies Router
+app.use('/technologies', technologiesRouter)
+
 // 404 for non founds paths
 app.use((req, res) => {
     res.status(404).json({
@@ -49,7 +53,7 @@ app.use((req, res) => {
 //+++++++++++++++++
 if(process.env.NODE_ENV !== 'production'){
     console.log("current ENV: ", process.env.NODE_ENV)
-    app.listen(PORT, () => {
+app.listen(PORT, () => {
         console.log(`
             ╔════════════════════════════════════════════╗
             ║                                            ║
@@ -59,19 +63,34 @@ if(process.env.NODE_ENV !== 'production'){
             ║   on: http://localhost:${PORT}             ║
             ║                                            ║
             ║   Endpoints:                               ║
+            ║   ─────────────────────────────────────   ║
+            ║   JOBS:                                    ║
             ║   GET    /jobs                             ║
             ║   GET    /jobs/:id                         ║
             ║   POST   /jobs                             ║
             ║   PATCH  /jobs/:id                         ║
+            ║   PUT    /jobs/:id                         ║
             ║   DELETE /jobs/:id                         ║
             ║                                            ║
+            ║   TECHNOLOGIES:                            ║
+            ║   GET    /technologies                     ║
+            ║   GET    /technologies/grouped            ║
+            ║   GET    /technologies/categories         ║
+            ║   GET    /technologies/category/:category ║
+            ║   GET    /technologies/:id                ║
+            ║   POST   /technologies (admin)            ║
+            ║   PUT    /technologies/:id (admin)         ║
+            ║   DELETE /technologies/:id (admin)         ║
+            ║                                            ║
             ║   Query params:                            ║
-            ║   ?tech=React                              ║
+            ║   ?technology=React                        ║
             ║   ?modality=remote                         ║
             ║   ?level=senior                            ║
+            ║   ?category=Frontend                       ║
+            ║   ?search=React                            ║
             ║                                            ║
             ╚════════════════════════════════════════════╝
-             
+              
         `)
     })
 }
