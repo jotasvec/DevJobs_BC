@@ -1,28 +1,29 @@
-import { Router } from "express";
+import { RequestHandler, Router } from "express";
 import { JobsController } from "../controllers/jobs.js";
-import { validateJob, validatePartialJob } from "../schemas/jobs.js";
+import { PartialJobSchema, jobSchema } from "../schemas/jobs.js";
+import { validateSchemas } from "../middlewares/validateSchemas.js";
 
 const jobsRouter = Router() //jobs router
 
 // Validation on Create a new JOb
-function validateOnCreate(req, res, next ) {
+/* const validateOnCreate: RequestHandler = (req , res, next ) => {
     const result = validateJob(req.body)
 
     if(!result.success) return res.status(400).json({error: 'Invalid Creation Request', details: result.error.errors })
 
     req.body = result.data
     return next()
-}
+} */
 
-// validate partial Job
-function validateOnUpdate(req, res, next ) {
+/* // validate partial Job
+const validateOnUpdate : RequestHandler = (req, res, next ) => {
     const result = validatePartialJob(req.body)
 
     if(!result.success) return res.status(400).json({error: 'Invalid Update Request', details: result.error.errors })
 
     req.body = result.data
     return next()
-}
+} */
 
 
 jobsRouter.get('/', (req, res, next) => {
@@ -30,7 +31,7 @@ jobsRouter.get('/', (req, res, next) => {
     // If id is in query params, use getJobById
     const { id, ...rest } = req.query;
     if (id) {
-        const queryString = new URLSearchParams(rest).toString();
+        const queryString = new URLSearchParams(rest as Record<string, string>).toString();
         const redirectURL = queryString
             ? `/jobs/${id}?${rest}`
             : `/jobs/${id}`;
@@ -46,9 +47,9 @@ jobsRouter.get('/', (req, res, next) => {
 jobsRouter.get('/:id', JobsController.getJobById)
 
 // Create new job
-jobsRouter.post('/', validateOnCreate, JobsController.createNewJob)
+jobsRouter.post('/', validateSchemas(jobSchema), JobsController.createNewJob)
 // Update resource 
-jobsRouter.patch('/:id', validateOnUpdate, JobsController.partialUpdateJob)
+jobsRouter.patch('/:id', validateSchemas(PartialJobSchema), JobsController.partialUpdateJob)
 
 // replace resource 
 jobsRouter.put('/:id', JobsController.updateJob)

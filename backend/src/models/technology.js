@@ -100,17 +100,11 @@ export class TechnologyModel {
 
         try {
             db.prepare(query).run(id, name, category, createdAt)
-            return {
-                success: true,
-                data: { id, name, category, created_at: createdAt }
-            }
+            return { id, name, category, created_at: createdAt }
+            
         } catch (error) {
             if (error.code === 'SQLITE_CONSTRAINT_UNIQUE') {
-                return {
-                    success: false,
-                    error: 'DUPLICATED_TECHNOLOGY',
-                    message: `Technology "${name}" already exists in category "${category}"`
-                }
+                throw new Error('DUPLICATE_TECHNOLOGY');
             }
             throw error
         }
@@ -141,10 +135,8 @@ export class TechnologyModel {
             const result = db.prepare(query).run(...params)
             if (result.changes === 0) return { success: false, error: 'Technology not found' }
             
-            return {
-                success: true,
-                data: this.getById(id)
-            }
+            return this.getById(id)
+
 
         } catch (error) {
             if (error.code === 'SQLITE_CONSTRAINT_UNIQUE') {
