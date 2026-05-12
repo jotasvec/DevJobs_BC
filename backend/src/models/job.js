@@ -1,6 +1,7 @@
 //import jobs from '../data.json' with { type: 'json' }
 import { db } from '../db/database.js'
 import { DEFAULTS as DEF } from "../config.js";
+import { JobInput } from "@/src/schemas/jobs.js";
 
 
 export class JobModel{
@@ -19,7 +20,8 @@ export class JobModel{
         return tech?.id || null
     }
 
-    static async getAll({text, title, level, technology, location, modality, limit = DEF.LIMIT_PAGINATION, offset = DEF.LIMIT_OFFSET}){
+    static getAll(data){
+        const {text, title, level, technology, location, modality, limit = DEF.LIMIT_PAGINATION, offset = DEF.LIMIT_OFFSET} = data
         // let fileteredJobs = jobs;
         // base query
         let query = `
@@ -136,7 +138,7 @@ export class JobModel{
 
     }
 
-    static async getJobById(id){
+    static getJobById(id){
         // return jobs.find(job => job.id === id)
         const query = `
             SELECT j.*,
@@ -172,7 +174,8 @@ export class JobModel{
         }
     }
 
-    static async create({title, company, location, description, modality, level, technologies, content}){
+    static create(input){
+        const {title, company, location, description, modality, level, technologies, content} = input
        /*  const newJob = {
             id : crypto.randomUUID(),
             title : title,
@@ -181,6 +184,7 @@ export class JobModel{
             data: data, 
             content: content
         }
+        
 
         jobs.push(newJob) // this should be addressing to the database
 
@@ -254,7 +258,7 @@ export class JobModel{
 
     }
 
-    static async updateJob(id, dataToUpdate) {
+/*     static updateJob(id, dataToUpdate) {
         let updateJobTechnology = null
         let updateJobContent = null
         
@@ -327,7 +331,7 @@ export class JobModel{
         }    
         
         
-    }
+    } */
 
     // Helper function to build and execute dynamic updates
     static #buildAndExecuteUpdate(tableName, id, fieldsObj) {
@@ -351,14 +355,10 @@ export class JobModel{
         
         const result = db.prepare(query).run(...params)
         
-        return {
-            success: true,
-            changes: result.changes,
-            fields: fieldNames
-        }
+        return result
     }
 
-    static async partialUpdateJob(id, fields) {
+    static partialUpdateJob(id, fields) {
         const { title, company, location, description, data, content } = fields
 
         const partialUpdateDetails = {
@@ -456,7 +456,7 @@ export class JobModel{
 
     }
 
-    static async deleteJob(id){
+    static deleteJob(id){
         const result = db.prepare('DELETE FROM jobs WHERE id = ?').run(id)
         return result.changes > 0
     }

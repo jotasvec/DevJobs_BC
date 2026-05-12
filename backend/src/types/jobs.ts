@@ -8,9 +8,14 @@ export interface Job {
     company: string
     location: string
     description: string
-    modality: 'remote' | 'onsite' | 'hybrid'
-    level: 'junior' | 'mid' | 'senior'
     created_at: string
+    data: {
+        modality: 'remote' | 'onsite' | 'hybrid'
+        level: 'junior' | 'mid' | 'senior'
+        technology: string[]
+    },
+    content: JobContent | null
+    
 }
 
 export interface JobContent {
@@ -20,19 +25,15 @@ export interface JobContent {
     about : string
 }
 
-export interface JobDetails extends Job{
-    technologies: string[]
-    content: JobContent | null
+export interface JobQuery {
+    text?: string;
+    title?: string;
+    level?: string;
+    technology?: string;
+    location?: string;
+    modality?: string;
+    limit?: string;
+    offset?: string;
 }
 
-export interface JobFilter {
-    text?: string
-    title?: string
-    level?: string
-    technology?: string
-    location?: string
-    modality?: string
-    limit?: number
-    offset?: number
-}
 
