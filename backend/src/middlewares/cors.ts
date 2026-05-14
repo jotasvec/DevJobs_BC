@@ -1,11 +1,14 @@
 import cors from "cors";
 import { ACCEPTED_ORIGINS } from "../config.js";
 
+interface CorsMiddlewareOptions {
+    acceptedOrigins?: string[];
+}
 
-export const corsMiddleware = ({ acceptedOrigins = ACCEPTED_ORIGINS } ={} ) =>{
+export const corsMiddleware = ({ acceptedOrigins = ACCEPTED_ORIGINS } : CorsMiddlewareOptions = {} ) =>{
     return cors({
         origin: (origin, callback) => {
-            if(acceptedOrigins.includes(origin) || !origin ){
+            if(!origin || acceptedOrigins.includes(origin) ){
                 return callback(null, true);
             } 
             return callback(new Error('Origin not Allowed'))

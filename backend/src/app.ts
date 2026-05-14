@@ -1,5 +1,5 @@
 import "dotenv/config";
-import express from "express";
+import express, { Express } from "express";
 import { DEFAULTS as DEF } from "./config.js";
 import { jobsRouter } from "./routes/jobs.js";
 import { technologiesRouter } from "./routes/technologies.js";
@@ -7,7 +7,7 @@ import { corsMiddleware } from "./middlewares/cors.js";
 
 const PORT = process.env.PORT || DEF.PORT;
 
-const app = express()
+const app: Express = express()
 
 // implementing cors
 app.use(corsMiddleware())
@@ -63,7 +63,7 @@ app.listen(PORT, () => {
             ║   on: http://localhost:${PORT}             ║
             ║                                            ║
             ║   Endpoints:                               ║
-            ║   ─────────────────────────────────────   ║
+            ║   ─────────────────────────────────────    ║
             ║   JOBS:                                    ║
             ║   GET    /jobs                             ║
             ║   GET    /jobs/:id                         ║
@@ -74,11 +74,11 @@ app.listen(PORT, () => {
             ║                                            ║
             ║   TECHNOLOGIES:                            ║
             ║   GET    /technologies                     ║
-            ║   GET    /technologies/grouped            ║
-            ║   GET    /technologies/categories         ║
-            ║   GET    /technologies/category/:category ║
-            ║   GET    /technologies/:id                ║
-            ║   POST   /technologies (admin)            ║
+            ║   GET    /technologies/grouped             ║
+            ║   GET    /technologies/categories          ║
+            ║   GET    /technologies/category/:category  ║
+            ║   GET    /technologies/:id                 ║
+            ║   POST   /technologies (admin)             ║
             ║   PUT    /technologies/:id (admin)         ║
             ║   DELETE /technologies/:id (admin)         ║
             ║                                            ║

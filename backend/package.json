@@ -1,10 +1,13 @@
 {
-  "name": "s04_express",
+  "name": "@devjobs/api",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "watch" : "node --watch app.js",
+    "dev": "pnpm tsx src/app.ts",
+    "build": "tsc",
+    "start": "node dist/app.js",
+    "watch": "pnpm tsx watch src/app.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -17,5 +20,13 @@
     "express": "^5.2.1",
     "qs": "^6.14.0",
     "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.6.2",
+    "tsx": "^4.19.4",
+    "typescript": "^6.0.3"
   }
 }

@@ -38,3 +38,6 @@ node_modules/
 dist
 dist-ssr
 *.local
+
+# old javascript backend backup folder
+backend_js_bckup/
