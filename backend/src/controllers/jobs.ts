@@ -4,6 +4,7 @@ import { Job, JobQuery,  } from "../types/jobs.js";
 import { ApiResponse, PaginatedResponse, UpdateResult } from "../types/index.js";
 import { JobInput } from "../schemas/jobs.js";
 import { success } from "zod";
+import { handleHttpError } from "../utils/http-errors.js";
 
 
 
@@ -25,7 +26,7 @@ export class JobsController{
             })
             
         } catch (error: unknown) {
-            this.#HandlingError(error, req, res, next)
+            handleHttpError(error, req, res, next)
         }
         /* return res.json({
             total: fileteredJobs,
@@ -37,7 +38,7 @@ export class JobsController{
     }
 
     // get IDs
-    static getJobById : RequestHandler<{id: string}, ApiResponse<Job>> = (req, res, next) => {
+    static getJobById : RequestHandler< {id: string}, ApiResponse<Job> > = (req, res, next) => {
         const { id } = req.params
         try {
             
@@ -56,7 +57,7 @@ export class JobsController{
             }) 
 
         } catch (error: unknown) {
-            this.#HandlingError(error, req, res, next)           
+            handleHttpError(error, req, res, next)           
         }
     }
 
@@ -74,7 +75,7 @@ export class JobsController{
             })
             
         } catch (error) {
-            this.#HandlingError(error, req, res, next)
+            handleHttpError(error, req, res, next)
         }
     }
 
@@ -97,7 +98,7 @@ export class JobsController{
             }) 
             
         } catch (error) {
-            this.#HandlingError(error, req, res, next)
+            handleHttpError(error, req, res, next)
         }
         
             //: res.status(400).json({error: 'Error on update'})
@@ -122,8 +123,7 @@ export class JobsController{
             }) 
             
         } catch (error: unknown) {
-            this.#HandlingError(error, req, res, next)
-            
+            handleHttpError(error, req, res, next)
         }
 
         
@@ -142,37 +142,10 @@ export class JobsController{
                 })
             }
         } catch (error: unknown) {
-            this.#HandlingError(error, req, res, next)
+            handleHttpError(error, req, res, next)
         }
     }
 
-    static #HandlingError = (error : unknown, req: Request, res: Response<ApiResponse<never>>, next: NextFunction ) =>{
-        if(error instanceof Error){
-            switch (error.message) {
-                case "NOT_FOUND": 
-                    return res.status(404).json({ 
-                        success: false,
-                        error: error.message,
-                        message: `Job is not found` 
-                    })
-                    
-                case "UNKNOKWN_TECHNOLOGY": 
-                    return res.status(409).json({ 
-                        success: false,
-                        error: error.message,
-                        message: `Not a invalid technology` 
-                    })
-                    
-                case "NO_FIELDS_PROVIDED": 
-                    return res.status(400).json({ 
-                        success: false,
-                        error: error.message,
-                        message: `no fields provided to update` 
-                    })
-                default: return next(error)
-            }
-        }
-        next(error)
-    }
+ 
 
 }

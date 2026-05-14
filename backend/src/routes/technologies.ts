@@ -3,7 +3,7 @@ import { TechnologiesController } from '../controllers/technologies.js'
 import { validateSchemas } from '../middlewares/validateSchemas.js'
 import { technologySchema, technologyUpdateSchema } from '../schemas/technologies.js'
 
-const technologiesRouter = Router()
+const technologiesRouter: Router = Router()
 
 // Public endpoints
 technologiesRouter.get('/', TechnologiesController.getAll)

@@ -10,3 +10,17 @@ export interface TechnologyCategory{
     name: string
     description: string
 }
+
+interface RawTechnologyRow extends Technology {
+    category_name: string; // Resultado del JOIN
+}
+
+export interface TechQuery {
+    search?: string;
+    category?: string;
+    name?: string
+}
+
+export interface GroupedTechnologies{
+    [categoryName: string]: Partial<Technology>[]
+}

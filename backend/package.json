@@ -1,13 +1,13 @@
 {
-  "name": "s04_express",
+  "name": "@devjobs/api",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --exec ts-node src/app.ts",
+    "dev": "pnpm tsx src/app.ts",
     "build": "tsc",
     "start": "node dist/app.js",
-    "watch": "nodemon --exec ts-node src/app.ts",
+    "watch": "pnpm tsx watch src/app.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -26,8 +26,7 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^25.6.2",
-    "nodemon": "^3.1.14",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.19.4",
     "typescript": "^6.0.3"
   }
 }

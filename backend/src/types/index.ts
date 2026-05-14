@@ -22,3 +22,8 @@ export interface UpdateResult{
     changes?: number
     message?: string
 }
+
+export interface SQLiteError extends Error {
+    code: string
+    errno?: number
+}

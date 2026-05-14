@@ -1,5 +1,5 @@
 import "dotenv/config";
-import express from "express";
+import express, { Express } from "express";
 import { DEFAULTS as DEF } from "./config.js";
 import { jobsRouter } from "./routes/jobs.js";
 import { technologiesRouter } from "./routes/technologies.js";
@@ -7,7 +7,7 @@ import { corsMiddleware } from "./middlewares/cors.js";
 
 const PORT = process.env.PORT || DEF.PORT;
 
-const app = express()
+const app: Express = express()
 
 // implementing cors
 app.use(corsMiddleware())

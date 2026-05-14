@@ -3,7 +3,7 @@ import { JobsController } from "../controllers/jobs.js";
 import { PartialJobSchema, jobSchema } from "../schemas/jobs.js";
 import { validateSchemas } from "../middlewares/validateSchemas.js";
 
-const jobsRouter = Router() //jobs router
+const jobsRouter: Router = Router() //jobs router
 
 // Validation on Create a new JOb
 /* const validateOnCreate: RequestHandler = (req , res, next ) => {
