@@ -5,7 +5,7 @@ export const DEFAULTS = {
   PORT: 3050
 }
 
-export const ACCEPTED_ORIGINS = [
+export const ACCEPTED_ORIGINS : string[] = [
   'http://localhost:5173',
   'http://localhost:3000',
 ]
