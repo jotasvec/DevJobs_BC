@@ -4,6 +4,7 @@
 *.sqlite3
 jobs.db
 *.db*
+*.sqlite*
 
 # Environment
 .env

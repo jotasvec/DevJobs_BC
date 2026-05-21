@@ -66,11 +66,12 @@ db.exec(`
 `)
 
 db.exec(`
-    CREATE TABLE IF NOT EXISTS users (
+    CREATE TABLE IF NOT EXISTS user (
         id TEXT UNIQUE NOT NULL,
         email TEXT UNIQUE NOT NULL,
         password TEXT NOT NULL,
         name TEXT NOT NULL,
+        last_name TEXT NOT NULL,
         role TEXT CHECK(role IN ('seeker', 'employer', 'admin')) DEFAULT 'seeker',
         avatar TEXT,
         bio TEXT,
@@ -83,7 +84,7 @@ db.exec(`
 db.exec(`
     CREATE TABLE IF NOT EXISTS applications (
         id TEXT PRIMARY KEY,
-        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        user_id TEXT NOT NULL REFERENCES user(id) ON DELETE CASCADE,
         job_id TEXT NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
         status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'accepted', 'rejected')),
         cover_letter TEXT,

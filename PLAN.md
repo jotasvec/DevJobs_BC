@@ -251,168 +251,177 @@ Note: Internally the database uses IDs, but the API response converts to string 
 
 ---
 
-## 10. User Authentication System
+## 10. User Authentication System (better-auth)
 
 ### Objective
-Implement complete user authentication system with JWT and role-based access control (RBAC)
+Implement complete user authentication system with better-auth and role-based access control (RBAC)
 
 ---
 
-### 10.1 Overview
+### 10.1 Current State (as of 2026-05-21)
 
-Create a secure authentication system that supports:
-- User registration and login
-- JWT-based authentication
-- Role-based access control (seeker, employer, admin)
-- Token refresh mechanism
+**Completed:**
+- [x] `better-auth` installed in backend + frontend
+- [x] `.env` configured with `BETTER_AUTH_SECRET` and `BETTER_AUTH_URL`
+- [x] Auth instance created: `backend/src/lib/auth.ts`
+- [x] Auth routes mounted: `backend/src/routes/auth.ts` → `/api/auth/*`
+- [x] Routes registered in `app.ts`
+- [x] Database tables created via `npx auth@latest migrate`:
+  - `user` (with custom `role`, `avatar`, `bio`, `resume`, `skills`, `last_name` columns)
+  - `session`
+  - `account`
+  - `verification`
+- [x] `usersRouter` registered at `/users` in `app.ts`
+- [x] `role` field configured in auth.ts with `defaultValue: "seeker"`
 
----
+**Database Tables:**
+```
+user ──────────────────────────────────────────────────────────────
+  id, email, password, name, last_name, role, avatar, bio, resume,
+  skills, created_at, emailVerified, image, createdAt, updatedAt
 
-### 10.2 Database Changes
+session ───────────────────────────────────────────────────────────
+  id, expiresAt, token, createdAt, updatedAt, ipAddress, userAgent,
+  userId (FK → user.id)
 
-```sql
--- Add columns to existing users table
-ALTER TABLE users ADD COLUMN is_active BOOLEAN DEFAULT 1;
-ALTER TABLE users ADD COLUMN last_login DATETIME;
+account ───────────────────────────────────────────────────────────
+  id, accountId, providerId, userId (FK → user.id), accessToken,
+  refreshToken, idToken, createdAt, updatedAt, ...
 
--- New table for refresh tokens
-CREATE TABLE refresh_tokens (
-    id TEXT PRIMARY KEY,
-    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    token TEXT NOT NULL,
-    expires_at DATETIME NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
+verification ──────────────────────────────────────────────────────
+  (auto-created by better-auth)
 ```
 
----
-
-### 10.3 New Files to Create
-
-| File | Purpose |
-|------|---------|
-| `backend/models/user.js` | User CRUD operations |
-| `backend/models/auth.js` | Authentication operations |
-| `backend/routes/auth.js` | Auth routes (login, register, logout, refresh) |
-| `backend/routes/users.js` | User management routes |
-| `backend/controllers/auth.js` | Auth request handlers |
-| `backend/controllers/users.js` | User request handlers |
-| `backend/schemas/user.js` | User validation schemas |
-| `backend/middlewares/auth.js` | JWT verification middleware |
-| `backend/middlewares/admin.js` | Admin role verification |
-
----
-
-### 10.4 User Roles
-
+**User Roles:**
 | Role | Permissions |
 |------|-------------|
 | **seeker** | View jobs, apply to jobs, update own profile |
-| **employer** | + Create jobs, update own jobs, view applicants |
+| **employer/recruiter** | + Create/update jobs, view applicants, see limited user info |
 | **admin** | + Manage users, manage technologies, full access |
 
----
-
-### 10.5 API Endpoints
-
-**Authentication:**
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| **POST** | `/auth/register` | Register new user | No |
-| **POST** | `/auth/login` | Login (returns JWT) | No |
-| **POST** | `/auth/logout` | Invalidate refresh token | Yes |
-| **POST** | `/auth/refresh` | Refresh expired JWT | No |
-
-**User Management:**
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| **GET** | `/users/me` | Get current user profile | Yes |
-| **PUT** | `/users/me` | Update own profile | Yes |
-| **GET** | `/users` | List all users | Admin |
-| **PUT** | `/users/:id/role` | Change user role | Admin |
-| **PUT** | `/users/:id/status` | Activate/deactivate user | Admin |
+**Protected Endpoints (agreed):**
+| Endpoint | Auth Required | Role Required |
+|----------|---------------|---------------|
+| `GET /jobs` | ❌ No | — |
+| `GET /jobs/:id` | ❌ No | — |
+| `POST /jobs` | ✅ Yes | recruiter, admin |
+| `PUT /jobs/:id` | ✅ Yes | recruiter, admin |
+| `PATCH /jobs/:id` | ✅ Yes | recruiter, admin |
+| `DELETE /jobs/:id` | ✅ Yes | admin |
+| `GET /users` | ✅ Yes | admin (full), recruiter (limited) |
+| `GET /users/:id` | ✅ Yes | admin (full), recruiter (limited) |
+| `PUT /users/:id` | ✅ Yes | admin |
+| `PATCH /users/:id` | ✅ Yes | admin |
+| `DELETE /users/:id` | ✅ Yes | admin |
+| `POST /technologies` | ✅ Yes | admin |
+| `PUT /technologies/:id` | ✅ Yes | admin |
+| `DELETE /technologies/:id` | ✅ Yes | admin |
 
 ---
 
-### 10.6 JWT Implementation
+### 10.2 Remaining Steps
 
-- **Access token**: 15 minutes expiry, contains user ID and role
-- **Refresh token**: 7 days expiry, stored in database
-- **Payload**: `{ userId, email, role }`
-- **Secret**: Stored in environment variable `JWT_SECRET`
+**Step 1: Create Auth Middlewares**
+- [ ] `backend/src/middlewares/auth.ts` → `requireSession` middleware
+  - Extract session from request using `auth.api.getSession()`
+  - Attach `req.user` to request object
+  - Return 401 if no valid session
+- [ ] `backend/src/middlewares/auth.ts` → `requireRoles(roles[])` middleware
+  - Check if `req.user.role` is in allowed roles array
+  - Return 403 if role not permitted
+  - Usage: `requireRoles('admin', 'recruiter')`
+
+**Step 2: Complete Users Routes**
+- [ ] `backend/src/routes/users.ts` → Implement handlers:
+  - `GET /users` → Admin: full user list, Recruiter: limited fields (name, email, role only)
+  - `GET /users/:id` → Same role-based field filtering
+  - `PUT /users/:id` → Admin only (full update)
+  - `PATCH /users/:id` → Admin only (partial update)
+  - `DELETE /users/:id` → Admin only
+- [ ] Create `backend/src/controllers/users.ts` → User request handlers
+- [ ] Create `backend/src/models/user.ts` → User data access layer
+
+**Step 3: Protect Job Endpoints**
+- [ ] Update `backend/src/routes/jobs.ts`:
+  - Add `requireSession` + `requireRoles('recruiter', 'admin')` to POST
+  - Add `requireSession` + `requireRoles('recruiter', 'admin')` to PUT/PATCH
+  - Add `requireSession` + `requireRoles('admin')` to DELETE
+- [ ] Update `backend/src/controllers/jobs.ts`:
+  - Attach `req.user` to created jobs (track who created them)
+
+**Step 4: Protect Technology Admin Endpoints**
+- [ ] Update `backend/src/routes/technologies.ts`:
+  - Add `requireSession` + `requireRoles('admin')` to POST/PUT/DELETE
+  - Keep GET endpoints public
+
+**Step 5: Update TypeScript Types**
+- [ ] `backend/src/types/user.ts` → Update to include better-auth session user type
+- [ ] `backend/src/types/index.ts` → Add `SessionUser` interface if needed
+
+**Step 6: (Optional) Seed Sample Users**
+- [ ] Add sample users to `backend/src/db/seed.js`:
+  - Admin: `admin@devjobs.com` / `admin1234`
+  - Recruiter: `recruiter@company.com` / `recruit1`
+  - Seeker: `seeker@test.com` / `password123`
+- [ ] Note: better-auth handles password hashing automatically via sign-up API
 
 ---
 
-### 10.7 Implementation Steps
+### 10.3 File Structure After Completion
 
-**Step 1: Install Dependencies**
-```bash
-npm install jsonwebtoken bcryptjs
+```
+backend/src/
+├── lib/
+│   └── auth.ts                    ✅ Auth instance
+├── routes/
+│   ├── auth.ts                    ✅ Auth handler mount
+│   ├── users.ts                   ⬜ User management (needs controllers)
+│   ├── jobs.ts                    ⬜ Add auth middleware
+│   └── technologies.ts            ⬜ Add auth middleware
+├── controllers/
+│   ├── jobs.ts                    ✅ Exists
+│   ├── technologies.ts            ✅ Exists
+│   └── users.ts                   ⬜ NEW
+├── models/
+│   ├── job.ts                     ✅ Exists
+│   ├── technology.ts              ✅ Exists
+│   └── user.ts                    ⬜ NEW
+├── middlewares/
+│   ├── auth.ts                    ⬜ NEW (requireSession, requireRoles)
+│   ├── cors.ts                    ✅ Exists
+│   └── validateSchemas.ts         ✅ Exists
+└── types/
+    ├── user.ts                    ⬜ Update with session types
+    └── index.ts                   ✅ Exists
 ```
 
-**Step 2: Update seed.js**
-- Add sample users (seeker, employer, admin)
-- Add is_active and last_login columns to users table
+---
 
-**Step 3: Create Models**
-- `backend/models/user.js` - User CRUD
-- `backend/models/auth.js` - Token management
+### 10.4 Dependencies
 
-**Step 4: Create Schemas**
-- `backend/schemas/user.js` - Registration/login validation
-
-**Step 5: Create Middlewares**
-- `backend/middlewares/auth.js` - Verify JWT
-- `backend/middlewares/admin.js` - Verify admin role
-
-**Step 6: Create Controllers**
-- `backend/controllers/auth.js` - Login, register, logout, refresh
-- `backend/controllers/users.js` - User management
-
-**Step 7: Create Routes**
-- `backend/routes/auth.js` - Auth endpoints
-- `backend/routes/users.js` - User management endpoints
-
-**Step 8: Register Routes**
-- Add to `backend/app.js`
-
-**Step 9: Test**
-- Verify login/logout/JWT works
-- Verify role-based access
+- `better-auth` — Already installed in backend + frontend
+- No additional packages needed (better-auth handles password hashing, sessions, tokens)
 
 ---
 
-### 10.8 Acceptance Criteria
-
-- [ ] Users can register with email and password
-- [ ] Users can login and receive JWT
-- [ ] Protected routes require valid JWT
-- [ ] Admin routes require admin role
-- [ ] Token refresh works correctly
-- [ ] Logout invalidates refresh token
-- [ ] Role-based access control works
-
----
-
-### 10.9 Dependencies
-
-- `jsonwebtoken` - JWT generation and verification
-- `bcryptjs` - Password hashing
-
----
-
-### 10.10 Timeline Estimate
+### 10.5 Timeline Estimate
 
 | Step | Effort | Description |
 |------|--------|-------------|
-| Step 1 | 5 min | Install dependencies |
-| Step 2 | 30 min | Update seed with sample users |
-| Step 3 | 1 hour | Create models |
-| Step 4 | 30 min | Create schemas |
-| Step 5 | 30 min | Create middlewares |
-| Step 6 | 1 hour | Create controllers |
-| Step 7 | 30 min | Create routes |
-| Step 8 | 15 min | Register routes |
-| Step 9 | 1 hour | Test and fix |
+| Step 1 | 30 min | Create auth middlewares |
+| Step 2 | 1 hour | Complete users routes + controllers + models |
+| Step 3 | 30 min | Protect job endpoints |
+| Step 4 | 15 min | Protect technology admin endpoints |
+| Step 5 | 15 min | Update TypeScript types |
+| Step 6 | 15 min | (Optional) Seed sample users |
 
-**Total: ~5 hours**
+**Total: ~2.5 hours**
+
+---
+
+### 10.6 Notes
+
+- better-auth uses cookie-based sessions by default
+- Social providers (GitHub, Google) are configured but commented out in `auth.ts`
+- `additionalFields` in `auth.ts` currently only has `role` — can add `lastName`, `avatar`, etc. later
+- Frontend auth integration (AuthContext, sign-in/up pages) is a separate phase

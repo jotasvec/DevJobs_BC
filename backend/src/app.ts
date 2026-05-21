@@ -4,6 +4,8 @@ import { DEFAULTS as DEF } from "./config.js";
 import { jobsRouter } from "./routes/jobs.js";
 import { technologiesRouter } from "./routes/technologies.js";
 import { corsMiddleware } from "./middlewares/cors.js";
+import { usersRouter } from "./routes/users.js";
+import { authRouter } from "./routes/auth.js";
 
 const PORT = process.env.PORT || DEF.PORT;
 
@@ -32,11 +34,18 @@ app.get('/health', (req, res) => {
     })
 })
 
+//auth
+app.use(authRouter);
+
 // Jobs Router
-app.use('/jobs', jobsRouter)
+app.use('/jobs', jobsRouter);
 
 // Technologies Router
-app.use('/technologies', technologiesRouter)
+app.use('/technologies', technologiesRouter);
+
+// Users router
+app.use('/users', usersRouter);
+
 
 // 404 for non founds paths
 app.use((req, res) => {
