@@ -67,7 +67,7 @@ export class JobsController{
         JobInput> = (req, res, next) => {
         const data = req.body;
         try {
-            const newJob = JobModel.create(data)
+            const newJob = JobModel.create({...data, createdBy: req.user?.id})
             return res.status(201).json({
                 success: true,
                 message: 'Job created successfully',

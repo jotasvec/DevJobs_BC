@@ -1,16 +1,15 @@
 import { Router } from "express";
+import { requireSession, requireRoles } from "../middlewares/auth.js";
+import { UsersController } from "../controllers/users.js";
 
-const usersRouter : Router = Router()
+const usersRouter: Router = Router();
 
-// get all users, 
-usersRouter.get('/')
+usersRouter.get("/", requireSession, UsersController.getAll);
+usersRouter.get("/:id", requireSession, UsersController.getById);
+// usersRouter.get("/:id", requireSession, requireRoles("recruiter","admin"), requireSession, UsersController.getById);
 
-//get by id
-usersRouter.get('/:id')
+usersRouter.put("/:id", requireSession, requireRoles("admin"), UsersController.update);
+usersRouter.patch("/:id", requireSession, requireRoles("admin"), UsersController.partialUpdate);
+usersRouter.delete("/:id", requireSession, requireRoles("admin"), UsersController.delete);
 
-// Admin endpoints (need admin middleware - to be added)
-usersRouter.patch('/:id')
-usersRouter.put('/:id')
-usersRouter.delete('/:id')
-
-export { usersRouter }
+export { usersRouter };

@@ -72,7 +72,7 @@ db.exec(`
         password TEXT NOT NULL,
         name TEXT NOT NULL,
         last_name TEXT NOT NULL,
-        role TEXT CHECK(role IN ('seeker', 'employer', 'admin')) DEFAULT 'seeker',
+        role TEXT CHECK(role IN ('seeker', 'recruiter', 'admin')) DEFAULT 'seeker',
         avatar TEXT,
         bio TEXT,
         resume TEXT,

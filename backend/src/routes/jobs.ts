@@ -2,6 +2,7 @@ import { RequestHandler, Router } from "express";
 import { JobsController } from "../controllers/jobs.js";
 import { PartialJobSchema, jobSchema } from "../schemas/jobs.js";
 import { validateSchemas } from "../middlewares/validateSchemas.js";
+import { requireRoles, requireSession } from "@/middlewares/auth.js";
 
 const jobsRouter: Router = Router() //jobs router
 
@@ -47,14 +48,14 @@ jobsRouter.get('/', (req, res, next) => {
 jobsRouter.get('/:id', JobsController.getJobById)
 
 // Create new job
-jobsRouter.post('/', validateSchemas(jobSchema), JobsController.createNewJob)
+jobsRouter.post('/', requireSession, requireRoles('recruiter', 'admin'), validateSchemas(jobSchema), JobsController.createNewJob)
 // Update resource 
-jobsRouter.patch('/:id', validateSchemas(PartialJobSchema), JobsController.partialUpdateJob)
+jobsRouter.patch('/:id', requireSession, requireRoles('recruiter', 'admin'), validateSchemas(PartialJobSchema), JobsController.partialUpdateJob)
 
 // replace resource 
-jobsRouter.put('/:id', JobsController.updateJob)
+jobsRouter.put('/:id', requireSession, requireRoles('recruiter', 'admin'), JobsController.updateJob)
 //Delete
-jobsRouter.delete('/:id', JobsController.deleteJob)
+jobsRouter.delete('/:id', requireSession, requireRoles('admin'), JobsController.deleteJob)
 
 export { jobsRouter }
 
