@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
     setIsLoggedIn(true);
   };
   const logout = () => {
-    setIsLoggedIn(true);
+    setIsLoggedIn(false);
   };
 
   const value = {

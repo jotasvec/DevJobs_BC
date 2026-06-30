@@ -26,7 +26,7 @@ const Jobs = () => {
                 onChange={handleSearchChange} 
                 onSubmit={ () => setPage(1) }  // Since handleSearchChange already resets the page on keystroke, we can simply ensure the page resets on submit for better UX.
                 />
-            <for onChange={updateField} m id="jobs-search-form" action="" role="search">
+            <form onChange={updateField} m id="jobs-search-form" action="" role="search">
                 <div className="jobs-filter">
                     <select name="technology" id="filter-tech" onChange={updateField}  value={filters.technology}>
                         <option value="">Tech</option>
@@ -62,7 +62,7 @@ const Jobs = () => {
                     </select>
                     <button onClick={clearFilters} >Clear</button>   
                 </div>
-            </for>
+            </form>
         </section>
         {
             loading 

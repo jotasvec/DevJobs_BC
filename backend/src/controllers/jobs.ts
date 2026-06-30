@@ -65,9 +65,16 @@ export class JobsController{
         Record<string, never>,
         ApiResponse<Job>,
         JobInput> = (req, res, next) => {
-        const data = req.body;
+        const { data: jobData, content, ...rest } = req.body;
         try {
-            const newJob = JobModel.create({...data, createdBy: req.user?.id})
+            const newJob = JobModel.create({
+                ...rest,
+                modality: jobData?.modality,
+                level: jobData?.level,
+                technologies: jobData?.technology,
+                content,
+                createdBy: req.user?.id,
+            })
             return res.status(201).json({
                 success: true,
                 message: 'Job created successfully',

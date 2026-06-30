@@ -60,7 +60,7 @@ app.use((req, res) => {
 //+++++++++++++++++
 //Run Server
 //+++++++++++++++++
-if(process.env.NODE_ENV !== 'production'){
+if(process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test'){
     console.log("current ENV: ", process.env.NODE_ENV)
 app.listen(PORT, () => {
         console.log(`

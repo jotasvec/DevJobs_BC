@@ -4,7 +4,7 @@ import type { UserRow } from "../schemas/users.js";
 export class UserModel {
   static getAll(): UserRow[] {
     const users = db.prepare(
-      "SELECT id, email, name, role, avatar, bio, resume, skills, emailVerified, image, createdAt, updatedAt FROM user ORDER BY createdAt DESC"
+      "SELECT id, email, name, role, bio, resume, skills, emailVerified, image, createdAt, updatedAt FROM user ORDER BY createdAt DESC"
     ).all() as UserRow[];
 
     return users;
@@ -12,13 +12,13 @@ export class UserModel {
 
   static getById(id: string): UserRow | null {
     const user = db.prepare(
-      "SELECT id, email, name, role, avatar, bio, resume, skills, emailVerified, image, createdAt, updatedAt FROM user WHERE id = ?"
+      "SELECT id, email, name, role, bio, resume, skills, emailVerified, image, createdAt, updatedAt FROM user WHERE id = ?"
     ).get(id) as UserRow | undefined;
 
     return user || null;
   }
 
-  static update(id: string, fields: Partial<Pick<UserRow, "name" | "role" | "avatar" | "bio" | "resume" | "skills">>): boolean {
+  static update(id: string, fields: Partial<Pick<UserRow, "name" | "role" | "bio" | "resume" | "skills">>): boolean {
     const setClauses: string[] = [];
     const params: unknown[] = [];
 

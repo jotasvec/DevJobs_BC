@@ -56,7 +56,7 @@ const ApplyButton = () =>{
 const JobsDetails = () => {
     const { jobID } = useParams(); 
     const [job, setJob] = useState({})
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
     const navigate = useNavigate()
 

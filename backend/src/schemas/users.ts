@@ -11,7 +11,6 @@ export const UserRowSchema = z.object({
   email: z.string(),
   name: z.string(),
   role: UserRoleSchema,
-  avatar: z.string().nullable(),
   bio: z.string().nullable(),
   resume: z.string().nullable(),
   skills: z.string().nullable(),
