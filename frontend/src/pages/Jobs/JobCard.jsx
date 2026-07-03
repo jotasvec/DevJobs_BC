@@ -1,35 +1,39 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Link } from '../../router/Link';
 
-
 const JobCard = ({ card }) => {
-    const [isApplied, setIsApplied] =  useState(false)
+    const [isApplied, setIsApplied] = useState(false)
 
-    const buttonClass = isApplied ? 'button-apply-job is-applied' : 'button-apply-job';
-    const buttonText = isApplied ? 'Applied' : 'Apply';
-    const appliedButtonHandle = () => {
-        setIsApplied(true)
-    }
-  return (
-    <article 
-        className='job-result-article' 
-        data-location={card.data.modality}
-        data-level={card.data.level}
-        data-technology={card.data.technology}
-        >
-        <div>
-            <Link href={`/jobs/${card.id}`} ><h3>{card.title}</h3></Link> 
-            <small>{card.company} | {card.location}</small>
-            <p>{card.description}</p>
-        </div>
-        <button 
-            className={buttonClass} 
-            type="button"
-            onClick={appliedButtonHandle}
-            >{buttonText}</button>
+    return (
+        <article className="job-card">
+            <div className="job-card-content">
+                <Link href={`/jobs/${card.id}`}>
+                    <h3 className="job-card-title">{card.title}</h3>
+                </Link>
+                <div className="job-card-meta">
+                    <span>{card.company}</span>
+                    <span className="job-card-dot"></span>
+                    <span>{card.location}</span>
+                </div>
+                <p className="job-card-description">{card.description}</p>
+                <div className="job-card-tags">
+                    {card.data?.technology?.map?.((tech) => (
+                        <span key={tech} className="job-card-tag">{tech}</span>
+                    ))}
+                </div>
+            </div>
+            <div className="job-card-actions">
+                <button
+                    className={`job-card-apply ${isApplied ? 'is-applied' : ''}`}
+                    type="button"
+                    onClick={() => setIsApplied(true)}
+                    disabled={isApplied}
+                >
+                    {isApplied ? 'Applied' : 'Apply'}
+                </button>
+            </div>
         </article>
-    
-  )
+    )
 }
 
 export default JobCard

@@ -1,52 +1,45 @@
-// import React, { useState } from 'react'
 import Pagination from './Pagination.jsx'
 import JobCard from './JobCard.jsx';
 
 const JobsList = ({ filteredList, currentPage, setPage }) => {
-
-    
     const totalArticles = filteredList.total
     const limit = filteredList.limit;
-    // const offset = filteredList.offset; 
     const jobs = filteredList.data || [];
-    // const [currentPage, setCurrentPage] = useState(1)
-    
-    const totalPages = Math.ceil(totalArticles/ limit)
-    
-    /* const paginationResult = filteredList.data.slice(
-        (page - 1)* ARTICLES_PER_PAGE,
-        page * ARTICLES_PER_PAGE
-    ); */
+    const totalPages = Math.ceil(totalArticles / limit)
 
     const handlePageChangeOnPagination = (newPage) => {
-        //setCurrentPage(page)
-        //const newOffset = (newPage - 1) * limit;
         setPage(newPage)
-    } 
+    }
 
     return (
         <section className="jobs-result">
-            <div className="">
-                <h2 className="">Resultados de búsqueda</h2>
-                <div className="selected-list"></div>
-
-                <div className="jobs-result-list">
-                    {
-                        totalArticles === 0 && (
-                            <p style={{ textAlign: 'center', padding: '2rem', textWrap: 'balance', border:'2px solid var(--border)', borderRadius: '1rem'  }}>
-                                Couldn't found jobs that matches with the search criteria.
-                            </p>
-                        )
-                    }
-                    {
-                        jobs.map(job => (
-                            <JobCard key={job.id} card={job}/> 
-                        ))
-                    }
-                </div>
-                {/* <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={onPageHandle} /> */} 
-                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChangeOnPagination} /> 
+            <div className="jobs-result-header">
+                <h2>Results</h2>
+                {totalArticles > 0 && (
+                    <span className="jobs-result-count">{totalArticles} jobs found</span>
+                )}
             </div>
+
+            <div className="jobs-result-list">
+                {totalArticles === 0 && (
+                    <div className="jobs-empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M0 0h24v24H0z" fill="none" />
+                            <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
+                            <path d="M21 21l-6 -6" />
+                        </svg>
+                        <p>No jobs match your search criteria.</p>
+                        <span>Try adjusting your filters or search terms.</span>
+                    </div>
+                )}
+                {jobs.map(job => (
+                    <JobCard key={job.id} card={job} />
+                ))}
+            </div>
+
+            {totalPages > 1 && (
+                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChangeOnPagination} />
+            )}
         </section>
     )
 }

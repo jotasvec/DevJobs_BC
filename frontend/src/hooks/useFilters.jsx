@@ -90,7 +90,7 @@ const useFilters = () => {
             //const response = await fetch(`https://jscamp-api.vercel.app/api/jobs?${params.toString()}`)
             const response = await fetch(`http://localhost:3050/jobs?${params.toString()}`)
             const data = await response.json()
-            setJobs(data)
+            setJobs(data.data)
         } catch (error) {
             console.error('Error fetching jobs: ', error)
         } finally{

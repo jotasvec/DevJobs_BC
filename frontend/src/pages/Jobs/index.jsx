@@ -1,10 +1,9 @@
 import JobsList from './JobsList'
-// import JobsData from '../../data.json'
 import SearchField from '../../components/SearchField'
 import { useFilters } from "../../hooks/useFilters";
 
 const Jobs = () => {
-    const {  
+    const {
         filters,
         loading,
         jobs,
@@ -15,63 +14,62 @@ const Jobs = () => {
         setPage,
         clearFilters } = useFilters()
 
-
-  return (
-    <>
-        <section className='jobs-search'>
-            <h2>Find your next Job</h2>
-            <p>Explore thousands oportunities on the tech industry</p>
-            <SearchField 
-                value={rawSearchText}
-                onChange={handleSearchChange} 
-                onSubmit={ () => setPage(1) }  // Since handleSearchChange already resets the page on keystroke, we can simply ensure the page resets on submit for better UX.
+    return (
+        <>
+            <section className="page-header">
+                <span className="page-header-label">Jobs</span>
+                <h1>Find your next role</h1>
+                <p>Browse thousands of developer positions from startups to big tech.</p>
+                <SearchField
+                    value={rawSearchText}
+                    onChange={handleSearchChange}
+                    onSubmit={() => setPage(1)}
                 />
-            <form onChange={updateField} m id="jobs-search-form" action="" role="search">
-                <div className="jobs-filter">
-                    <select name="technology" id="filter-tech" onChange={updateField}  value={filters.technology}>
-                        <option value="">Tech</option>
-                        <optgroup label="most popular">
+            </section>
+
+            <section className="jobs-page-content">
+                <div className="jobs-filter-bar">
+                    <select name="technology" onChange={updateField} value={filters.technology}>
+                        <option value="">All Technologies</option>
+                        <optgroup label="Popular">
                             <option value="javascript">JavaScript</option>
                             <option value="python">Python</option>
                             <option value="react">React</option>
                             <option value="nodejs">Node.js</option>
                             <option value="java">Java</option>
                         </optgroup>
-                        <hr />
                         <option value="csharp">C#</option>
                         <option value="c">C</option>
                         <option value="c++">C++</option>
-                        <hr />
                         <option value="ruby">Ruby</option>
                         <option value="php">PHP</option>
                     </select>
-                    <select name="location" id="filter-location" onChange={updateField}  value={filters.location} >
-                        <option value="">Location</option>
-                        <option value="remoto">Remoto</option>
-                        <option value="cdmx">Ciudad de México</option>
+                    <select name="location" onChange={updateField} value={filters.location}>
+                        <option value="">All Locations</option>
+                        <option value="remoto">Remote</option>
+                        <option value="cdmx">Ciudad de Mexico</option>
                         <option value="guadalajara">Guadalajara</option>
                         <option value="monterrey">Monterrey</option>
                         <option value="barcelona">Barcelona</option>
                     </select>
-                    <select name="level" id="filter-experience" onChange={updateField}  value={filters.level}>
-                        <option value="">Experience</option>
-                        <option value="junior">junior</option>
+                    <select name="level" onChange={updateField} value={filters.level}>
+                        <option value="">All Levels</option>
+                        <option value="junior">Junior</option>
                         <option value="mid">Mid-Level</option>
                         <option value="senior">Senior</option>
-                        <option value="lead">lead</option>
+                        <option value="lead">Lead</option>
                     </select>
-                    <button onClick={clearFilters} >Clear</button>   
+                    <button className="filter-clear-btn" onClick={clearFilters}>Clear</button>
                 </div>
-            </form>
-        </section>
-        {
-            loading 
-                ?  <h1>Loading Jobs ... </h1>
-                : <JobsList filteredList={jobs} currentPage={page} setPage={setPage} />
-        }
-        
-    </>
-  )
+
+                {
+                    loading
+                        ? <div className="page-loading"><span>Loading jobs...</span></div>
+                        : <JobsList filteredList={jobs} currentPage={page} setPage={setPage} />
+                }
+            </section>
+        </>
+    )
 }
 
 export default Jobs

@@ -1,4 +1,3 @@
-import React from 'react'
 import AuthForm from '../../components/AuthForm.jsx'
 import { useRouter } from '../../hooks/useRouter.jsx'
 
@@ -7,7 +6,6 @@ const SignUp = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    // Handle sign up logic here
     console.log('Sign up submitted')
   }
 
@@ -20,8 +18,8 @@ const SignUp = () => {
       isSignUp={true}
       onSubmit={handleSubmit}
       title="Create Account"
-      subtitle="Join our community and find your dream job"
-      submitText="Sign Up"
+      subtitle="Join our community and start finding your dream developer job."
+      submitText="Create Account"
       altText="Already have an account?"
       altButtonText="Sign In"
       altButtonAction={handleSignInClick}

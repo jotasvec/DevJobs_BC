@@ -1,63 +1,78 @@
-import React from 'react'
-
-const AuthForm = ({ 
-  isSignUp = false, 
-  onSubmit, 
-  title, 
-  subtitle,
-  submitText,
-  altText,
-  altButtonText,
-  altButtonAction 
+const AuthForm = ({
+    isSignUp = false,
+    onSubmit,
+    title,
+    subtitle,
+    submitText,
+    altText,
+    altButtonText,
+    altButtonAction
 }) => {
-  return (
-    <>
-        <h2 style={{paddingTop:'3rem' }}>{title}</h2>
-        <p>{subtitle}</p>
-        <div className='signin-form'>
-          <form onSubmit={onSubmit}>
-            {isSignUp && (
-              <input type="text" name="name" id="name" placeholder='Full Name' required />
-            )}
-            <input type="email" name="email" id="email" placeholder='Email' required />
-            <input type="password" name="password" id="password" placeholder='Password' required />
-            {isSignUp && (
-              <input type="password" name="confirmPassword" id="confirmPassword" placeholder='Confirm Password' required />
-            )}
-            {!isSignUp ? (
-              <div style={{display: 'flex', justifyContent: 'space-between', margin: '1rem 0' }}>
-                <div>
-                  <input type="checkbox" name="remember" id="remember" /> 
-                  <label htmlFor='remember'>Remember Me</label>
+    return (
+        <section className="auth-page">
+            <div className="auth-card">
+                <div className="auth-header">
+                    <span className="auth-header-label">{isSignUp ? 'Create account' : 'Welcome back'}</span>
+                    <h1>{title}</h1>
+                    <p>{subtitle}</p>
                 </div>
-                <a href="#">Forgot password</a>
-              </div>
-            ) : (
-              <div style={{display: 'flex', justifyContent: 'space-between', margin: '1rem 0' }}>
-                <div>
-                  <input type="checkbox" name="terms" id="terms" required /> 
-                  <label htmlFor='terms'>I agree to the Terms & Conditions</label>
+
+                <form className="auth-form" onSubmit={onSubmit}>
+                    {isSignUp && (
+                        <div className="auth-field">
+                            <label htmlFor="name">Full Name</label>
+                            <input type="text" name="name" id="name" placeholder="Ada Lovelace" required />
+                        </div>
+                    )}
+                    <div className="auth-field">
+                        <label htmlFor="email">Email</label>
+                        <input type="email" name="email" id="email" placeholder="you@company.com" required />
+                    </div>
+                    <div className="auth-field">
+                        <label htmlFor="password">Password</label>
+                        <input type="password" name="password" id="password" placeholder="Enter your password" required />
+                    </div>
+                    {isSignUp && (
+                        <div className="auth-field">
+                            <label htmlFor="confirmPassword">Confirm Password</label>
+                            <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm your password" required />
+                        </div>
+                    )}
+
+                    {!isSignUp ? (
+                        <div className="auth-extras">
+                            <label className="auth-checkbox">
+                                <input type="checkbox" name="remember" id="remember" />
+                                <span>Remember me</span>
+                            </label>
+                            <a href="#" className="auth-link">Forgot password?</a>
+                        </div>
+                    ) : (
+                        <div className="auth-extras">
+                            <label className="auth-checkbox">
+                                <input type="checkbox" name="terms" id="terms" required />
+                                <span>I agree to the Terms & Conditions</span>
+                            </label>
+                        </div>
+                    )}
+
+                    <button type="submit" className="auth-submit">{submitText}</button>
+                </form>
+
+                <div className="auth-footer">
+                    <p>{altText}</p>
+                    {!isSignUp ? (
+                        <div className="auth-alt-buttons">
+                            <button type="button" onClick={() => altButtonAction('dev')}>Sign up as Dev</button>
+                            <button type="button" onClick={() => altButtonAction('company')}>Sign up as Company</button>
+                        </div>
+                    ) : (
+                        <button type="button" className="auth-alt-single" onClick={altButtonAction}>{altButtonText}</button>
+                    )}
                 </div>
-              </div>
-            )}
-            <button type='submit'>{submitText}</button>
-          </form>
-          <div className='form-bellow'>
-            <p>{altText}</p>
-            <div className=''>
-              {!isSignUp ? (
-                <>
-                  <button type="button" onClick={() => altButtonAction('dev')}>Sign Up as Dev</button>
-                  <button type="button" onClick={() => altButtonAction('company')}>Sign Up as a Company</button>
-                </>
-              ) : (
-                <button type="button" onClick={altButtonAction}>{altButtonText}</button>
-              )}
             </div>
-          </div>
-        </div>
-    </>
-  )
+        </section>
+    )
 }
 
 export default AuthForm
