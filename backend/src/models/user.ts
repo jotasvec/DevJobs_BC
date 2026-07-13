@@ -18,7 +18,7 @@ export class UserModel {
     return user || null;
   }
 
-  static update(id: string, fields: Partial<Pick<UserRow, "name" | "role" | "bio" | "resume" | "skills">>): boolean {
+  static update(id: string, fields: Partial<Pick<UserRow, "name" | "role" | "bio" | "resume" | "skills" | "image" >>): boolean {
     const setClauses: string[] = [];
     const params: unknown[] = [];
 

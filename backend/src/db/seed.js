@@ -12,6 +12,7 @@ db.exec(`
         description TEXT NOT NULL, 
         modality TEXT NOT NULL CHECK(modality in ('remote','onsite','hybrid')),
         level TEXT NOT NULL CHECK(level in ('junior','mid','senior')),
+        created_by TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
 `)
@@ -24,15 +25,6 @@ db.exec(`
         responsibilities TEXT,
         requirements TEXT,
         about TEXT,
-        FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE
-    )
-`)
-
-db.exec(`
-    CREATE TABLE IF NOT EXISTS job_technologies_old (
-        id TEXT PRIMARY KEY,
-        job_id TEXT NOT NULL,
-        technology TEXT NOT NULL,
         FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE
     )
 `)

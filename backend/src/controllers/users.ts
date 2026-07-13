@@ -1,10 +1,10 @@
 import type { RequestHandler } from "express";
 import { UserModel } from "../models/user.js";
 import type { UserPublic } from "../types/user.js";
-import type { ApiResponse } from "../types/index.js";
 import { handleHttpError } from "../utils/http-errors.js";
+import { UserRow } from "@/schemas/users.js";
 
-function toPublic(user: { id: string; email: string; name: string; role: string; image: string | null }): UserPublic {
+function toPublic(user: UserRow): UserPublic {
   return {
     id: user.id,
     email: user.email,
@@ -12,17 +12,38 @@ function toPublic(user: { id: string; email: string; name: string; role: string;
     role: user.role as UserPublic["role"],
     image: user.image,
   };
-}
+};
+
+function toRecruiterSafe(user: UserRow) {
+  return {
+    email: user.email,
+    name: user.name,
+    role: user.role as UserPublic["role"],
+    image: user.image,
+    bio: user.bio,
+    resume: user.resume,
+    skills: user.skills,
+  };
+};
 
 export class UsersController {
   static getAll: RequestHandler = (req, res, next) => {
     try {
       const users = UserModel.getAll();
-      const isAdmin = req.user?.role === "admin";
 
-      const data = isAdmin ? users : users.map(toPublic);
+      const currentUserRole = req.user?.role
+      let userData;
 
-      return res.json({ success: true, data });
+      if (currentUserRole === 'admin'){
+        userData = users;
+      }else if (currentUserRole === 'recruiter'){
+        userData = users.map(toRecruiterSafe)
+      }else {
+        userData = users.map(toPublic); 
+      }
+      
+
+      return res.json({ success: true, data: userData });
     } catch (error) {
       handleHttpError(error, req, res, next);
     }
@@ -41,7 +62,9 @@ export class UsersController {
       }
 
       const isAdmin = req.user?.role === "admin";
-      const data = isAdmin ? user : toPublic(user);
+      const isSelf = req.user?.id === user.id
+
+      const data = (isAdmin || isSelf) ? user : toRecruiterSafe(user);
 
       return res.json({ success: true, data });
     } catch (error) {
@@ -51,9 +74,9 @@ export class UsersController {
 
   static update: RequestHandler<{ id: string }> = (req, res, next) => {
     try {
-      const { name, role, avatar, bio, resume, skills } = req.body;
+      const { name, role, image, bio, resume, skills } = req.body;
 
-      const updated = UserModel.update(req.params.id, { name, role, avatar, bio, resume, skills });
+      const updated = UserModel.update(req.params.id, { name, role, bio, resume, skills, image });
 
       if (!updated) {
         return res.status(404).json({

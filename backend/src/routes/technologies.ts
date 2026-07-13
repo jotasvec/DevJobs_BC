@@ -13,10 +13,8 @@ technologiesRouter.get('/categories', TechnologiesController.getCategories)
 technologiesRouter.get('/category/:category', TechnologiesController.getByCategory)
 technologiesRouter.get('/:id', TechnologiesController.getById)
 
-// Admin endpoints (need admin middleware - to be added)
 technologiesRouter.post(
     '/',
-    // TODO isAdmin? 
     requireSession,
     requireRoles('admin'),
     validateSchemas(TechnologySchema), 
@@ -24,7 +22,6 @@ technologiesRouter.post(
 )
 technologiesRouter.patch(
     '/:id', 
-    // TODO isAdmin? 
     requireSession,
     requireRoles('admin'),
     validateSchemas(technologyUpdateSchema),
@@ -32,7 +29,6 @@ technologiesRouter.patch(
 )
 technologiesRouter.delete(
     '/:id', 
-    // TODO isAdmin? 
     requireSession,
     requireRoles('admin'),
     TechnologiesController.delete
