@@ -6,7 +6,8 @@ const AuthForm = ({
     submitText,
     altText,
     altButtonText,
-    altButtonAction
+    altButtonAction,
+    error
 }) => {
     return (
         <section className="auth-page">
@@ -55,8 +56,15 @@ const AuthForm = ({
                             </label>
                         </div>
                     )}
+                    {
+                        error && (
+                            <div> Error </div>
+                        ) 
+                    }
 
-                    <button type="submit" className="auth-submit">{submitText}</button>
+                    <button type="submit" className="auth-submit">
+                        { submitText }
+                    </button>
                 </form>
 
                 <div className="auth-footer">

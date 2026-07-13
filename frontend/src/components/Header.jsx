@@ -1,10 +1,10 @@
 import '../App.css';
 import Avatar from './Avatar';
 import { Link, NavLink } from '../router/Link.jsx';
-import { useAuth } from '../context/AuthContext.jsx';
+import { useAuth } from '../hooks/useAuth.jsx';
 
 const Header = () => {
-    const { isLoggedIn } = useAuth()
+    const { isLoggedIn, user, logout } = useAuth();
   return (
     <header>
         <Link href="/" style={{textDecoration: 'none'}}>
@@ -20,10 +20,17 @@ const Header = () => {
             <a href="" target="_blank" rel="noopener noreferrer">Salaries</a>
         </nav>
         <div>
-            <a href="" target="_blank" rel="noopener noreferrer">Post a Job</a>
+            <a href="/signup" target="_blank" rel="noopener noreferrer">Post a Job</a>
             {
                 isLoggedIn 
-                    ? <Avatar username="jotasvec" service="x"/>
+                    ? (
+                        <div>
+                            <Avatar username="jotasvec" service="x"/>
+                            <NavLink href="/profile"> {user?.name || user?.email } </NavLink>
+                            <button onClick={logout}>Logout</button>
+                        </div>
+
+                    )
                     : <NavLink href="/signin" rel="noopener noreferrer">SignIn</NavLink>
             }
             
