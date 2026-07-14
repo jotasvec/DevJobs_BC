@@ -2,7 +2,7 @@ import styles from './JobsDetails.module.css';
 import { Link } from '../../router/Link';
 import { useParams, useNavigate } from 'react-router';
 import { useEffect, useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 
 const CircleCheck = () => (
     <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -50,12 +50,12 @@ const JobsDetails = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        fetch(`https://jscamp-api.vercel.app/api/jobs/${jobID}`)
+        fetch(`http://localhost:3050/jobs/${jobID}`)
             .then(response => {
                 if (!response.ok) throw new Error(`Job Not Found \n Status: ${response.statusText} `);
                 return response.json()
             })
-            .then(json => setJob(json))
+            .then(json => setJob(json.data))
             .catch(err => setError(err.message))
             .finally(() => setLoading(false))
     }, [jobID])
@@ -84,16 +84,16 @@ const JobsDetails = () => {
                 <nav className={styles.breadcrumb}>
                     <Link href="/jobs">Jobs</Link>
                     <span>/</span>
-                    <span>{job.titulo}</span>
+                    <span>{job.title}</span>
                 </nav>
 
                 <section className={styles.jobHeader}>
                     <div>
-                        <h1>{job.titulo}</h1>
+                        <h1>{job.title}</h1>
                         <div className={styles.jobHeaderMeta}>
-                            <span>{job.empresa}</span>
+                            <span>{job.company}</span>
                             <span className={styles.metaDot}></span>
-                            <span>{job.ubicacion}</span>
+                            <span>{job.location}</span>
                         </div>
                     </div>
                     <ApplyButton />

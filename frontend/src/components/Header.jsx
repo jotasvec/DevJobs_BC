@@ -14,24 +14,25 @@ const Header = () => {
             </h2>
         </Link>
         <nav>
+            
             <NavLink href="/" rel="noopener noreferrer">Start</NavLink>
             <NavLink href="/jobs"  rel="noopener noreferrer">Jobs</NavLink>
             <a href="" target="_blank" rel="noopener noreferrer">Companies</a>
             <a href="" target="_blank" rel="noopener noreferrer">Salaries</a>
         </nav>
         <div>
-            <a href="/signup" target="_blank" rel="noopener noreferrer">Post a Job</a>
             {
                 isLoggedIn 
-                    ? (
-                        <div>
-                            <Avatar username="jotasvec" service="x"/>
-                            <NavLink href="/profile"> {user?.name || user?.email } </NavLink>
-                            <button onClick={logout}>Logout</button>
-                        </div>
-
-                    )
-                    : <NavLink href="/signin" rel="noopener noreferrer">SignIn</NavLink>
+                ? (
+                    <div>
+                        <Avatar username="jotasvec" service="x"/>
+                        <NavLink href={`/profile/${user.id}`}> {user?.name || user?.email } </NavLink>
+                        <button onClick={logout}>Logout</button>
+                    </div>
+                ): <div>
+                        <NavLink href="/signin" rel="noopener noreferrer">SignIn</NavLink>
+                        <a href="/signup" target="_blank" rel="noopener noreferrer">Post a Job</a>
+                    </div>
             }
             
             

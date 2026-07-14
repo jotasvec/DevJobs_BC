@@ -21,6 +21,7 @@ const JobsDetails = lazy(()=> import('./pages/Detail/JobsDetails.jsx'))
 const SignIn = lazy(()=> import('./pages/signIn/index.jsx'))
 const SignUp = lazy(()=> import('./pages/signUp/index.jsx'))
 const NotFound = lazy(()=> import('./pages/NotFound.jsx'))
+const SeekerProfile = lazy(()=> import('./pages/profile/Seeker.jsx'))
 
 
 
@@ -44,6 +45,7 @@ function App() {
               <Route path='*' element={ <NotFound /> } />
               <Route path='/signin' element={<SignIn />} />
               <Route path='/signup' element={<SignUp />} />
+              <Route path='/profile/:userID'element={<SeekerProfile />} />
 
             </Routes>
         </Suspense>

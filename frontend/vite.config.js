@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 
-const local = 'http://localhost:5173/' | 'http://localhost:3050/'
+const local = 'http://localhost:3050/'
 
 // https://vite.dev/config/
 export default defineConfig({
