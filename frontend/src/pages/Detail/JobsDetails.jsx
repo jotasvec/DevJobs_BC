@@ -50,7 +50,7 @@ const JobsDetails = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        fetch(`http://localhost:3050/jobs/${jobID}`)
+        fetch(`/jobs/${jobID}`) // the localhost:3050 is used by Vite Proxy locally by default
             .then(response => {
                 if (!response.ok) throw new Error(`Job Not Found \n Status: ${response.statusText} `);
                 return response.json()

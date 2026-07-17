@@ -19,7 +19,8 @@ const HomePage = lazy( () => import('./pages/Home.jsx') )
 const Jobs = lazy(()=> import('./pages/Jobs/index.jsx'))
 const JobsDetails = lazy(()=> import('./pages/Detail/JobsDetails.jsx'))
 const SignIn = lazy(()=> import('./pages/signIn/index.jsx'))
-const SignUp = lazy(()=> import('./pages/signUp/index.jsx'))
+const SignUp = lazy(()=> import('./pages/signUp/SeekerSignUp.jsx'))
+const RecruitersSignUp = lazy(()=> import('./pages/signUp/RecruiterSignUp.jsx'))
 const NotFound = lazy(()=> import('./pages/NotFound.jsx'))
 const SeekerProfile = lazy(()=> import('./pages/profile/Seeker.jsx'))
 
@@ -45,6 +46,7 @@ function App() {
               <Route path='*' element={ <NotFound /> } />
               <Route path='/signin' element={<SignIn />} />
               <Route path='/signup' element={<SignUp />} />
+              <Route path='/r_signup' element={<RecruitersSignUp />} />
               <Route path='/profile/:userID'element={<SeekerProfile />} />
 
             </Routes>

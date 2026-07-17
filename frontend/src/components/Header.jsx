@@ -2,10 +2,18 @@ import '../App.css';
 import Avatar from './Avatar';
 import { Link, NavLink } from '../router/Link.jsx';
 import { useAuth } from '../hooks/useAuth.jsx';
+import { useRouter } from '../hooks/useRouter.jsx';
 
 const Header = () => {
     const { isLoggedIn, user, logout } = useAuth();
-  return (
+    const { navigateTo } = useRouter();
+   
+    const handleLogOut = async () => {
+        await logout()
+        navigateTo('/')
+        
+    } 
+    return (
     <header>
         <Link href="/" style={{textDecoration: 'none'}}>
             <h2>
@@ -27,11 +35,11 @@ const Header = () => {
                     <div>
                         <Avatar username="jotasvec" service="x"/>
                         <NavLink href={`/profile/${user.id}`}> {user?.name || user?.email } </NavLink>
-                        <button onClick={logout}>Logout</button>
+                        <button onClick={handleLogOut}>Logout</button>
                     </div>
                 ): <div>
                         <NavLink href="/signin" rel="noopener noreferrer">SignIn</NavLink>
-                        <a href="/signup" target="_blank" rel="noopener noreferrer">Post a Job</a>
+                        <a href="/r_signup" rel="noopener noreferrer">Post a Job</a>
                     </div>
             }
             

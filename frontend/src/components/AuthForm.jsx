@@ -1,3 +1,5 @@
+import InputField from './InputField.jsx'
+
 const AuthForm = ({
     isSignUp = false,
     onSubmit,
@@ -7,6 +9,8 @@ const AuthForm = ({
     altText,
     altButtonText,
     altButtonAction,
+    register,
+    errors,
     error
 }) => {
     return (
@@ -20,24 +24,40 @@ const AuthForm = ({
 
                 <form className="auth-form" onSubmit={onSubmit}>
                     {isSignUp && (
-                        <div className="auth-field">
-                            <label htmlFor="name">Full Name</label>
-                            <input type="text" name="name" id="name" placeholder="Ada Lovelace" required />
-                        </div>
+                        <InputField
+                            name="name"
+                            label="Full Name"
+                            placeholder="Ada Lovelace"
+                            type="text"
+                            register={register}
+                            error={errors?.name}
+                        />
                     )}
-                    <div className="auth-field">
-                        <label htmlFor="email">Email</label>
-                        <input type="email" name="email" id="email" placeholder="you@company.com" required />
-                    </div>
-                    <div className="auth-field">
-                        <label htmlFor="password">Password</label>
-                        <input type="password" name="password" id="password" placeholder="Enter your password" required />
-                    </div>
+                    <InputField
+                        name="email"
+                        label="Email"
+                        placeholder="you@company.com"
+                        type="email"
+                        register={register}
+                        error={errors?.email}
+                    />
+                    <InputField
+                        name="password"
+                        label="Password"
+                        placeholder="Enter your password"
+                        type="password"
+                        register={register}
+                        error={errors?.password}
+                    />
                     {isSignUp && (
-                        <div className="auth-field">
-                            <label htmlFor="confirmPassword">Confirm Password</label>
-                            <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm your password" required />
-                        </div>
+                        <InputField
+                            name="confirmPassword"
+                            label="Confirm Password"
+                            placeholder="Confirm your password"
+                            type="password"
+                            register={register}
+                            error={errors?.confirmPassword}
+                        />
                     )}
 
                     {!isSignUp ? (
@@ -56,11 +76,12 @@ const AuthForm = ({
                             </label>
                         </div>
                     )}
-                    {
-                        error && (
-                            <div> Error </div>
-                        ) 
-                    }
+
+                    {error && (
+                        <div className="auth-error">
+                            {typeof error === 'string' ? error : error.message || 'An error occurred'}
+                        </div>
+                    )}
 
                     <button type="submit" className="auth-submit">
                         { submitText }
@@ -71,8 +92,8 @@ const AuthForm = ({
                     <p>{altText}</p>
                     {!isSignUp ? (
                         <div className="auth-alt-buttons">
-                            <button type="button" onClick={() => altButtonAction('dev')}>Sign up as Dev</button>
-                            <button type="button" onClick={() => altButtonAction('company')}>Sign up as Company</button>
+                            <button type="button" onClick={() => altButtonAction('seeker')}>Sign up as Dev</button>
+                            <button type="button" onClick={() => altButtonAction('recruiter')}>Sign up as Company</button>
                         </div>
                     ) : (
                         <button type="button" className="auth-alt-single" onClick={altButtonAction}>{altButtonText}</button>

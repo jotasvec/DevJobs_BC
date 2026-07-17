@@ -12,7 +12,7 @@ const Seeker = () => {
 
 
     useEffect(() => {
-        fetch(`http://localhost:3050/users/${userID}`, {credentials: 'include'})
+        fetch(`/users/${userID}`, {credentials: 'include'}) // the localhost:3050 is used by Vite Proxy locally by default
             .then(response => {
                 if (!response.ok) throw new Error(`User Profile not found \nStatus: ${response.statusText}` );
                 return response.json()

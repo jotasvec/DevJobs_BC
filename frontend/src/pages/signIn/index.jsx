@@ -26,8 +26,9 @@ const SignIn = () => {
       if(res.error){
         setError(res.error)
         console.log('error', error)
+      }else{
+        navigateTo('/')
       }
-      navigateTo('/')
     } catch (error) {
         console.log('SignIn Failed', error)
     }
@@ -37,7 +38,13 @@ const SignIn = () => {
   }
 
   const handleSignUpClick = (type) => {
-    navigateTo(`/signup?type=${type}`)
+
+    console.log('type:', type)
+    if (type === 'recruiter'){ 
+      navigateTo(`/r_signup`);
+    }else{
+      navigateTo(`/signup`)
+    }
   }
 
 
