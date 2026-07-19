@@ -1,6 +1,7 @@
 import JobsList from './JobsList'
 import SearchField from '../../components/SearchField'
 import { useFilters } from "../../hooks/useFilters";
+import { LEVEL, UI } from '../../constants.js';
 
 const Jobs = () => {
     const {
@@ -54,17 +55,16 @@ const Jobs = () => {
                     </select>
                     <select name="level" onChange={updateField} value={filters.level}>
                         <option value="">All Levels</option>
-                        <option value="junior">Junior</option>
-                        <option value="mid">Mid-Level</option>
-                        <option value="senior">Senior</option>
-                        <option value="lead">Lead</option>
+                        <option value={LEVEL.JUNIOR}>Junior</option>
+                        <option value={LEVEL.MID}>Mid-Level</option>
+                        <option value={LEVEL.SENIOR}>Senior</option>
                     </select>
-                    <button className="filter-clear-btn" onClick={clearFilters}>Clear</button>
+                    <button className="filter-clear-btn" onClick={clearFilters}>{UI.CLEAR}</button>
                 </div>
 
                 {
                     loading
-                        ? <div className="page-loading"><span>Loading jobs...</span></div>
+                        ? <div className="page-loading"><span>{UI.LOADING_JOBS}</span></div>
                         : <JobsList filteredList={jobs} currentPage={page} setPage={setPage} />
                 }
             </section>

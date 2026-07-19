@@ -3,6 +3,7 @@ import { UserModel } from "../models/user.js";
 import type { UserPublic } from "../types/user.js";
 import { handleHttpError } from "../utils/http-errors.js";
 import { UserRow } from "@/schemas/users.js";
+import { HTTP_STATUS, ERROR_CODES, ROLES, MESSAGES } from "../constants.js";
 
 function toPublic(user: UserRow): UserPublic {
   return {
@@ -34,9 +35,9 @@ export class UsersController {
       const currentUserRole = req.user?.role
       let userData;
 
-      if (currentUserRole === 'admin'){
+      if (currentUserRole === ROLES.ADMIN){
         userData = users;
-      }else if (currentUserRole === 'recruiter'){
+      }else if (currentUserRole === ROLES.RECRUITER){
         userData = users.map(toRecruiterSafe)
       }else {
         userData = users.map(toPublic); 
@@ -54,14 +55,14 @@ export class UsersController {
       const user = UserModel.getById(req.params.id);
 
       if (!user) {
-        return res.status(404).json({
+        return res.status(HTTP_STATUS.NOT_FOUND).json({
           success: false,
-          error: "NOT_FOUND",
+          error: ERROR_CODES.NOT_FOUND,
           message: "User not found",
         });
       }
 
-      const isAdmin = req.user?.role === "admin";
+      const isAdmin = req.user?.role === ROLES.ADMIN;
       const isSelf = req.user?.id === user.id
 
       const data = (isAdmin || isSelf) ? user : toRecruiterSafe(user);
@@ -79,9 +80,9 @@ export class UsersController {
       const updated = UserModel.update(req.params.id, { name, role, bio, resume, skills, image });
 
       if (!updated) {
-        return res.status(404).json({
+        return res.status(HTTP_STATUS.NOT_FOUND).json({
           success: false,
-          error: "NOT_FOUND",
+          error: ERROR_CODES.NOT_FOUND,
           message: "User not found or no fields to update",
         });
       }
@@ -90,7 +91,7 @@ export class UsersController {
 
       return res.json({
         success: true,
-        message: "User updated successfully",
+        message: MESSAGES.USER_UPDATED,
         data: user,
       });
     } catch (error) {
@@ -110,19 +111,19 @@ export class UsersController {
       }
 
       if (Object.keys(fields).length === 0) {
-        return res.status(400).json({
+        return res.status(HTTP_STATUS.BAD_REQUEST).json({
           success: false,
-          error: "NO_FIELDS",
-          message: "No valid fields provided to update",
+          error: ERROR_CODES.NO_FIELDS_PROVIDED,
+          message: MESSAGES.NO_VALID_FIELDS,
         });
       }
 
       const updated = UserModel.update(req.params.id, fields);
 
       if (!updated) {
-        return res.status(404).json({
+        return res.status(HTTP_STATUS.NOT_FOUND).json({
           success: false,
-          error: "NOT_FOUND",
+          error: ERROR_CODES.NOT_FOUND,
           message: "User not found",
         });
       }
@@ -131,7 +132,7 @@ export class UsersController {
 
       return res.json({
         success: true,
-        message: "User updated successfully",
+        message: MESSAGES.USER_UPDATED,
         data: user,
       });
     } catch (error) {
@@ -144,16 +145,16 @@ export class UsersController {
       const deleted = UserModel.delete(req.params.id);
 
       if (!deleted) {
-        return res.status(404).json({
+        return res.status(HTTP_STATUS.NOT_FOUND).json({
           success: false,
-          error: "NOT_FOUND",
+          error: ERROR_CODES.NOT_FOUND,
           message: "User not found",
         });
       }
 
-      return res.status(204).json({
+      return res.status(HTTP_STATUS.NO_CONTENT).json({
         success: true,
-        message: "User deleted successfully",
+        message: MESSAGES.USER_DELETED,
       });
     } catch (error) {
       handleHttpError(error, req, res, next);

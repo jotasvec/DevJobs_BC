@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router';
 import { useRouter } from '../../hooks/useRouter';
+import { ROUTES, UI, API } from '../../constants.js';
 
 const Seeker = () => {
     const { userID } = useParams()
@@ -12,7 +13,7 @@ const Seeker = () => {
 
 
     useEffect(() => {
-        fetch(`/users/${userID}`, {credentials: 'include'}) // the localhost:3050 is used by Vite Proxy locally by default
+        fetch(`${API.USERS}/${userID}`, {credentials: 'include'})
             .then(response => {
                 if (!response.ok) throw new Error(`User Profile not found \nStatus: ${response.statusText}` );
                 return response.json()
@@ -27,7 +28,7 @@ const Seeker = () => {
             <div className="page-header">
                 <h1>Seeker Profile Not Found</h1>
                 <p>The User Profile doesn't exist or has been removed.</p>
-                <button className="auth-submit" onClick={() => navigateTo('/')}>Go Home</button>
+                <button className="auth-submit" onClick={() => navigateTo(ROUTES.HOME)}>{UI.GO_HOME}</button>
             </div>
         )
     }
@@ -35,12 +36,10 @@ const Seeker = () => {
     if (loading) {
         return (
             <div className="page-loading">
-                <span>Loading User details...</span>
+                <span>{UI.LOADING_PROFILE}</span>
             </div>
         )
     }
-    console.log('response : ', seeker)
-
   return (
     <div>
         <h2>Welcome {seeker.name}</h2>

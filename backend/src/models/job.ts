@@ -192,9 +192,13 @@ export class JobModel {
         }
     }
 
-    static create(input: Omit<JobInput, 'modality' | 'level' | 'technologies'> & { 
-        modality?: string; 
-        level?: string; 
+    static create(input: {
+        title: string;
+        company: string;
+        location: string;
+        description: string;
+        modality?: string;
+        level?: string;
         technologies?: string[];
         content?: JobInput['content'];
         createdBy?: string;

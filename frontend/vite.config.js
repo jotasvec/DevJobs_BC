@@ -9,7 +9,9 @@ export default defineConfig({
   server: {
     proxy : {
       '/api': local,
-      '/users': local
+      '/users': local,
+      '/jobs': local,
+      '/technologies': local
     }
   }
 })

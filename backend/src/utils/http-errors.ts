@@ -1,53 +1,54 @@
 import { NextFunction, Response, Request } from "express"
 import { ApiResponse } from "../types/index.js"
+import { HTTP_STATUS, ERROR_CODES } from "../constants.js"
 
 export const handleHttpError = (
-    error: unknown, 
-    req: Request, 
-    res: Response<ApiResponse<never>>, 
+    error: unknown,
+    req: Request,
+    res: Response<ApiResponse<never>>,
     next: NextFunction
 ) => {
     if (error instanceof Error) {
         switch (error.message) {
-            case "NOT_FOUND":
-                return res.status(404).json({
+            case ERROR_CODES.NOT_FOUND:
+                return res.status(HTTP_STATUS.NOT_FOUND).json({
                     success: false,
                     error: error.message,
                     message: `not found`
                 })
 
             case "UNKNOWN_TECHNOLOGY":
-                return res.status(409).json({
+                return res.status(HTTP_STATUS.CONFLICT).json({
                     success: false,
                     error: error.message,
                     message: `invalid technology`
                 })
 
-            case "NO_FIELDS_PROVIDED":
-                return res.status(400).json({
+            case ERROR_CODES.NO_FIELDS_PROVIDED:
+                return res.status(HTTP_STATUS.BAD_REQUEST).json({
                     success: false,
                     error: error.message,
                     message: `no fields provided to update`
                 })
-            case "DUPLICATED_TECHNOLOGY":
-                return res.status(409).json({ 
-                        success: false, 
+            case ERROR_CODES.DUPLICATED_TECHNOLOGY:
+                return res.status(HTTP_STATUS.CONFLICT).json({
+                        success: false,
                         error: error.message,
-                        message: `Technology "${req.body.name}" already exists` 
+                        message: `Technology "${req.body.name}" already exists`
 
                     });
-            case "INVALID_CATEGORY":
-                return res.status(409).json({ 
-                    success: false, 
+            case ERROR_CODES.INVALID_CATEGORY:
+                return res.status(HTTP_STATUS.CONFLICT).json({
+                    success: false,
                     error: error.message,
-                    message: `invalid category` 
+                    message: `invalid category`
 
                 });
-            case "FAILED_TO_CREATE":
-                return res.status(409).json({ 
-                    success: false, 
+            case ERROR_CODES.FAILED_TO_CREATE:
+                return res.status(HTTP_STATUS.CONFLICT).json({
+                    success: false,
                     error: error.message,
-                    message: `Fail on creation` 
+                    message: `Fail on creation`
 
                 });
             default: return next(error)

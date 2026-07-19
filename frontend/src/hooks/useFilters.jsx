@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router'
+import { PAGINATION, API } from '../constants.js'
 
 
 
@@ -7,14 +8,15 @@ const useFilters = () => {
     const [searchParams, setSearchParams] = useSearchParams()
 
     // total - limit and offset for pagination
-    const limit = 4;
+    const limit = PAGINATION.FRONTEND_LIMIT;
     const page = Number(searchParams.get('page') || 1)
 
 
     const filters = useMemo(() => ({
-        search: searchParams.get('search') ?? "", 
+        search: searchParams.get('search') ?? "",
         technology: searchParams.get('technology') ?? "",
         location: searchParams.get('location') ?? "",
+        modality: searchParams.get('modality') ?? "",
         level: searchParams.get('level') ?? "",
     }), [searchParams]) 
 
@@ -30,12 +32,8 @@ const useFilters = () => {
         }, {replace: true} )
     },[setSearchParams]);
 
-    // === Clear Filters ===
-    const clearFilters = () => {
-    // Reset local input
-        setRawSearchText("");
-        setSearchParams({ page: 1 });
-    };
+    // Search on Submit
+    const [rawSearchText, setRawSearchText] = useState(filters.search)
 
     // Filter change
     const updateField = (event) =>{
@@ -48,8 +46,11 @@ const useFilters = () => {
 
     const setPage = (page) => updateParams({ page: page})
 
-    // Search on Submit
-    const [rawSearchText, setRawSearchText] = useState(filters.search)
+    // === Clear Filters ===
+    const clearFilters = () => {
+        setRawSearchText("");
+        setSearchParams({ page: 1 });
+    };
     const handleSearchChange = (event) =>setRawSearchText(event.target.value.toLowerCase())
     
     //=== Debounced ===
@@ -85,10 +86,11 @@ const useFilters = () => {
             if (filters.search) params.set('text', filters.search)
             if (filters.technology) params.set('technology', filters.technology)
             if (filters.location) params.set('location', filters.location)
+            if (filters.modality) params.set('modality', filters.modality)
             if (filters.level) params.set('level', filters.level)
 
             //const response = await fetch(`https://jscamp-api.vercel.app/api/jobs?${params.toString()}`)
-            const response = await fetch(`http://localhost:3050/jobs?${params.toString()}`)
+            const response = await fetch(`${API.JOBS}?${params.toString()}`)
             const data = await response.json()
             setJobs(data.data)
         } catch (error) {

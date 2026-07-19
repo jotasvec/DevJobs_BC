@@ -3,6 +3,8 @@ import { Link } from '../../router/Link';
 import { useParams, useNavigate } from 'react-router';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
+import { useRouter } from '../../hooks/useRouter';
+import { ROUTES, UI, API } from '../../constants.js';
 
 const CircleCheck = () => (
     <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -32,12 +34,27 @@ const JobSection = ({ title, content = "" }) => {
 
 const ApplyButton = ({ className = '' }) => {
     const { isLoggedIn } = useAuth()
+    const { navigateTo } =  useRouter()
+
+    const handleClick = () => {
+        if(!isLoggedIn){
+            navigateTo(ROUTES.SIGNIN)
+        }else{
+            console.log('Congrats you have applied.')
+        }
+    } 
+    
     return (
         <button
             className={`detail-apply-btn ${className} ${!isLoggedIn ? 'is-disabled' : ''}`}
             disabled={!isLoggedIn}
+            onClick={handleClick }
         >
-            {isLoggedIn ? 'Apply Now' : 'Login to Apply'}
+            {
+                    isLoggedIn
+                    ? UI.APPLY_NOW
+                    : UI.LOGIN_TO_APPLY
+            }
         </button>
     )
 }
@@ -50,7 +67,7 @@ const JobsDetails = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        fetch(`/jobs/${jobID}`) // the localhost:3050 is used by Vite Proxy locally by default
+        fetch(`${API.JOBS}/${jobID}`)
             .then(response => {
                 if (!response.ok) throw new Error(`Job Not Found \n Status: ${response.statusText} `);
                 return response.json()
@@ -65,7 +82,7 @@ const JobsDetails = () => {
             <div className="page-header">
                 <h1>Job Not Found</h1>
                 <p>The job listing you're looking for doesn't exist or has been removed.</p>
-                <button className="auth-submit" onClick={() => navigate('/')}>Go Home</button>
+                <button className="auth-submit" onClick={() => navigate(ROUTES.HOME)}>{UI.GO_HOME}</button>
             </div>
         )
     }
@@ -73,7 +90,7 @@ const JobsDetails = () => {
     if (loading) {
         return (
             <div className="page-loading">
-                <span>Loading job details...</span>
+                <span>{UI.LOADING_JOB_DETAILS}</span>
             </div>
         )
     }
@@ -82,7 +99,7 @@ const JobsDetails = () => {
         <>
             <div className={styles.jobsDetails}>
                 <nav className={styles.breadcrumb}>
-                    <Link href="/jobs">Jobs</Link>
+                    <Link href={ROUTES.JOBS}>{UI.JOBS}</Link>
                     <span>/</span>
                     <span>{job.title}</span>
                 </nav>

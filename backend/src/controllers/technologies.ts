@@ -4,6 +4,7 @@ import { TechnologyInput } from '../schemas/technologies.js'
 import { ApiResponse } from '../types/index.js'
 import { GroupedTechnologies, Technology, TechnologyCategory } from '../types/technologies.js'
 import { handleHttpError } from '../utils/http-errors.js'
+import { HTTP_STATUS, MESSAGES } from '../constants.js'
 
 
 export class TechnologiesController {
@@ -32,7 +33,7 @@ export class TechnologiesController {
     > = (req, res, next) =>  {
         try {
             const result = TechnologyModel.getGrouped()
-            return res.status(200).json({
+            return res.status(HTTP_STATUS.OK).json({
                 success: true,
                 data: result.data
             })
@@ -49,9 +50,9 @@ export class TechnologiesController {
             const { id } = req.params
             const technology = TechnologyModel.getById(id)
 
-            if (!technology) return res.status(404).json({ success: false, message: 'Technology not found' });
-            
-            return res.status(200).json({ 
+            if (!technology) return res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: 'Technology not found' });
+
+            return res.status(HTTP_STATUS.OK).json({ 
                 success: true, 
                 data: technology 
             })
@@ -69,9 +70,9 @@ export class TechnologiesController {
         
         try {   
             const result = TechnologyModel.getAll({category});
-            res.status(200).json({
+            res.status(HTTP_STATUS.OK).json({
                 success: true,
-                data: result.data 
+                data: result.data
             });
         } catch (error: unknown) {
             handleHttpError(error, req, res, next)
@@ -87,9 +88,9 @@ export class TechnologiesController {
         try {
             const result = TechnologyModel.create({ name, category })
 
-            res.status(201).json({ 
+            res.status(HTTP_STATUS.CREATED).json({
                 success: true,
-                message: 'New technology successfully added',
+                message: MESSAGES.TECHNOLOGY_CREATED,
                 data: result
             })
         } catch (error: unknown) {
@@ -109,16 +110,16 @@ export class TechnologiesController {
         
         const validCategories = TechnologyModel.getCategories()
         if (!validCategories.includes(category)) {
-            return res.status(400).json({ 
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 error: 'Invalid Category data',
-                message: `${category} is not a valid category. please select from: ${validCategories}` 
+                message: `${category} is not a valid category. please select from: ${validCategories}`
             })
         }
 
         try {
             const result = TechnologyModel.update(id, req.body)
-            res.status(200).json({
+            res.status(HTTP_STATUS.OK).json({
                 success: true,
                 data: result
             })
@@ -134,11 +135,11 @@ export class TechnologiesController {
         > = (req, res, next) =>  {
 
         const { id } = req.params
-        try {            
+        try {
             const result = TechnologyModel.delete(id)
-            res.status(204).json({
+            res.status(HTTP_STATUS.NO_CONTENT).json({
                 success: true,
-                message: result.message,
+                message: MESSAGES.TECHNOLOGY_DELETED,
             })
         } catch (error: unknown) {
             handleHttpError(error, req, res, next)
@@ -152,7 +153,7 @@ export class TechnologiesController {
         try {
             const categories = TechnologyModel.getCategories()
     
-            return res.status(200).json({
+            return res.status(HTTP_STATUS.OK).json({
                 success: true,
                 data: categories
             })

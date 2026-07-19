@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { auth } from "../lib/auth";
+import { HTTP_STATUS, ERROR_CODES, MESSAGES } from "../constants.js";
 
 declare global {
     namespace Express {
@@ -21,20 +22,20 @@ export const requireSession = async (req: Request, res: Response, next: NextFunc
         });
 
         if (!session) {
-            return res.status(401).json({
+            return res.status(HTTP_STATUS.UNAUTHORIZED).json({
                 success: false,
-                error: "UNAUTHORIZED",
-                message: "Authentication required"
+                error: ERROR_CODES.UNAUTHORIZED,
+                message: MESSAGES.AUTHENTICATION_REQUIRED
             });
         }
 
         req.user = session.user;
         next();
     } catch (error) {
-        return res.status(401).json({
+        return res.status(HTTP_STATUS.UNAUTHORIZED).json({
             success: false,
-            error: "UNAUTHORIZED",
-            message: "Invalid session"
+            error: ERROR_CODES.UNAUTHORIZED,
+            message: MESSAGES.INVALID_SESSION
         });
     }
 };
@@ -42,17 +43,17 @@ export const requireSession = async (req: Request, res: Response, next: NextFunc
 export const requireRoles = (...allowedRoles: string[]) => {
     return (req: Request, res: Response, next: NextFunction) => {
         if (!req.user) {
-            return res.status(401).json({
+            return res.status(HTTP_STATUS.UNAUTHORIZED).json({
                 success: false,
-                error: "UNAUTHORIZED",
-                message: "Authentication required"
+                error: ERROR_CODES.UNAUTHORIZED,
+                message: MESSAGES.AUTHENTICATION_REQUIRED
             });
         }
 
         if (!allowedRoles.includes(req.user.role)) {
-            return res.status(403).json({
+            return res.status(HTTP_STATUS.FORBIDDEN).json({
                 success: false,
-                error: "FORBIDDEN",
+                error: ERROR_CODES.FORBIDDEN,
                 message: `Role '${req.user.role}' is not authorized. Required: ${allowedRoles.join(', ')}`
             });
         }

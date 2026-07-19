@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useRouter } from '../hooks/useRouter'
+import { ROUTES, UI, MODALITY, LEVEL } from '../constants.js'
 
 const Home = () => {
     const { navigateTo } = useRouter()
@@ -48,11 +49,11 @@ const Home = () => {
                     </div>
 
                     <div className="hero-quick-filters">
-                        <button onClick={() => navigateTo('/jobs?technology=react')}>React</button>
-                        <button onClick={() => navigateTo('/jobs?location=remoto')}>Remote</button>
-                        <button onClick={() => navigateTo('/jobs?level=senior')}>Senior</button>
-                        <button onClick={() => navigateTo('/jobs?technology=nodejs')}>Node.js</button>
-                        <button onClick={() => navigateTo('/jobs')}>View all</button>
+                        <button onClick={() => navigateTo(`${ROUTES.JOBS}?technology=react`)}>React</button>
+                        <button onClick={() => navigateTo(`${ROUTES.JOBS}?modality=${MODALITY.REMOTE}`)}>Remote</button>
+                        <button onClick={() => navigateTo(`${ROUTES.JOBS}?level=${LEVEL.SENIOR}`)}>Senior</button>
+                        <button onClick={() => navigateTo(`${ROUTES.JOBS}?technology=nodejs`)}>Node.js</button>
+                        <button onClick={() => navigateTo(ROUTES.JOBS)}>View all</button>
                     </div>
 
                     <div className="hero-stats">

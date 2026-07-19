@@ -3,6 +3,7 @@ import { TechnologiesController } from '../controllers/technologies.js'
 import { validateSchemas } from '../middlewares/validateSchemas.js'
 import { TechnologySchema, technologyUpdateSchema } from '../schemas/technologies.js'
 import { requireRoles, requireSession } from '@/middlewares/auth.js'
+import { ROLES } from '../constants.js'
 
 const technologiesRouter: Router = Router()
 
@@ -16,21 +17,21 @@ technologiesRouter.get('/:id', TechnologiesController.getById)
 technologiesRouter.post(
     '/',
     requireSession,
-    requireRoles('admin'),
-    validateSchemas(TechnologySchema), 
+    requireRoles(ROLES.ADMIN),
+    validateSchemas(TechnologySchema),
     TechnologiesController.create
 )
 technologiesRouter.patch(
-    '/:id', 
+    '/:id',
     requireSession,
-    requireRoles('admin'),
+    requireRoles(ROLES.ADMIN),
     validateSchemas(technologyUpdateSchema),
     TechnologiesController.update
 )
 technologiesRouter.delete(
-    '/:id', 
+    '/:id',
     requireSession,
-    requireRoles('admin'),
+    requireRoles(ROLES.ADMIN),
     TechnologiesController.delete
 )
 

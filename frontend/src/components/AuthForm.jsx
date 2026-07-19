@@ -1,4 +1,5 @@
 import InputField from './InputField.jsx'
+import { ROLES, UI } from '../constants.js'
 
 const AuthForm = ({
     isSignUp = false,
@@ -17,7 +18,7 @@ const AuthForm = ({
         <section className="auth-page">
             <div className="auth-card">
                 <div className="auth-header">
-                    <span className="auth-header-label">{isSignUp ? 'Create account' : 'Welcome back'}</span>
+                    <span className="auth-header-label">{isSignUp ? UI.CREATE_ACCOUNT : UI.WELCOME_BACK}</span>
                     <h1>{title}</h1>
                     <p>{subtitle}</p>
                 </div>
@@ -64,22 +65,22 @@ const AuthForm = ({
                         <div className="auth-extras">
                             <label className="auth-checkbox">
                                 <input type="checkbox" name="remember" id="remember" />
-                                <span>Remember me</span>
+                                <span>{UI.REMEMBER_ME}</span>
                             </label>
-                            <a href="#" className="auth-link">Forgot password?</a>
+                            <a href="#" className="auth-link">{UI.FORGOT_PASSWORD}</a>
                         </div>
                     ) : (
                         <div className="auth-extras">
                             <label className="auth-checkbox">
                                 <input type="checkbox" name="terms" id="terms" required />
-                                <span>I agree to the Terms & Conditions</span>
+                                <span>{UI.TERMS_AND_CONDITIONS}</span>
                             </label>
                         </div>
                     )}
 
                     {error && (
                         <div className="auth-error">
-                            {typeof error === 'string' ? error : error.message || 'An error occurred'}
+                            {typeof error === 'string' ? error : error.message || ERRORS.GENERIC}
                         </div>
                     )}
 
@@ -92,8 +93,8 @@ const AuthForm = ({
                     <p>{altText}</p>
                     {!isSignUp ? (
                         <div className="auth-alt-buttons">
-                            <button type="button" onClick={() => altButtonAction('seeker')}>Sign up as Dev</button>
-                            <button type="button" onClick={() => altButtonAction('recruiter')}>Sign up as Company</button>
+                            <button type="button" onClick={() => altButtonAction(ROLES.SEEKER)}>Sign up as Dev</button>
+                            <button type="button" onClick={() => altButtonAction(ROLES.RECRUITER)}>Sign up as Company</button>
                         </div>
                     ) : (
                         <button type="button" className="auth-alt-single" onClick={altButtonAction}>{altButtonText}</button>

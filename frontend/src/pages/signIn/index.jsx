@@ -2,17 +2,20 @@ import AuthForm from '../../components/AuthForm.jsx';
 import { useRouter } from '../../hooks/useRouter.jsx';
 import { signIn } from '../../lib/auth-client.js';
 import { useAuth } from '../../hooks/useAuth.jsx';
+import { useLocation } from "react-router";
 import { useState } from 'react';
+import { ROLES, ROUTES, UI, ERRORS } from '../../constants.js';
 
 
 const SignIn = () => {
   const { isLoggedIn } = useAuth()
   const { navigateTo } = useRouter();
+  const location = useLocation()
   const [ error, setError ] = useState('');
-  //const [isSignedIn, setIsSignedIn] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  if(isLoggedIn) navigateTo('/')
+
+  if(isLoggedIn) navigateTo(ROUTES.HOME)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -25,25 +28,21 @@ const SignIn = () => {
       
       if(res.error){
         setError(res.error)
-        console.log('error', error)
       }else{
-        navigateTo('/')
+        const redirect = location.state?.from || ROUTES.HOME
+        navigateTo(redirect)
       }
     } catch (error) {
         console.log('SignIn Failed', error)
     }
-
-    console.log('Sign in submitted')
     setLoading(false)
   }
 
   const handleSignUpClick = (type) => {
-
-    console.log('type:', type)
-    if (type === 'recruiter'){ 
-      navigateTo(`/r_signup`);
+    if (type === ROLES.RECRUITER){
+      navigateTo(ROUTES.SIGNUP_RECRUITER);
     }else{
-      navigateTo(`/signup`)
+      navigateTo(ROUTES.SIGNUP_SEEKER)
     }
   }
 
@@ -51,13 +50,13 @@ const SignIn = () => {
 
   return (
     <AuthForm
-      isSignUp={isLoggedIn}
+      isSignUp={false}
       onSubmit={handleSubmit}
-      title="Welcome Back"
+      title={UI.WELCOME_BACK}
       subtitle="Sign in to access your dashboard and continue your job search."
-      submitText={loading ? "Signing in" : "Sign In"}
-      altText="Don't have an account?"
-      altButtonText="Sign Up"
+      submitText={loading ? UI.SIGNING_IN : UI.SIGN_IN}
+      altText={UI.DONT_HAVE_ACCOUNT}
+      altButtonText={UI.SIGN_UP}
       altButtonAction={handleSignUpClick}
       error={error}
     />
