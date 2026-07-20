@@ -6,6 +6,9 @@ import { technologiesRouter } from "./routes/technologies.js";
 import { corsMiddleware } from "./middlewares/cors.js";
 import { usersRouter } from "./routes/users.js";
 import { authRouter } from "./routes/auth.js";
+import { seekerProfileRouter } from "./routes/seekerProfile.js";
+import { recruiterProfileRouter } from "./routes/recruiterProfile.js";
+import { companiesRouter } from "./routes/companies.js";
 
 const PORT = process.env.PORT || DEF.PORT;
 
@@ -36,6 +39,13 @@ app.get('/health', (req, res) => {
 
 //auth
 app.use(authRouter);
+
+// Profile routes (mounted on /users to share the /users prefix)
+app.use('/users', seekerProfileRouter);
+app.use('/users', recruiterProfileRouter);
+
+// Companies Router
+app.use('/companies', companiesRouter);
 
 // Jobs Router
 app.use('/jobs', jobsRouter);

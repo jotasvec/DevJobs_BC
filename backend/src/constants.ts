@@ -81,6 +81,9 @@ export const TABLES = {
   SESSIONS: 'session',
   ACCOUNTS: 'account',
   APPLICATIONS: 'applications',
+  SEEKER_PROFILES: 'seeker_profile',
+  RECRUITER_PROFILES: 'recruiter_profile',
+  COMPANIES: 'company',
 } as const
 
 // ===========================
@@ -115,6 +118,10 @@ export const MESSAGES = {
   INVALID_SESSION: 'Invalid session',
   NO_VALID_FIELDS: 'No valid fields provided to update',
   MISSING_REQUIRED_FIELDS: 'Missing required fields for full update',
+  PROFILE_UPDATED: 'Profile updated successfully',
+  COMPANY_CREATED: 'Company created successfully',
+  COMPANY_UPDATED: 'Company updated successfully',
+  COMPANY_DELETED: 'Company deleted successfully',
 } as const
 
 // ===========================

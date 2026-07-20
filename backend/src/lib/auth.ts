@@ -21,6 +21,11 @@ export const auth = betterAuth({
                 type: "string",
                 required: true,
                 defaultValue: "seeker"
+            },
+            lastName: {
+                type: "string",
+                required: true,
+                defaultValue: ''
             }
 
         }

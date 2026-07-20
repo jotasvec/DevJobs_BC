@@ -15,9 +15,9 @@ const loading = async () => {
 }
 
 const users = [
-  { email: "jotasvec@gmail.com", password: "admin2026", name: "Admin User", role: "admin" },
-  { email: "recruiter@company.com", password: "recruit1", name: "Recruiter User", role: "recruiter" },
-  { email: "seeker@test.com", password: "password123", name: "Seeker User", role: "seeker" },
+  { email: "jotasvec@gmail.com", password: "admin2026", name: "Admin", lastName: "User", role: "admin" },
+  { email: "recruiter@company.com", password: "recruit1", name: "Recruiter", lastName: "User", role: "recruiter" },
+  { email: "seeker@test.com", password: "password123", name: "Seeker", lastName: "User", role: "seeker" },
 ]
 
 

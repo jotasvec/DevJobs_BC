@@ -71,6 +71,7 @@ export const API = {
   TECHNOLOGIES: '/technologies',
   APPLICATIONS: '/applications',
   AUTH: '/api/auth',
+  COMPANIES: '/companies',
 }
 
 // ===========================
@@ -145,3 +146,25 @@ export const ERRORS = {
   SIGN_UP_FAILED: 'Sign up failed. Please try again.',
   APPLY_FAILED: 'Failed to submit application. Please try again.',
 }
+
+
+export const profileFields = [
+    {
+        name: "resumeUrl",
+        label: "Resume",
+    },
+    {
+      name: "linkedin",
+      label: "LinkedIn",
+    },
+    {
+      name: "github",
+      label: "Github",
+    },
+    {
+        name: "portfolio",
+        label: "Portfolio",
+    },
+    
+    
+];

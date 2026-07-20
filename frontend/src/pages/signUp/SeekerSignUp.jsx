@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { signUpSchema } from '../../schemas/signUp.js';
 import { ROLES, ROUTES, UI } from '../../constants.js';
 
+
 const SeekerSignUp = () => {
   const { navigateTo } = useRouter()
   const [error, setError] = useState(null)

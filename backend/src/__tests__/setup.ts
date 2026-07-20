@@ -21,6 +21,8 @@ before(async () => {
   for (const email of ["admin@test.dev", "recruiter@test.dev", "seeker@test.dev"]) {
     const user = db.prepare("SELECT id FROM user WHERE email = ?").get(email) as { id: string } | undefined;
     if (user) {
+      db.prepare("UPDATE jobs SET created_by = NULL WHERE created_by = ?").run(user.id);
+      db.prepare("DELETE FROM applications WHERE user_id = ?").run(user.id);
       db.prepare("DELETE FROM session WHERE userId = ?").run(user.id);
       db.prepare("DELETE FROM account WHERE userId = ?").run(user.id);
     }
@@ -40,16 +42,16 @@ before(async () => {
 
   // Create test users and capture session cookies
   const users = [
-    { name: "Admin Test", email: "admin@test.dev", password: "admin1234", role: "admin" },
-    { name: "Recruiter Test", email: "recruiter@test.dev", password: "recruit1", role: "recruiter" },
-    { name: "Seeker Test", email: "seeker@test.dev", password: "password123", role: "seeker" },
+    { name: "Admin", lastName: "Test", email: "admin@test.dev", password: "admin1234", role: "admin" },
+    { name: "Recruiter", lastName: "Test", email: "recruiter@test.dev", password: "recruit1", role: "recruiter" },
+    { name: "Seeker", lastName: "Test", email: "seeker@test.dev", password: "password123", role: "seeker" },
   ];
 
   for (const user of users) {
     const res = await fetch(`${BASE_URL}/api/auth/sign-up/email`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: user.name, email: user.email, password: user.password, role: user.role }),
+      body: JSON.stringify({ name: user.name, lastName: user.lastName, email: user.email, password: user.password, role: user.role }),
     });
 
     if (res.ok) {
@@ -59,7 +61,7 @@ before(async () => {
       else if (role === "recruiter") recruiterCookie = cookie;
       else seekerCookie = cookie;
 
-      db.prepare("UPDATE user SET role = ?, name = ? WHERE email = ?").run(role, user.name, user.email);
+      db.prepare("UPDATE user SET role = ?, name = ?, lastName = ? WHERE email = ?").run(role, user.name, user.lastName, user.email);
     } else {
       // Fallback: try sign-in instead
       const signin = await fetch(`${BASE_URL}/api/auth/sign-in/email`, {

@@ -1,58 +1,76 @@
-import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router';
-import { useRouter } from '../../hooks/useRouter';
-import { ROUTES, UI, API } from '../../constants.js';
+import React from 'react';
+import InputField from '../../components/InputField.jsx';
+import { MODALITY_OPTIONS, profileFields } from '../../constants.js';
 
-const Seeker = () => {
-    const { userID } = useParams()
-    const [seeker, setSeeker] = useState({})
-    const [error, setError] = useState(null)
-    const [loading, setLoading] = useState(true)
-    const { navigateTo } = useRouter();
+const Seeker = ({ profile, register, errors }) => {
+    console.log('profile: ', profile )
+    return (
+        <div>
+            <h3>Seeker Profile</h3>
 
+            <InputField
+                label="Location"
+                name="location"
+                placeholder="Madrid, Spain"
+                register={register}
+                error={errors?.location}
+            />
 
-
-    useEffect(() => {
-        fetch(`${API.USERS}/${userID}`, {credentials: 'include'})
-            .then(response => {
-                if (!response.ok) throw new Error(`User Profile not found \nStatus: ${response.statusText}` );
-                return response.json()
-            }).then( json => setSeeker(json.data))
-            .catch(err => setError(err.message))
-            .finally(() => setLoading(false))
-
-    }, [userID])
-
-    if (error || !seeker) {
-        return (
-            <div className="page-header">
-                <h1>Seeker Profile Not Found</h1>
-                <p>The User Profile doesn't exist or has been removed.</p>
-                <button className="auth-submit" onClick={() => navigateTo(ROUTES.HOME)}>{UI.GO_HOME}</button>
+            <div className="auth-field">
+                <label htmlFor="modality">Modality</label>
+                <select
+                    id="modality"
+                    name="modality"
+                    {...register("modality")}
+                >
+                    <option value="">Select modality</option>
+                    {MODALITY_OPTIONS.map(opt => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                </select>
+                {errors?.modality && (
+                    <p className="input-error">{errors.modality.message}</p>
+                )}
             </div>
-        )
-    }
 
-    if (loading) {
-        return (
-            <div className="page-loading">
-                <span>{UI.LOADING_PROFILE}</span>
-            </div>
-        )
-    }
-  return (
-    <div>
-        <h2>Welcome {seeker.name}</h2>
-        <h3>Data</h3>
-        <ul>
-            <li>name    : {seeker.name}</li>
-            <li>email   : {seeker.email}</li>
-            <li>bio   :{seeker.bio}</li> 
-        </ul>
-    </div>
+            <InputField
+                label="Experience (years)"
+                name="experienceYears"
+                type="number"
+                placeholder={profile.experienceYears}
+                defaultValue={profile.experienceYears}
+                register={register}
+                error={errors?.name}
+            />
 
+            <InputField
+                label="Expected Salary"
+                name="expectedSalary"
+                type="number"
+                placeholder={profile.expectedSalary}
+                defaultValue={profile.expectedSalary}
+                register={register}
+                error={errors?.expectedSalary}
+            />
 
-  )
-}
+            <h3>Links</h3>
 
-export default Seeker
+            {
+                profileFields.map(field => (
+                    <InputField 
+                        key={field.name}
+                        name={field.name}
+                        label={field.label}
+                        placeholder={profile[field.name]}
+                        defaultValue={profile[field.name]}
+                        register={register}
+                        error={errors?.[field.name]}
+                    />
+                ))
+            }
+            
+        </div>
+    );
+};
+
+export default Seeker;

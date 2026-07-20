@@ -57,7 +57,7 @@ db.exec(`
     )
 `)
 
-db.exec(`
+/* db.exec(`
     CREATE TABLE IF NOT EXISTS user (
         id TEXT UNIQUE NOT NULL,
         email TEXT UNIQUE NOT NULL,
@@ -71,7 +71,7 @@ db.exec(`
         skills TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
-`)
+`) */
 
 db.exec(`
     CREATE TABLE IF NOT EXISTS applications (

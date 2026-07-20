@@ -24,7 +24,7 @@ const SignIn = lazy(()=> import('./pages/signIn/index.jsx'))
 const SignUp = lazy(()=> import('./pages/signUp/SeekerSignUp.jsx'))
 const RecruitersSignUp = lazy(()=> import('./pages/signUp/RecruiterSignUp.jsx'))
 const NotFound = lazy(()=> import('./pages/NotFound.jsx'))
-const SeekerProfile = lazy(()=> import('./pages/profile/Seeker.jsx'))
+const UserProfile = lazy(()=> import('./pages/profile/User.jsx'))
 
 
 
@@ -50,7 +50,7 @@ function App() {
               <Route path={ROUTES.SIGNUP_RECRUITER} element={<RecruitersSignUp />} />
               {/* protected routes */}
               <Route element={<ProtectedRoute/> } >
-                <Route path={`${ROUTES.PROFILE}/:userID`}element={<SeekerProfile />} />
+                <Route path={`${ROUTES.PROFILE}/:userID`}element={<UserProfile />} />
               </Route>
             </Routes>
         </Suspense>

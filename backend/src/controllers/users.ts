@@ -10,6 +10,7 @@ function toPublic(user: UserRow): UserPublic {
     id: user.id,
     email: user.email,
     name: user.name,
+    lastName: user.lastName,
     role: user.role as UserPublic["role"],
     image: user.image,
   };
@@ -19,11 +20,10 @@ function toRecruiterSafe(user: UserRow) {
   return {
     email: user.email,
     name: user.name,
+    lastName: user.lastName,
     role: user.role as UserPublic["role"],
     image: user.image,
     bio: user.bio,
-    resume: user.resume,
-    skills: user.skills,
   };
 };
 
@@ -75,9 +75,15 @@ export class UsersController {
 
   static update: RequestHandler<{ id: string }> = (req, res, next) => {
     try {
-      const { name, role, image, bio, resume, skills } = req.body;
-
-      const updated = UserModel.update(req.params.id, { name, role, bio, resume, skills, image });
+      const { name, lastName, role, image, bio } = req.body;
+      const user = UserModel.getById(req.params.id);
+      
+      let updated 
+      if(user?.id === req.user?.id){
+        updated = UserModel.update(req.params.id, { name, lastName, bio, image });
+      }else{
+        updated = UserModel.update(req.params.id, { name, lastName, role, bio, image });
+      }
 
       if (!updated) {
         return res.status(HTTP_STATUS.NOT_FOUND).json({
@@ -87,7 +93,6 @@ export class UsersController {
         });
       }
 
-      const user = UserModel.getById(req.params.id);
 
       return res.json({
         success: true,
@@ -99,10 +104,20 @@ export class UsersController {
     }
   };
 
+
   static partialUpdate: RequestHandler<{ id: string }> = (req, res, next) => {
     try {
-      const allowedFields = ["name", "role", "avatar", "bio", "resume", "skills"];
       const fields: Record<string, unknown> = {};
+      console.log('entered')
+      const user = UserModel.getById(req.params.id);
+     
+      const isSelf = user?.id === req.user?.id
+      const isAdmin = req.user?.role === ROLES.ADMIN;
+      if(!isSelf && !isAdmin) return res.status(403).json({ error: "Cannot edit other users" })
+
+      const allowedFields = isSelf 
+        ? ["name", "lastName", "image", "bio"]
+        : ["name", "lastName", "role", "image", "bio"]
 
       for (const key of allowedFields) {
         if (req.body[key] !== undefined) {
@@ -117,9 +132,11 @@ export class UsersController {
           message: MESSAGES.NO_VALID_FIELDS,
         });
       }
-
+     
       const updated = UserModel.update(req.params.id, fields);
+      const updatedUser = UserModel.getById(req.params.id);
 
+     
       if (!updated) {
         return res.status(HTTP_STATUS.NOT_FOUND).json({
           success: false,
@@ -128,12 +145,10 @@ export class UsersController {
         });
       }
 
-      const user = UserModel.getById(req.params.id);
-
       return res.json({
         success: true,
         message: MESSAGES.USER_UPDATED,
-        data: user,
+        data: updatedUser,
       });
     } catch (error) {
       handleHttpError(error, req, res, next);

@@ -11,7 +11,8 @@ export default defineConfig({
       '/api': local,
       '/users': local,
       '/jobs': local,
-      '/technologies': local
+      '/technologies': local,
+      '/companies': local
     }
   }
 })

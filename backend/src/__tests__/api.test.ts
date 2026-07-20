@@ -94,7 +94,7 @@ describe("POST /api/auth", () => {
     const res = await fetch(`${BASE_URL}/api/auth/sign-up/email`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: "Fresh", email, password: "fresh1234", role: "seeker" }),
+      body: JSON.stringify({ name: "Fresh", lastName: "User", email, password: "fresh1234", role: "seeker" }),
     });
     assert.strictEqual(res.status, 200);
   });
@@ -213,11 +213,12 @@ describe("GET /users (auth required)", () => {
     // Recruiter should only see public fields
     if (body.data.length > 0) {
       const first = body.data[0];
-      assert.ok(first.id);
       assert.ok(first.email);
       assert.ok(first.name);
+      assert.ok(first.lastName);
       assert.ok(first.role);
       // Should NOT contain sensitive fields
+      assert.strictEqual(first.id, undefined);
       assert.strictEqual(first.createdAt, undefined);
       assert.strictEqual(first.updatedAt, undefined);
     }

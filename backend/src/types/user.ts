@@ -6,6 +6,7 @@ export type AuthUser = typeof auth.$Infer.Session.user;
 export interface User extends AuthUser{
     readonly id: string
     lastName: string
+    bio: string | null
     role: UserRole
 
 }
@@ -13,45 +14,42 @@ export interface User extends AuthUser{
 export interface UserPublic {
     id: string;
     name: string;
+    lastName: string;
     email: string;
     role: UserRole;
     image: string | null;
 }
 
-export interface Seeker extends User{
-    applications: number
-    resume: string
-    address: string
-    expectedSalary: number
-    biography: string
-    //modality: 'remote' | 'onsite' | 'hybrid'
+export interface SeekerProfile {
+    userId: string
+    resumeUrl: string | null
+    linkedin: string | null
+    github: string | null
+    portfolio: string | null
+    expectedSalary: number | null
+    modality: 'remote' | 'onsite' | 'hybrid' | null
+    location: string | null
+    experienceYears: number | null
 }
 
 export type ProfileStatus = 'incomplete' | 'complete' | 'verified' ;
 
-export interface Recruiter extends User{
-    company: Company;
-    position? : string
-    profileStatus : ProfileStatus
+export interface RecruiterProfile {
+    userId: string
+    companyId: string | null
+    position: string | null
+    phone: string | null
+    department: string | null
 }
 
-
-export type Company = {
+export interface Company {
     id: string
-    name: string;
-    address: string;
-    phone?: string;
-    description?: string
-    websiteUrl?: string
-    logoUrl?: string
-    industry?: string
-    companySize?: number
-    createdAt: Date;
-    updatedAt: Date;
-}
-
-
-export interface Admin extends User{
-    adminLevel: number
-    rootAdmin(): void
+    name: string
+    description: string | null
+    website: string | null
+    logo: string | null
+    industry: string | null
+    size: string | null
+    location: string | null
+    createdAt: string
 }

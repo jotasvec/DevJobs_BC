@@ -1,5 +1,5 @@
 import InputField from './InputField.jsx'
-import { ROLES, UI } from '../constants.js'
+import { ERRORS, ROLES, UI } from '../constants.js'
 
 const AuthForm = ({
     isSignUp = false,
