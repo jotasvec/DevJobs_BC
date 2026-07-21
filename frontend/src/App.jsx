@@ -5,6 +5,8 @@ import { Route, Routes } from "react-router";
 import Footer from './components/Footer.jsx'
 import Header from './components/Header.jsx'
 import Loading from './components/Loading.jsx';
+import { ProtectedRoute } from './router/ProtectedRoute.jsx';
+import { ROUTES } from './constants.js';
 /* import Home from './pages/Home.jsx'
 import Jobs from './pages/Jobs/index.jsx';
 import JobsDetails from './pages/Detail/JobsDetails.jsx'
@@ -17,10 +19,13 @@ import NotFound from './pages/NotFound.jsx' */
 /* lazy lets you defer loading component’s code until it is rendered for the first time. */
 const HomePage = lazy( () => import('./pages/Home.jsx') )
 const Jobs = lazy(()=> import('./pages/Jobs/index.jsx'))
+const Companies = lazy(()=> import('./pages/companies'))
 const JobsDetails = lazy(()=> import('./pages/Detail/JobsDetails.jsx'))
 const SignIn = lazy(()=> import('./pages/signIn/index.jsx'))
-const SignUp = lazy(()=> import('./pages/signUp/index.jsx'))
+const SignUp = lazy(()=> import('./pages/signUp/SeekerSignUp.jsx'))
+const RecruitersSignUp = lazy(()=> import('./pages/signUp/RecruiterSignUp.jsx'))
 const NotFound = lazy(()=> import('./pages/NotFound.jsx'))
+const UserProfile = lazy(()=> import('./pages/profile/User.jsx'))
 
 
 
@@ -37,14 +42,18 @@ function App() {
           </div>
         } >
             <Routes>
-              <Route path='/' element={<HomePage />} />
-              <Route path='/jobs' element={<Jobs />} />
-              <Route path='/jobs/:jobID' element={<JobsDetails />} />
-              {/* <Route path='/jobsdetails' element={<JobsDetails />} /> */}
+              <Route path={ROUTES.HOME} element={<HomePage />} />
+              <Route path={ROUTES.JOBS} element={<Jobs />} />
+              <Route path={ROUTES.COMPANIES} element={<Companies />} />
+              <Route path={`${ROUTES.JOBS}/:jobID`} element={<JobsDetails />} />
               <Route path='*' element={ <NotFound /> } />
-              <Route path='/signin' element={<SignIn />} />
-              <Route path='/signup' element={<SignUp />} />
-
+              <Route path={ROUTES.SIGNIN} element={<SignIn />} />
+              <Route path={ROUTES.SIGNUP_SEEKER} element={<SignUp />} />
+              <Route path={ROUTES.SIGNUP_RECRUITER} element={<RecruitersSignUp />} />
+              {/* protected routes */}
+              <Route element={<ProtectedRoute/> } >
+                <Route path={`${ROUTES.PROFILE}/:userID`}element={<UserProfile />} />
+              </Route>
             </Routes>
         </Suspense>
       </main>

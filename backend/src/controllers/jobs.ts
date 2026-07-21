@@ -5,6 +5,7 @@ import { ApiResponse, PaginatedResponse, UpdateResult } from "../types/index.js"
 import { JobInput } from "../schemas/jobs.js";
 import { success } from "zod";
 import { handleHttpError } from "../utils/http-errors.js";
+import { HTTP_STATUS, ERROR_CODES, MESSAGES } from "../constants.js";
 
 
 
@@ -44,14 +45,14 @@ export class JobsController{
             
             const job = JobModel.getJobById(id)
             if (!job) {
-                res.status(404).json({
+                res.status(HTTP_STATUS.NOT_FOUND).json({
                     success: false,
-                    error: 'NOT_FOUND',
+                    error: ERROR_CODES.NOT_FOUND,
                     message: 'Job not found'
                 });
                 return;
             }
-            return res.status(200).json({
+            return res.status(HTTP_STATUS.OK).json({
                 success: true,
                 data: job
             }) 
@@ -65,12 +66,19 @@ export class JobsController{
         Record<string, never>,
         ApiResponse<Job>,
         JobInput> = (req, res, next) => {
-        const data = req.body;
+        const { data: jobData, content, ...rest } = req.body;
         try {
-            const newJob = JobModel.create(data)
-            return res.status(201).json({
+            const newJob = JobModel.create({
+                ...rest,
+                modality: jobData?.modality,
+                level: jobData?.level,
+                technologies: jobData?.technology,
+                content,
+                createdBy: req.user?.id,
+            })
+            return res.status(HTTP_STATUS.CREATED).json({
                 success: true,
-                message: 'Job created successfully',
+                message: MESSAGES.JOB_CREATED,
                 data: newJob
             })
             
@@ -87,21 +95,20 @@ export class JobsController{
         const { id } = req.params;
         const { title, company, location, description, data, content } = req.body;
 
-        if (!title || !company || !location || !description || !data || !content) return res.status(400).json({ success: false, error: "Missing required fields for full update"})
+        if (!title || !company || !location || !description || !data || !content) return res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, error: MESSAGES.MISSING_REQUIRED_FIELDS})
         
         try {
             const updateJob = JobModel.partialUpdateJob(id, { title, company, location, description, data, content })
             
-            return res.status(200).json({
+            return res.status(HTTP_STATUS.OK).json({
                 success: true,
                 data: updateJob
-            }) 
-            
+            })
+
         } catch (error) {
             handleHttpError(error, req, res, next)
         }
-        
-            //: res.status(400).json({error: 'Error on update'})
+
     }
 
     static partialUpdateJob : RequestHandler<
@@ -112,12 +119,12 @@ export class JobsController{
 
         try {
             const fieldsToUpdate = req.body;
-    
-            if(Object.keys(fieldsToUpdate).length === 0) return res.status(400).json({ success: false, error: "No fields provided to update"});
-    
+
+            if(Object.keys(fieldsToUpdate).length === 0) return res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, error: MESSAGES.NO_VALID_FIELDS});
+
             const partialUpdate = JobModel.partialUpdateJob(id, fieldsToUpdate);
-            
-            return res.status(200).json({
+
+            return res.status(HTTP_STATUS.OK).json({
                 success: true,
                 data: partialUpdate 
             }) 
@@ -136,9 +143,9 @@ export class JobsController{
         try {
             const deleted = JobModel.deleteJob(id);
             if (deleted) {
-                return res.status(204).json({
+                return res.status(HTTP_STATUS.NO_CONTENT).json({
                     success: true,
-                    message: "Job deleted successfully",
+                    message: MESSAGES.JOB_DELETED,
                 })
             }
         } catch (error: unknown) {

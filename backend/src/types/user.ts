@@ -1,39 +1,55 @@
-export interface User{
+import { UserRole } from "@/schemas/users"
+import { auth } from "@/lib/auth";
+
+
+export type AuthUser = typeof auth.$Infer.Session.user;
+export interface User extends AuthUser{
     readonly id: string
-    email: string
-    password: string
-    name: string
     lastName: string
-    role: 'admin' | 'recruiter' | 'seeker'
-    greeting: () => string
-    avatar: string
-    createdAr: string
-    
-}
-
-export interface Seeker extends User{
-    aplications: number
-    resume: string
-    address: string
-    expectedSalary: number
-    modality: 'remote' | 'onsite' | 'hybrid'
-
+    bio: string | null
+    role: UserRole
 
 }
 
-
-export interface Recruiter extends User{
-    company: Company;
+export interface UserPublic {
+    id: string;
+    name: string;
+    lastName: string;
+    email: string;
+    role: UserRole;
+    image: string | null;
 }
 
-export interface Admin extends User{
-    adminLevel: number
-    rootAdmin(): void
+export interface SeekerProfile {
+    userId: string
+    resumeUrl: string | null
+    linkedin: string | null
+    github: string | null
+    portfolio: string | null
+    expectedSalary: number | null
+    modality: 'remote' | 'onsite' | 'hybrid' | null
+    location: string | null
+    experienceYears: number | null
 }
 
-export type Company = {
-  name: string;
-  address: string;
-  phone?: string;
-};
+export type ProfileStatus = 'incomplete' | 'complete' | 'verified' ;
 
+export interface RecruiterProfile {
+    userId: string
+    companyId: string | null
+    position: string | null
+    phone: string | null
+    department: string | null
+}
+
+export interface Company {
+    id: string
+    name: string
+    description: string | null
+    website: string | null
+    logo: string | null
+    industry: string | null
+    size: string | null
+    location: string | null
+    createdAt: string
+}

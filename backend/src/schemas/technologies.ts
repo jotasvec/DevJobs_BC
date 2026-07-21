@@ -1,6 +1,6 @@
 import * as z from 'zod'
 
-export const technologySchema = z.object({
+export const TechnologySchema = z.object({
     name: z.string()
         .min(1, 'Name is required')
         .max(100, 'Name must be less than 100 characters'),
@@ -9,9 +9,9 @@ export const technologySchema = z.object({
         .max(50, 'Category must be less than 50 characters')
 })
 
-export const technologyUpdateSchema = technologySchema.partial()
+export const technologyUpdateSchema = TechnologySchema.partial()
 
-export type TechnologyInput = z.infer<typeof technologySchema>
+export type TechnologyInput = z.infer<typeof TechnologySchema>
 export type PartialTechnologyUpdate = z.infer<typeof technologyUpdateSchema>
 
 /* export function validateTechnology(input) {

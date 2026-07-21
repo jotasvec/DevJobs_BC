@@ -1,12 +1,13 @@
 import React from 'react'
 import { useNavigate } from 'react-router'
+import { ROUTES, UI } from '../constants.js'
 
 const NotFound = () => {
   const navigate = useNavigate()
   return (
     <>
       <div className="" style={{ paddingTop:'10rem'}}>
-          
+
           <div className="">
             <div className="">
               <span className="" >
@@ -15,15 +16,15 @@ const NotFound = () => {
             </div>
           <div className="">
             <h2 className=" " style={{fontSize:'xxx-large' }} >404</h2>
-            <h3 className="" style={{fontSize:'xx-large' }} >Página no encontrada</h3>
+            <h3 className="" style={{fontSize:'xx-large' }} >{UI.PAGE_NOT_FOUND}</h3>
             <p className="">
-                                        Oops! Parece que has hecho un `git push --force` a la URL equivocada.
+                                        {UI.PAGE_NOT_FOUND_DESC}
                                     </p>
           </div>
           <button
-            style={{marginTop: '2rem' }} 
-            onClick={() => navigate('/')} >Back Home</button>
-          
+            style={{marginTop: '2rem' }}
+            onClick={() => navigate(ROUTES.HOME)} >{UI.BACK_HOME}</button>
+
         </div>
       </div>
     </>

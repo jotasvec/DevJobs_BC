@@ -2,6 +2,8 @@ import { RequestHandler, Router } from "express";
 import { JobsController } from "../controllers/jobs.js";
 import { PartialJobSchema, jobSchema } from "../schemas/jobs.js";
 import { validateSchemas } from "../middlewares/validateSchemas.js";
+import { requireRoles, requireSession } from "@/middlewares/auth.js";
+import { ROLES } from "../constants.js";
 
 const jobsRouter: Router = Router() //jobs router
 
@@ -47,14 +49,14 @@ jobsRouter.get('/', (req, res, next) => {
 jobsRouter.get('/:id', JobsController.getJobById)
 
 // Create new job
-jobsRouter.post('/', validateSchemas(jobSchema), JobsController.createNewJob)
-// Update resource 
-jobsRouter.patch('/:id', validateSchemas(PartialJobSchema), JobsController.partialUpdateJob)
+jobsRouter.post('/', requireSession, requireRoles(ROLES.RECRUITER, ROLES.ADMIN), validateSchemas(jobSchema), JobsController.createNewJob)
+// Update resource
+jobsRouter.patch('/:id', requireSession, requireRoles(ROLES.RECRUITER, ROLES.ADMIN), validateSchemas(PartialJobSchema), JobsController.partialUpdateJob)
 
-// replace resource 
-jobsRouter.put('/:id', JobsController.updateJob)
+// replace resource
+jobsRouter.put('/:id', requireSession, requireRoles(ROLES.RECRUITER, ROLES.ADMIN), JobsController.updateJob)
 //Delete
-jobsRouter.delete('/:id', JobsController.deleteJob)
+jobsRouter.delete('/:id', requireSession, requireRoles(ROLES.ADMIN), JobsController.deleteJob)
 
 export { jobsRouter }
 

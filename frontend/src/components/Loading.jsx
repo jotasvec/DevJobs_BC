@@ -1,26 +1,22 @@
-//import React, { useEffect, useState } from 'react'
 import { PacmanLoader, PulseLoader } from 'react-spinners'
 
 
 const Loading = (isLoading = true) => {
-    const color = '#37d7b7'
   return (
-    <> 
-        <div style={{display: 'flex', flexDirection: 'column' ,margin: '3rem auto'}}>
-            <h1 style={{color:color}}>
-                Loading <span> <PulseLoader 
-                    color={color}
-                    loading={isLoading}/> </span>
-            </h1>
-            <PacmanLoader 
-                color={color}
+    <div className="page-loading" style={{ flexDirection: 'column', gap: '1.5rem' }}>
+        <h1 style={{color: 'var(--accent, #38bdf8)', display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+            Loading <PulseLoader
+                color="var(--accent, #38bdf8)"
                 loading={isLoading}
-                aria-label='... Loading'
-                margin={'auto'}
-
+                size={8}
             />
-        </div>
-    </>
+        </h1>
+        <PacmanLoader
+            color="var(--accent, #38bdf8)"
+            loading={isLoading}
+            aria-label='... Loading'
+        />
+    </div>
   )
 }
 

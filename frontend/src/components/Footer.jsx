@@ -1,8 +1,9 @@
+import { UI } from '../constants.js'
 
 const Footer = () => {
   return (
     <footer>
-        <small>&copy; 2025 JSCamp, all rights reserves</small>
+        <small>&copy; {UI.FOOTER_TEXT}</small>
     </footer>
   )
 }

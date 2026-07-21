@@ -7,6 +7,7 @@ interface CorsMiddlewareOptions {
 
 export const corsMiddleware = ({ acceptedOrigins = ACCEPTED_ORIGINS } : CorsMiddlewareOptions = {} ) =>{
     return cors({
+        credentials: true,
         origin: (origin, callback) => {
             if(!origin || acceptedOrigins.includes(origin) ){
                 return callback(null, true);

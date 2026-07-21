@@ -8,6 +8,7 @@ interface JobTechnologyResult {
     id: string
     title: string
     company: string
+    created_by: string
     location: string
     description: string
     created_at: string
@@ -134,6 +135,7 @@ export class JobModel {
             id: job.id,
             title: job.title,
             company: job.company,
+            created_by: job.created_by,
             location: job.location,
             description: job.description,
             created_at: job.created_at,
@@ -177,6 +179,7 @@ export class JobModel {
             id: job.id,
             title: job.title,
             company: job.company,
+            created_by: job.created_by,
             location: job.location,
             description: job.description,
             created_at: job.created_at,
@@ -189,20 +192,25 @@ export class JobModel {
         }
     }
 
-    static create(input: Omit<JobInput, 'modality' | 'level' | 'technologies'> & { 
-        modality?: string; 
-        level?: string; 
+    static create(input: {
+        title: string;
+        company: string;
+        location: string;
+        description: string;
+        modality?: string;
+        level?: string;
         technologies?: string[];
         content?: JobInput['content'];
+        createdBy?: string;
     }): Job {
-        const { title, company, location, description, modality, level, technologies, content } = input
+        const { title, company, location, description, modality, level, technologies, content, createdBy } = input
 
         const id = crypto.randomUUID()
         const createdAt = new Date().toISOString()
 
         const insertJob = db.prepare(`
-            INSERT INTO jobs (id, title, company, location, description, modality, level, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO jobs (id, title, company, location, description, modality, level, created_at, created_by)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         `)
         const insertJobTechnology = db.prepare(`
             INSERT INTO job_technologies (id, job_id, technology_id)
@@ -232,7 +240,7 @@ export class JobModel {
         }
 
         const transaction = db.transaction(() => {
-            insertJob.run(id, title, company, location, description, modality, level, createdAt)
+            insertJob.run(id, title, company, location, description, modality, level, createdAt, createdBy)
 
             if (content) {
                 insertContent.run(

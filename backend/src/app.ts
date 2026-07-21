@@ -1,9 +1,9 @@
 import "dotenv/config";
 import express, { Express } from "express";
 import { DEFAULTS as DEF } from "./config.js";
-import { jobsRouter } from "./routes/jobs.js";
-import { technologiesRouter } from "./routes/technologies.js";
 import { corsMiddleware } from "./middlewares/cors.js";
+import { authRouter } from "./routes/auth.js";
+import api from "./routes/api.js";
 
 const PORT = process.env.PORT || DEF.PORT;
 
@@ -32,11 +32,12 @@ app.get('/health', (req, res) => {
     })
 })
 
-// Jobs Router
-app.use('/jobs', jobsRouter)
+//auth
+app.use(authRouter);
 
-// Technologies Router
-app.use('/technologies', technologiesRouter)
+// APIs
+app.use("/api", api)
+
 
 // 404 for non founds paths
 app.use((req, res) => {
@@ -51,7 +52,7 @@ app.use((req, res) => {
 //+++++++++++++++++
 //Run Server
 //+++++++++++++++++
-if(process.env.NODE_ENV !== 'production'){
+if(process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test'){
     console.log("current ENV: ", process.env.NODE_ENV)
 app.listen(PORT, () => {
         console.log(`

@@ -8,13 +8,17 @@
     "build": "tsc",
     "start": "node dist/app.js",
     "watch": "pnpm tsx watch src/app.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --import tsx --test src/__tests__/*.test.ts",
+    "test:watch": "node --import tsx --test --watch src/__tests__/*.test.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@types/express-serve-static-core": "^5.1.2",
+    "better-auth": "^1.6.11",
+    "better-sqlite3": "^12.10.0",
     "cors": "^2.8.6",
     "dotenv": "^17.2.4",
     "express": "^5.2.1",

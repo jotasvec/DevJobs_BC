@@ -6,6 +6,7 @@ export interface Job {
     id: string
     title: string
     company: string
+    created_by: string
     location: string
     description: string
     created_at: string

@@ -1,7 +1,9 @@
 import { Router } from 'express'
 import { TechnologiesController } from '../controllers/technologies.js'
 import { validateSchemas } from '../middlewares/validateSchemas.js'
-import { technologySchema, technologyUpdateSchema } from '../schemas/technologies.js'
+import { TechnologySchema, technologyUpdateSchema } from '../schemas/technologies.js'
+import { requireRoles, requireSession } from '@/middlewares/auth.js'
+import { ROLES } from '../constants.js'
 
 const technologiesRouter: Router = Router()
 
@@ -12,22 +14,24 @@ technologiesRouter.get('/categories', TechnologiesController.getCategories)
 technologiesRouter.get('/category/:category', TechnologiesController.getByCategory)
 technologiesRouter.get('/:id', TechnologiesController.getById)
 
-// Admin endpoints (need admin middleware - to be added)
 technologiesRouter.post(
     '/',
-    // TODO isAdmin? 
-    validateSchemas(technologySchema), 
+    requireSession,
+    requireRoles(ROLES.ADMIN),
+    validateSchemas(TechnologySchema),
     TechnologiesController.create
 )
 technologiesRouter.patch(
-    '/:id', 
-    // TODO isAdmin? 
+    '/:id',
+    requireSession,
+    requireRoles(ROLES.ADMIN),
     validateSchemas(technologyUpdateSchema),
     TechnologiesController.update
 )
 technologiesRouter.delete(
-    '/:id', 
-    // TODO isAdmin? 
+    '/:id',
+    requireSession,
+    requireRoles(ROLES.ADMIN),
     TechnologiesController.delete
 )
 

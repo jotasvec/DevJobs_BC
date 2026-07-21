@@ -12,12 +12,15 @@
         height: 2.5rem;
         text-decoration: none;
         color: var(--text-muted);
-        border-radius: 0.3rem;
-        transition: all 0.3s;
+        border-radius: 0.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: rgba(255, 255, 255, 0.03);
+        transition: all 0.15s;
 
         &:hover{
-            background-color: white;
-
+            background: rgba(56, 189, 248, 0.1);
+            border-color: rgba(56, 189, 248, 0.2);
+            color: var(--accent, #38bdf8);
         }
 
     } 
@@ -27,19 +30,19 @@
     display: flex;
     justify-content: center;
     gap: 0.5rem;
-    margin-block: 2rem; 
 }
 
 .isActive{
-    background-color: var(--primary-light);
-    color: var(--text-primary);
-    font-weight: var(--font-weight-700);
+    background: var(--accent, #38bdf8) !important;
+    color: #080c14 !important;
+    font-weight: 600;
     pointer-events: none;
+    border-color: transparent !important;
 }
 
 .disabled{
-    opacity: 0.5;
+    opacity: 0.3;
     pointer-events: none;
-    background-color: #3b4550;
-    background: none;
+    background: none !important;
+    border-color: transparent !important;
 }
