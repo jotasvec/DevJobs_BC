@@ -43,7 +43,7 @@ backend/          Express 5 + TypeScript  (tsx dev, tsc build)
   src/controllers/      jobs, technologies
   src/models/           job, technology
 
-frontend/         React 19 + Vite 7 + JavaScript (no TS)
+frontend/         React 19 + Vite 7 + Tailwind CSS v4 + JavaScript (no TS)
   src/context/AuthContext.jsx  Auth provider (better-auth/react client)
   src/lib/auth-client.js     better-auth client instance
 ```
@@ -64,6 +64,14 @@ frontend/         React 19 + Vite 7 + JavaScript (no TS)
 - Zod schemas in `backend/src/schemas/` for request validation
 - `validateSchemas` middleware wraps Zod schemas on routes
 - `backend_js_bckup/` = old JS backend backup, do not modify
+
+### Frontend Styling
+- Tailwind CSS v4 via `@tailwindcss/vite` plugin
+- Custom theme tokens in `index.css` `@theme` block
+- Existing CSS variables still work alongside Tailwind
+- Use Tailwind utilities for new components, migrate old CSS gradually
+- Font families: `font-sans` (Inter Variable), `font-mono` (JetBrains Mono), `font-heading` (Sora)
+- Theme colors: `background`, `surface`, `card`, `accent`, `text`, `text-secondary`, `text-muted`, `border`, `success`, `error`
 
 ## Plan
 

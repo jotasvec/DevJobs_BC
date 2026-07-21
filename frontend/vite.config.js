@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
+import tailwindcss from '@tailwindcss/vite'
 import { API } from './src/constants'
 
 const local = 'http://localhost:3050'
@@ -19,7 +20,7 @@ const proxy = Object.values(API).reduce((acc, route) => {
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   server: {
     proxy
   }
