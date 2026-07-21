@@ -28,7 +28,17 @@ const AuthForm = ({
                         <InputField
                             name="name"
                             label="Full Name"
-                            placeholder="Ada Lovelace"
+                            placeholder="Ada"
+                            type="text"
+                            register={register}
+                            error={errors?.name}
+                        />
+                    )}
+                    {isSignUp && (
+                        <InputField
+                            name="lastName"
+                            label="last Name"
+                            placeholder="Lovelace"
                             type="text"
                             register={register}
                             error={errors?.name}

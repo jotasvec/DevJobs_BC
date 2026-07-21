@@ -100,7 +100,7 @@ const useFilters = () => {
         }
       }    
       fetchJobs();
-    }, [filters, page])
+    }, [filters, page, limit])
 
 
     /* const filteredJobs = useMemo(() => {

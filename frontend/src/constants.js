@@ -53,6 +53,7 @@ export const LEVEL_OPTIONS = [
 export const ROUTES = {
   HOME: '/',
   JOBS: '/jobs',
+  COMPANIES: '/companies',
   SIGNIN: '/signin',
   SIGNUP_SEEKER: '/signup',
   SIGNUP_RECRUITER: '/r_signup',
@@ -66,12 +67,12 @@ export const ROUTES = {
 // API paths
 // ===========================
 export const API = {
-  JOBS: '/jobs',
-  USERS: '/users',
-  TECHNOLOGIES: '/technologies',
-  APPLICATIONS: '/applications',
+  JOBS: '/api/jobs',
+  USERS: '/api/users',
+  TECHNOLOGIES: '/api/technologies',
+  APPLICATIONS: '/api/applications',
   AUTH: '/api/auth',
-  COMPANIES: '/companies',
+  COMPANIES: '/api/companies',
 }
 
 // ===========================

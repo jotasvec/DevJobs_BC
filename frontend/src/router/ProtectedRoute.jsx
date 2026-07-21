@@ -1,10 +1,15 @@
 import { Navigate, Outlet, useLocation } from "react-router";
 import { useAuth } from "../hooks/useAuth";
+import Loading from "../components/Loading";
 
 export const ProtectedRoute = () => {
-    const { isLoggedIn } = useAuth();
+    const { isLoggedIn, isPending } = useAuth();
     const location = useLocation()
 
+    if (isPending) return (
+        <Loading />
+    )
+    
     if (!isLoggedIn) {
         return <Navigate 
             to="/signin"

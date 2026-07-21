@@ -4,15 +4,23 @@ import { API } from '../../constants.js';
 
 const Recruiter = ({ profile, register, errors }) => {
     const [companies, setCompanies] = useState([]);
+    const [company, setCompany] = useState({})
 
     useEffect(() => {
         fetch(`${API.COMPANIES}`, { credentials: 'include' })
-            .then(r => r.ok ? r.json() : { data: [] })
+            .then(res => res.ok ? res.json() : { data: [] })
             .then(json => setCompanies(json.data || []))
             .catch(() => setCompanies([]));
-    }, []);
+    },[]);
 
-    console.log('profile: ', profile)
+    useEffect(() => {
+        companies.map(c => {
+            if (c.id === profile.companyId) {
+                setCompany(c)
+            }
+        });
+    },)
+
     return (
         <div>
             <h3>Recruiter Profile</h3>
@@ -25,7 +33,12 @@ const Recruiter = ({ profile, register, errors }) => {
                     {...register("companyId")}
 
                 >
-                    <option value="">Select a company</option>
+                    <option value="">
+                        {profile.companyId 
+                            ? company.name
+                            : 'Select a company'
+                        }
+                        </option>
                     {companies.map(c => (
                         <option key={c.id} value={c.id}>{c.name}</option>
                     ))}
@@ -38,7 +51,8 @@ const Recruiter = ({ profile, register, errors }) => {
             <InputField
                 label="Position"
                 name="position"
-                placeholder="Engineering Manager"
+                placeholder={profile.position}
+                defaultValue={profile.position}
                 register={register}
                 error={errors?.position}
             />
@@ -46,7 +60,8 @@ const Recruiter = ({ profile, register, errors }) => {
             <InputField
                 label="Phone"
                 name="phone"
-                placeholder="+1-555-0101"
+                placeholder={profile.phone}
+                defaultValue={profile.phone}
                 register={register}
                 error={errors?.phone}
             />
@@ -54,7 +69,8 @@ const Recruiter = ({ profile, register, errors }) => {
             <InputField
                 label="Department"
                 name="department"
-                placeholder="Engineering"
+                placeholder={profile.department}
+                defaultValue={profile.department}
                 register={register}
                 error={errors?.department}
             />

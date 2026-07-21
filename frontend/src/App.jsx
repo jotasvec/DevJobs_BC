@@ -19,6 +19,7 @@ import NotFound from './pages/NotFound.jsx' */
 /* lazy lets you defer loading component’s code until it is rendered for the first time. */
 const HomePage = lazy( () => import('./pages/Home.jsx') )
 const Jobs = lazy(()=> import('./pages/Jobs/index.jsx'))
+const Companies = lazy(()=> import('./pages/companies'))
 const JobsDetails = lazy(()=> import('./pages/Detail/JobsDetails.jsx'))
 const SignIn = lazy(()=> import('./pages/signIn/index.jsx'))
 const SignUp = lazy(()=> import('./pages/signUp/SeekerSignUp.jsx'))
@@ -43,6 +44,7 @@ function App() {
             <Routes>
               <Route path={ROUTES.HOME} element={<HomePage />} />
               <Route path={ROUTES.JOBS} element={<Jobs />} />
+              <Route path={ROUTES.COMPANIES} element={<Companies />} />
               <Route path={`${ROUTES.JOBS}/:jobID`} element={<JobsDetails />} />
               <Route path='*' element={ <NotFound /> } />
               <Route path={ROUTES.SIGNIN} element={<SignIn />} />

@@ -10,6 +10,7 @@ import { seekerProfileSchema } from '../../schemas/seekerProfile.js';
 import { recruiterProfileSchema } from '../../schemas/recruiterProfile.js';
 import Seeker from './Seeker.jsx';
 import Recruiter from './Recruiter.jsx';
+import { useSession } from '../../lib/auth-client.js';
 
 const UserProfile = () => {
     const { userID } = useParams()
@@ -19,9 +20,14 @@ const UserProfile = () => {
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(true)
     const { navigateTo } = useRouter();
+    const session = useSession()
+    if(!session) navigateTo(ROUTES.HOME)
+    
 
-    const profileSchema = user?.role === ROLES.SEEKER ? seekerProfileSchema : recruiterProfileSchema;
-    const combinedSchema = userProfileSchema.merge(profileSchema);
+    //Schema
+    const combinedSchema = user ? userProfileSchema.merge(
+        user?.role === ROLES.SEEKER ? seekerProfileSchema : recruiterProfileSchema
+    ) : userProfileSchema;
 
     const {
         register,
@@ -40,14 +46,12 @@ const UserProfile = () => {
                 if (!res.ok) throw new Error(`User not found: ${res.statusText}`);
                 return res.json();
             })
-            .then(async (userData) => {
-                const user = userData.data
-                if (userData.success === true) {
-                    setUser(user);
+            .then(async (userDataRes) => {
+                const userData = userDataRes.data
+                if (userDataRes.success === true) {
+                    setUser(userData);
                 }
-                console.log('user', user)
-                console.log('userData', userData)
-                if (user.role === ROLES.SEEKER) {
+                if (userData.role === ROLES.SEEKER) {
                     const res = await fetch(`${API.USERS}/seeker-profile/${userID}`, { credentials: 'include' });
                     if (res.ok) {
                         const json = await res.json();
@@ -130,11 +134,11 @@ const UserProfile = () => {
                 <h3>User Data</h3>
                 <div>
                     <div>
-                        <InputField label='Name' name='name' placeholder={user.name} defaultValue={user.name} register={register} error={errors?.name} />
-                        <InputField label='Last Name' name='lastName' placeholder={user.lastName} defaultValue={user.lastName} register={register} error={errors?.lastName} />
+                        <InputField label='Name' name='name' placeholder='John' defaultValue={user.name} register={register} error={errors?.name} />
+                        <InputField label='Last Name' name='lastName' placeholder='Doe' defaultValue={user.lastName} register={register} error={errors?.lastName} />
                     </div>
-                    <InputField label='Email' name='email' placeholder={user.email} defaultValue={user.email} disabled />
-                    <InputField label='Biography' name='bio' placeholder={user.bio || '—'} register={register} error={errors?.bio} />
+                    <InputField label='Email' name='email' placeholder='user@johndoe.com' defaultValue={user.email} disabled />
+                    <InputField label='Biography' name='bio' placeholder=" I'm a great engineer ... " register={register} error={errors?.bio} />
                 </div>
 
                 {user.role === ROLES.SEEKER && (

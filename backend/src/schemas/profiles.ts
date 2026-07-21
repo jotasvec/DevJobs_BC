@@ -2,10 +2,10 @@ import * as z from "zod";
 import { MODALITY } from "../constants.js";
 
 export const SeekerProfileSchema = z.object({
-  resumeUrl: z.string().url().nullable().optional(),
-  linkedin: z.string().url().nullable().optional(),
-  github: z.string().url().nullable().optional(),
-  portfolio: z.string().url().nullable().optional(),
+  resumeUrl: z.url().nullable().optional(),
+  linkedin: z.url().nullable().optional(),
+  github: z.url().nullable().optional(),
+  portfolio: z.url().nullable().optional(),
   expectedSalary: z.number().int().positive().nullable().optional(),
   modality: z.enum([MODALITY.REMOTE, MODALITY.ONSITE, MODALITY.HYBRID]).nullable().optional(),
   location: z.string().nullable().optional(),
@@ -22,8 +22,8 @@ export const RecruiterProfileSchema = z.object({
 export const CompanySchema = z.object({
   name: z.string().min(1, "Company name is required"),
   description: z.string().nullable().optional(),
-  website: z.string().url().nullable().optional(),
-  logo: z.string().url().nullable().optional(),
+  website: z.url().nullable().optional(),
+  logo: z.url().nullable().optional(),
   industry: z.string().nullable().optional(),
   size: z.string().nullable().optional(),
   location: z.string().nullable().optional(),

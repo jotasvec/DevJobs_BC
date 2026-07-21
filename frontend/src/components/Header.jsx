@@ -25,7 +25,7 @@ const Header = () => {
             
             <NavLink href={ROUTES.HOME} rel="noopener noreferrer">{UI.START}</NavLink>
             <NavLink href={ROUTES.JOBS}  rel="noopener noreferrer">{UI.JOBS}</NavLink>
-            <a href="" target="_blank" rel="noopener noreferrer">{UI.COMPANIES}</a>
+            <NavLink href={ROUTES.COMPANIES} target="_blank" rel="noopener noreferrer">{UI.COMPANIES}</NavLink>
             <a href="" target="_blank" rel="noopener noreferrer">{UI.SALARIES}</a>
         </nav>
         <div>

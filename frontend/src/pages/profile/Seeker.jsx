@@ -40,7 +40,7 @@ const Seeker = ({ profile, register, errors }) => {
                 placeholder={profile.experienceYears}
                 defaultValue={profile.experienceYears}
                 register={register}
-                error={errors?.name}
+                error={errors?.experienceYears}
             />
 
             <InputField
