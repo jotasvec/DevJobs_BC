@@ -28,9 +28,15 @@ const Jobs = () => {
                 />
             </section>
 
-            <section className="jobs-page-content">
-                <div className="jobs-filter-bar">
-                    <select name="technology" onChange={updateField} value={filters.technology}>
+            <section className="max-w-7xl mx-auto px-6 pb-16">
+                <div className="flex flex-wrap gap-3 mb-8">
+                    <select 
+                        name="technology" 
+                        onChange={updateField} 
+                        value={filters.technology}
+                        className="px-3.5 py-2 pr-10 bg-white/4 border border-white/8 rounded-lg text-text-secondary text-sm font-sans cursor-pointer transition-all appearance-none hover:border-white/15 hover:bg-white/6 focus:outline-none focus:border-accent/30 focus:shadow-[0_0_0_2px_rgba(56,189,248,0.08)]"
+                        style={{backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 0.6rem center"}}
+                    >
                         <option value="">All Technologies</option>
                         <optgroup label="Popular">
                             <option value="javascript">JavaScript</option>
@@ -45,7 +51,13 @@ const Jobs = () => {
                         <option value="ruby">Ruby</option>
                         <option value="php">PHP</option>
                     </select>
-                    <select name="location" onChange={updateField} value={filters.location}>
+                    <select 
+                        name="location" 
+                        onChange={updateField} 
+                        value={filters.location}
+                        className="px-3.5 py-2 pr-10 bg-white/4 border border-white/8 rounded-lg text-text-secondary text-sm font-sans cursor-pointer transition-all appearance-none hover:border-white/15 hover:bg-white/6 focus:outline-none focus:border-accent/30 focus:shadow-[0_0_0_2px_rgba(56,189,248,0.08)]"
+                        style={{backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 0.6rem center"}}
+                    >
                         <option value="">All Locations</option>
                         <option value="remoto">Remote</option>
                         <option value="cdmx">Ciudad de Mexico</option>
@@ -53,13 +65,24 @@ const Jobs = () => {
                         <option value="monterrey">Monterrey</option>
                         <option value="barcelona">Barcelona</option>
                     </select>
-                    <select name="level" onChange={updateField} value={filters.level}>
+                    <select 
+                        name="level" 
+                        onChange={updateField} 
+                        value={filters.level}
+                        className="px-3.5 py-2 pr-10 bg-white/4 border border-white/8 rounded-lg text-text-secondary text-sm font-sans cursor-pointer transition-all appearance-none hover:border-white/15 hover:bg-white/6 focus:outline-none focus:border-accent/30 focus:shadow-[0_0_0_2px_rgba(56,189,248,0.08)]"
+                        style={{backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 0.6rem center"}}
+                    >
                         <option value="">All Levels</option>
                         <option value={LEVEL.JUNIOR}>Junior</option>
                         <option value={LEVEL.MID}>Mid-Level</option>
                         <option value={LEVEL.SENIOR}>Senior</option>
                     </select>
-                    <button className="filter-clear-btn" onClick={clearFilters}>{UI.CLEAR}</button>
+                    <button 
+                        className="px-4 py-2 bg-white/4 border border-white/8 text-text-muted text-sm rounded-lg cursor-pointer transition-all hover:bg-white/8 hover:text-text-secondary"
+                        onClick={clearFilters}
+                    >
+                        {UI.CLEAR}
+                    </button>
                 </div>
 
                 {

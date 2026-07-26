@@ -22,6 +22,79 @@
   --font-heading: 'Sora', sans-serif;
 }
 
+/* ===== SHARED TAILWIND UTILITIES ===== */
+
+@utility page-loading {
+  @apply flex justify-center items-center min-h-[30vh];
+
+  span {
+    @apply font-mono text-sm text-text-muted;
+  }
+}
+
+@utility auth-field {
+  @apply flex flex-col gap-1;
+
+  label {
+    @apply text-sm font-medium text-text-secondary;
+  }
+
+  input, textarea, select {
+    @apply w-full h-11 px-3.5 bg-white/4 border border-white/8 rounded-lg text-text text-[0.9rem] font-sans transition-all duration-150;
+
+    &::placeholder {
+      @apply text-text-muted;
+    }
+
+    &:focus {
+      @apply outline-none border-accent/30 shadow-[0_0_0_2px_rgba(56,189,248,0.08)];
+    }
+  }
+
+  select {
+    @apply cursor-pointer appearance-none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+  }
+}
+
+@utility input-error {
+  @apply text-error text-xs mt-1;
+}
+
+@utility profile-section {
+  @apply bg-card border border-white/10 rounded-xl p-7 mb-6;
+}
+
+@utility profile-section-header {
+  @apply flex items-center gap-3 mb-6 pb-4 border-b border-white/6;
+
+  h2 {
+    @apply font-heading text-lg font-semibold text-text m-0;
+  }
+
+  span {
+    @apply text-xs text-text-muted;
+  }
+}
+
+@utility profile-section-icon {
+  @apply w-9 h-9 flex items-center justify-center rounded-md bg-accent/8 shrink-0;
+
+  svg {
+    @apply w-4 h-4 text-accent;
+  }
+}
+
+@utility profile-grid {
+  @apply grid grid-cols-2 gap-4;
+
+  .full-width {
+    @apply col-span-full;
+  }
+}
+
 /* :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -252,30 +325,6 @@ main{
     }
 }
 
-#jobs-search-form{
-    max-width: 42rem;
-    padding: .5rem;
-    display: flex;
-    justify-self: center;
-
-}
-/* select {
-  padding: 0.625rem 1.25rem;
-  background-color: #242d3a;
-  border: 0;
-  border-radius: 0.5rem;
-  font-size: 0.875rem;
-  color: #ddd;
-  cursor: pointer;
-  transition: all 0.2s;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.5rem center;
-  padding-right: 2.5rem;
-
-} */
-
 select,
 button {
     padding: 0.65rem 1.3rem;
@@ -323,55 +372,6 @@ input:not([type="checkbox"],[type="radio"]){
     }
 }
 
-
-/* Features Section */
-.features {
-    padding-inline: 1rem;
-    background-color: var(--background);
-    padding-top: 2rem;
-    text-align: center;
-
-    & > div {
-      max-width: 1280px;
-      margin: 0 auto;
-    }
-  
-    .features-top h2 {
-        font-size: 1.875rem;
-        font-weight: var(--font-weight-700);
-        color: var(--text-primary);
-    }
-
-    .features-top p {
-        font-size: 1.123rem;
-        color: var(--text-muted);
-        max-width: 42rem;
-        margin: 1rem auto;
-        margin-bottom: 1.5rem;
-    }
-    .features-bottom {
-        gap: 1rem;
-        flex-direction: column;
-  
-        h2 {
-            margin-bottom: 0 auto;
-        }
-    
-        p {
-            opacity: .75;
-        }
-    }
-
-}
-
-
-/* Grid de features */
-.features-bottom {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.2rem;
-    
-}
 
 /* Footer */
 footer {

@@ -5,26 +5,36 @@ const JobCard = ({ card }) => {
     const [isApplied, setIsApplied] = useState(false)
 
     return (
-        <article className="job-card">
-            <div className="job-card-content">
+        <article className="flex items-start justify-between gap-6 p-6 bg-card border border-white/5 rounded-xl transition-all duration-150 hover:border-accent/12 hover:-translate-y-px">
+            <div className="flex-1 min-w-0">
                 <Link href={`/jobs/${card.id}`}>
-                    <h3 className="job-card-title">{card.title}</h3>
+                    <h3 className="font-heading text-[1.05rem] font-semibold text-text mb-1 hover:text-accent transition-colors">
+                        {card.title}
+                    </h3>
                 </Link>
-                <div className="job-card-meta">
+                <div className="flex items-center gap-2 text-[0.85rem] text-text-secondary mb-3">
                     <span>{card.company}</span>
-                    <span className="job-card-dot"></span>
+                    <span className="w-[3px] h-[3px] rounded-full bg-text-muted"></span>
                     <span>{card.location}</span>
                 </div>
-                <p className="job-card-description">{card.description}</p>
-                <div className="job-card-tags">
+                <p className="text-[0.9rem] text-text-muted leading-relaxed mb-3 line-clamp-2">
+                    {card.description}
+                </p>
+                <div className="flex flex-wrap gap-1.5">
                     {card.data?.technology?.map?.((tech) => (
-                        <span key={tech} className="job-card-tag">{tech}</span>
+                        <span key={tech} className="font-mono text-[0.7rem] font-medium px-2 py-0.5 bg-accent/8 text-accent rounded">
+                            {tech}
+                        </span>
                     ))}
                 </div>
             </div>
-            <div className="job-card-actions">
+            <div className="shrink-0">
                 <button
-                    className={`job-card-apply ${isApplied ? 'is-applied' : ''}`}
+                    className={`px-5 py-2 font-semibold text-[0.8rem] rounded-lg border-none cursor-pointer transition-opacity whitespace-nowrap ${
+                        isApplied 
+                            ? 'bg-white/6 text-text-muted cursor-default' 
+                            : 'bg-accent text-[#080c14] hover:opacity-90'
+                    }`}
                     type="button"
                     onClick={() => setIsApplied(true)}
                     disabled={isApplied}

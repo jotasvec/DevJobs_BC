@@ -1,4 +1,3 @@
-import '../App.css';
 import Avatar from './Avatar';
 import { Link, NavLink } from '../router/Link.jsx';
 import { useAuth } from '../hooks/useAuth.jsx';
