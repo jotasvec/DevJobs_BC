@@ -142,25 +142,75 @@ Recruiter view (limited):
 
 ### 1.5 Applications (`/applications`) — NOT YET IMPLEMENTED
 
+**DB note:** The `applications` table CHECK constraint must include `'reviewed'` status (migration 006).
+Resume comes from `seeker_profile.resumeUrl` — not stored on the application itself.
+
 | Method | Endpoint | Auth | Roles | Body | Response |
 |--------|----------|------|-------|------|----------|
 | POST | `/applications` | ✅ | seeker | `{ jobId, coverLetter? }` | `{ success, data: Application }` |
-| GET | `/applications?jobId=` | ✅ | recruiter, admin | — | `{ success, data: Application[] }` |
-| GET | `/applications?userId=` | ✅ | seeker | — | `{ success, data: Application[] }` |
+| GET | `/applications` | ✅ | seeker (own), recruiter/admin (by jobId) | — | `{ success, data: Application[], total, limit }` |
+| GET | `/applications/stats?jobId=` | ✅ | recruiter, admin | — | `{ success, data: { pending, reviewed, accepted, rejected, total } }` |
+| GET | `/applications/:id` | ✅ | owner, recruiter (of job), admin | — | `{ success, data: Application }` |
 | PATCH | `/applications/:id` | ✅ | recruiter, admin | `{ status }` | `{ success, data: Application }` |
-| DELETE | `/applications/:id` | ✅ | seeker, admin | — | `{ success, data: { deleted: boolean } }` |
+| DELETE | `/applications/:id` | ✅ | seeker (own), admin | — | `{ success, data: { deleted: boolean } }` |
+
+**Query params for GET `/applications`:**
+- `?jobId=` — recruiter/admin: list all applications for a specific job
+- `?userId=` — seeker: list own applications (enforced server-side, user can only query self)
+- `?status=` — optional filter by status
+- `?limit=` / `?offset=` — pagination
+
+**ApplicationCreateInput schema:**
+```ts
+{
+  jobId: string          // valid UUID, required
+  coverLetter?: string   // max 2000 characters, optional
+}
+```
+
+**ApplicationUpdateStatusInput schema:**
+```ts
+{
+  status: "pending" | "reviewed" | "accepted" | "rejected"
+}
+```
 
 **Application response shape:**
 ```ts
 {
   id: string
-  user_id: string
-  job_id: string
+  userId: string
+  jobId: string
   status: "pending" | "reviewed" | "accepted" | "rejected"
-  cover_letter: string | null
-  created_at: string
+  coverLetter: string | null
+  createdAt: string
+  // Joined fields (for display):
+  jobTitle?: string
+  company?: string
+  location?: string
+  userName?: string
+  userEmail?: string
+  resumeUrl?: string     // from seeker_profile.resumeUrl
 }
 ```
+
+**Stats response shape:**
+```ts
+{
+  pending: number
+  reviewed: number
+  accepted: number
+  rejected: number
+  total: number
+}
+```
+
+**Business rules:**
+- A seeker can only apply once per job (UNIQUE constraint on `user_id, job_id`)
+- Duplicate application returns 409 Conflict
+- Seeker can only withdraw their own applications
+- Recruiter can only view applications for jobs they created (enforced via `created_by` check)
+- Status transitions: any status can be set by recruiter/admin (no state machine enforcement)
 
 ---
 
@@ -257,6 +307,68 @@ Search input with icon and submit.
   placeholder: string        // Placeholder text
 }
 ```
+
+### 2.7 ApplicationModal (`components/ApplicationModal.jsx`) — NOT YET IMPLEMENTED
+
+Modal form for applying to a job.
+
+**Props:**
+```js
+{
+  job: object                // Job data { id, title, company }
+  isOpen: boolean            // Modal visibility
+  onClose: function          // Close handler
+  onApplied: function        // Called after successful application
+}
+```
+
+**Behavior:**
+- Fetches seeker profile on open: `GET /api/users/seeker-profile/:userId`
+- Displays job title + company (read-only)
+- Displays seeker's resume URL from profile (read-only)
+- Cover letter textarea (optional, max 2000 chars)
+- Submit: `POST /api/applications` with `{ jobId, coverLetter }`
+- Shows loading state during submission
+- Shows error message on failure
+- On success: calls `onApplied()`, closes modal
+
+### 2.8 StatusBadge (`components/StatusBadge.jsx`) — NOT YET IMPLEMENTED
+
+Color-coded status indicator for applications.
+
+**Props:**
+```js
+{
+  status: string             // "pending" | "reviewed" | "accepted" | "rejected"
+}
+```
+
+**Colors:**
+- pending → yellow/amber
+- reviewed → blue
+- accepted → green
+- rejected → red
+
+### 2.9 MyApplications (`pages/Applications/MyApplications.jsx`) — NOT YET IMPLEMENTED
+
+Seeker's application history page.
+
+**Behavior:**
+- Fetches `GET /api/applications?userId=X`
+- Shows table/list with: Job Title, Company, Applied Date, Status (StatusBadge), Withdraw button
+- Empty state with illustration when no applications
+- Withdraw: confirmation dialog → `DELETE /api/applications/:id`
+- Loading state while fetching
+
+### 2.10 ApplicantDashboard (`pages/Applications/ApplicantDashboard.jsx`) — NOT YET IMPLEMENTED
+
+Recruiter's view of applicants per job.
+
+**Behavior:**
+- View 1: List of recruiter's jobs with application counts (fetched via `GET /api/applications/stats?jobId=X` for each job)
+- View 2: Click a job → shows applicants list for that job (`GET /api/applications?jobId=X`)
+- Applicant row shows: name, email, resume link, applied date, status
+- Status update dropdown: `PATCH /api/applications/:id` with `{ status }`
 
 ---
 
@@ -362,14 +474,15 @@ Job filtering with URL search params and debounced search.
 
 ### 5.4 ApplicationModel — NOT YET IMPLEMENTED
 
-Planned methods:
 | Method | Parameters | Returns |
 |--------|-----------|---------|
+| `getAll(filters)` | `ApplicationQuery` (jobId?, userId?, status?, limit?, offset?) | `{ data: ApplicationWithDetails[], total, limit }` |
+| `getById(id)` | `string` | `ApplicationWithDetails` |
+| `getByJobAndUser(jobId, userId)` | `string`, `string` | `Application` \| `null` |
 | `create(userId, jobId, coverLetter?)` | `string`, `string`, optional `string` | `Application` |
-| `getByJobId(jobId)` | `string` | `Application[]` |
-| `getByUserId(userId)` | `string` | `Application[]` |
-| `updateStatus(id, status)` | `string`, `string` | `Application` |
-| `delete(id)` | `string` | `{ deleted: boolean }` |
+| `updateStatus(id, status)` | `string`, `ApplicationStatus` | `Application` |
+| `delete(id, userId?)` | `string`, optional `string` (null = admin) | `{ deleted: boolean }` |
+| `getStats(jobId)` | `string` | `{ pending, reviewed, accepted, rejected, total }` |
 
 ---
 

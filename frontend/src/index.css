@@ -95,81 +95,6 @@
   }
 }
 
-/* :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}
- */
-
- * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
 @font-face {
     font-family: 'Inter Variable';
     font-style: normal;
@@ -181,7 +106,6 @@ button:focus-visible {
   
 :root {
     --primary: #3b4550;
-    --primary-dark: #0a3d66;
     --primary-hover: #0d5ba8;
     --primary-light: #09f;
     --background: #06182a;
@@ -190,38 +114,35 @@ button:focus-visible {
     --text-muted: #94a3b8;
     --border: rgba(255, 255, 255, 0.1);
     --card-bg: #1e293b;
-    --shadow: rgba(0, 0, 0, 0.3);
     --input-bg: #1e293b;
-    --hsla-example: hsla(210, 100%, 56%, 1);
     --svg-bg: rgba(0, 153, 255, 0.3);
     --font-weight-700: 700;
     --font-weight-500: 500;
 }
-  
-body{
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+body {
     background-color: var(--background);
     color: var(--text-primary);
     min-height: 100dvh;
     display: flex;
     flex-direction: column;
-    line-height: 1.6;
 }
 
-/* Titles */
+/* Global headings */
 h1 {
   font-size: 2.25rem;
   font-weight: 900;
   margin-bottom: 1rem;
   line-height: 1.2;
-  text-wrap: balance;  
+  text-wrap: balance;
 }
 
-h1 + p{
+h1 + p {
     text-wrap: balance;
     margin-bottom: 2rem;
 }
-p{
+
+p {
     color: var(--text-muted);
 }
 
@@ -299,30 +220,6 @@ main{
     max-width: 80rem; /* 1280px */
     width: 100%;
     min-height: 85vh;
-}
-
-/* Hero */
-.hero{
-    height: 500px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    h1 {
-        padding-top: 2rem;
-    }
-    img{
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        z-index: -1;
-        left: 0;
-        right: 0;
-        mask-image: linear-gradient(to bottom, rgba(16, 25, 34, 1) 5%, rgba(16, 25, 34, 0) 90%);
-    }
 }
 
 select,
@@ -421,242 +318,6 @@ footer {
     margin: 0 auto 2rem;
 }
 
-.page-loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 30vh;
-
-    span {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.875rem;
-        color: var(--text-muted);
-    }
-}
-
-
-/* ===== JOBS PAGE ===== */
-
-.jobs-page-content {
-    max-width: 72rem;
-    margin: 0 auto;
-    padding: 0 1.5rem 4rem;
-}
-
-.jobs-filter-bar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-bottom: 2rem;
-
-    select {
-        padding: 0.5rem 2.5rem 0.5rem 0.9rem;
-        background-color: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 0.5rem;
-        color: var(--text-secondary);
-        font-size: 0.875rem;
-        font-family: 'Inter Variable', system-ui, sans-serif;
-        cursor: pointer;
-        transition: all 0.15s;
-        appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 0.6rem center;
-
-        &:hover {
-            border-color: rgba(255, 255, 255, 0.15);
-            background-color: rgba(255, 255, 255, 0.06);
-        }
-
-        &:focus {
-            outline: none;
-            border-color: rgba(56, 189, 248, 0.3);
-            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.08);
-        }
-    }
-}
-
-.filter-clear-btn {
-    padding: 0.5rem 1rem !important;
-    background: rgba(255, 255, 255, 0.04) !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    color: var(--text-muted) !important;
-    font-size: 0.875rem;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    transition: all 0.15s;
-
-    &:hover {
-        background: rgba(255, 255, 255, 0.08) !important;
-        color: var(--text-secondary) !important;
-    }
-}
-
-
-/* ===== JOB CARDS & RESULTS ===== */
-
-.jobs-result {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-.jobs-result-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
-
-    h2 {
-        font-family: 'Sora', sans-serif;
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: var(--text-primary);
-    }
-}
-
-.jobs-result-count {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.8rem;
-    color: var(--text-muted);
-}
-
-.job-card {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1.5rem;
-    padding: 1.5rem;
-    background: var(--card-bg);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 0.75rem;
-    transition: border-color 0.15s, transform 0.15s;
-
-    &:hover {
-        border-color: rgba(56, 189, 248, 0.12);
-        transform: translateY(-1px);
-    }
-}
-
-.job-card-content {
-    flex: 1;
-    min-width: 0;
-}
-
-.job-card-title {
-    font-family: 'Sora', sans-serif;
-    font-size: 1.05rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 0.35rem;
-
-    a {
-        color: inherit;
-        text-decoration: none;
-        transition: color 0.15s;
-
-        &:hover {
-            color: var(--accent, #38bdf8);
-        }
-    }
-}
-
-.job-card-meta {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    margin-bottom: 0.75rem;
-}
-
-.job-card-dot {
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background: var(--text-muted);
-}
-
-.job-card-description {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    line-height: 1.6;
-    margin-bottom: 0.75rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.job-card-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-}
-
-.job-card-tag {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.7rem;
-    font-weight: 500;
-    padding: 0.2rem 0.55rem;
-    background: rgba(56, 189, 248, 0.08);
-    color: var(--accent, #38bdf8);
-    border-radius: 0.3rem;
-}
-
-.job-card-actions {
-    flex-shrink: 0;
-}
-
-.job-card-apply {
-    padding: 0.5rem 1.2rem !important;
-    background: var(--accent, #38bdf8) !important;
-    color: #080c14 !important;
-    font-weight: 600;
-    font-size: 0.8rem;
-    border-radius: 0.5rem;
-    border: none;
-    cursor: pointer;
-    transition: opacity 0.15s;
-    white-space: nowrap;
-
-    &:hover {
-        opacity: 0.9;
-    }
-
-    &.is-applied {
-        background: rgba(255, 255, 255, 0.06) !important;
-        color: var(--text-muted) !important;
-        cursor: default;
-    }
-}
-
-.jobs-empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 4rem 2rem;
-    text-align: center;
-
-    svg {
-        width: 48px;
-        height: 48px;
-        color: var(--text-muted);
-        margin-bottom: 0.5rem;
-    }
-
-    p {
-        font-size: 1rem;
-        color: var(--text-secondary);
-    }
-
-    span {
-        font-size: 0.875rem;
-        color: var(--text-muted);
-    }
-}
 
 
 /* ===== PROFILE PAGE ===== */
@@ -683,63 +344,6 @@ footer {
 .profile-header p {
     font-size: 0.95rem;
     color: var(--text-secondary);
-}
-
-.profile-section {
-    background: var(--card-bg);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 0.75rem;
-    padding: 1.75rem;
-    margin-bottom: 1.5rem;
-}
-
-.profile-section-header {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.profile-section-icon {
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 0.5rem;
-    background: rgba(56, 189, 248, 0.08);
-    flex-shrink: 0;
-}
-
-.profile-section-icon svg {
-    width: 18px;
-    height: 18px;
-    color: var(--accent, #38bdf8);
-}
-
-.profile-section-header h2 {
-    font-family: 'Sora', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin: 0;
-}
-
-.profile-section-header span {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-}
-
-.profile-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-}
-
-.profile-grid .full-width {
-    grid-column: 1 / -1;
 }
 
 .profile-avatar-section {
@@ -888,178 +492,7 @@ footer {
     }
 }
 
-/* ===== AUTH PAGES ===== */
-
-.auth-page {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 70vh;
-    padding: 2rem 1.5rem;
-}
-
-.auth-card {
-    width: 100%;
-    max-width: 28rem;
-}
-
-.auth-header {
-    text-align: center;
-    margin-bottom: 2rem;
-
-    h1 {
-        font-family: 'Sora', sans-serif;
-        font-size: 1.75rem;
-        font-weight: 700;
-        letter-spacing: -0.02em;
-        margin-bottom: 0.5rem;
-    }
-
-    p {
-        font-size: 0.95rem;
-        color: var(--text-secondary);
-    }
-}
-
-.auth-header-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--accent, #38bdf8);
-    margin-bottom: 0.75rem;
-    display: block;
-}
-
-.auth-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    padding: 2rem;
-    background: var(--card-bg);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 0.75rem;
-}
-
-.auth-field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-
-    label {
-        font-size: 0.85rem;
-        font-weight: 500;
-        color: var(--text-secondary);
-    }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="password"],
-    input[type="tel"],
-    input[type="number"] {
-        width: 100%;
-        height: 2.75rem;
-        padding: 0 0.9rem;
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 0.5rem;
-        color: var(--text-primary);
-        font-size: 0.9rem;
-        font-family: 'Inter Variable', system-ui, sans-serif;
-        transition: border-color 0.15s, box-shadow 0.15s;
-
-        &::placeholder {
-            color: var(--text-muted);
-        }
-
-        &:focus {
-            outline: none;
-            border-color: rgba(56, 189, 248, 0.3);
-            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.08);
-        }
-    }
-
-    textarea {
-        width: 100%;
-        min-height: 100px;
-        padding: 0.75rem 0.9rem;
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 0.5rem;
-        color: var(--text-primary);
-        font-size: 0.9rem;
-        font-family: 'Inter Variable', system-ui, sans-serif;
-        resize: vertical;
-        transition: border-color 0.15s, box-shadow 0.15s;
-
-        &::placeholder {
-            color: var(--text-muted);
-        }
-
-        &:focus {
-            outline: none;
-            border-color: rgba(56, 189, 248, 0.3);
-            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.08);
-        }
-    }
-
-    select {
-        width: 100%;
-        height: 2.75rem;
-        padding: 0 0.9rem;
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 0.5rem;
-        color: var(--text-primary);
-        font-size: 0.9rem;
-        font-family: 'Inter Variable', system-ui, sans-serif;
-        cursor: pointer;
-        transition: border-color 0.15s, box-shadow 0.15s;
-        appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 0.75rem center;
-
-        &:focus {
-            outline: none;
-            border-color: rgba(56, 189, 248, 0.3);
-            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.08);
-        }
-    }
-}
-
-.auth-extras {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.85rem;
-}
-
-.auth-checkbox {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--text-secondary);
-    cursor: pointer;
-
-    input[type="checkbox"] {
-        width: 16px;
-        height: 16px;
-        accent-color: var(--accent, #38bdf8);
-    }
-}
-
-.auth-link {
-    color: var(--accent, #38bdf8);
-    text-decoration: none;
-    font-size: 0.85rem;
-    transition: opacity 0.15s;
-
-    &:hover {
-        opacity: 0.8;
-    }
-}
+/* ===== AUTH BUTTON (used by error states) ===== */
 
 .auth-submit {
     width: 100%;
@@ -1075,55 +508,6 @@ footer {
 
     &:hover {
         opacity: 0.9;
-    }
-}
-
-.auth-footer {
-    text-align: center;
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
-
-    p {
-        font-size: 0.875rem;
-        color: var(--text-muted);
-        margin-bottom: 0.75rem;
-    }
-}
-
-.auth-alt-buttons {
-    display: flex;
-    gap: 0.5rem;
-
-    button {
-        flex: 1;
-        padding: 0.5rem 1rem !important;
-        background: rgba(255, 255, 255, 0.04) !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-        color: var(--text-secondary) !important;
-        font-size: 0.8rem;
-        border-radius: 0.5rem;
-        cursor: pointer;
-        transition: all 0.15s;
-
-        &:hover {
-            background: rgba(255, 255, 255, 0.08) !important;
-        }
-    }
-}
-
-.auth-alt-single {
-    padding: 0.5rem 1.5rem !important;
-    background: rgba(255, 255, 255, 0.04) !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    color: var(--text-secondary) !important;
-    font-size: 0.85rem;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    transition: all 0.15s;
-
-    &:hover {
-        background: rgba(255, 255, 255, 0.08) !important;
     }
 }
 

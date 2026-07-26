@@ -224,25 +224,100 @@ _migrations     (id, name, applied_at)
 ### Phase 1: Applications System (Priority: HIGH)
 
 The `applications` table exists in the DB but has no API or UI.
+**Known DB issue:** The `applications` table CHECK constraint in `seed.js` only allows `('pending', 'accepted', 'rejected')` — missing `'reviewed'`. Must be fixed via migration 006.
 
-**Backend:**
-- [ ] Create `backend/src/schemas/applications.ts` — Zod schema for application input
-- [ ] Create `backend/src/models/application.ts` — Application model (create, getByJob, getByUser, updateStatus, delete)
-- [ ] Create `backend/src/controllers/application.ts` — Application controller
-- [ ] Create `backend/src/routes/applications.ts` — Application routes
-- [ ] Register routes in `api.ts`
-- [ ] Protect endpoints:
-  - `POST /api/applications` — seeker only (apply to job)
-  - `GET /api/applications?jobId=` — recruiter/admin (view applicants for their jobs)
-  - `GET /api/applications?userId=` — seeker (view own applications)
-  - `PATCH /api/applications/:id` — recruiter/admin (update status)
-  - `DELETE /api/applications/:id` — seeker (withdraw application)
+#### 1a. Migration 006 — Fix DB constraint
 
-**Frontend:**
-- [ ] Wire ApplyButton on JobDetail page to `POST /api/applications` with session cookie
-- [ ] Create "My Applications" page — seeker views own applications with status
-- [ ] Create applicant dashboard — recruiter views applicants per job
-- [ ] Add application status badge component
+- [ ] Create `backend/migrations/006_fix_applications_status_check.sql`
+  - Recreate `applications` table with correct CHECK: `('pending', 'reviewed', 'accepted', 'rejected')`
+  - Wrap in a transaction (SQLite doesn't support `ALTER COLUMN`)
+- [ ] Update `seed.js` CHECK constraint to match (for fresh databases)
+
+#### 1b. Backend — Schema, Types, Model, Controller, Routes
+
+**Schema** (`backend/src/schemas/applications.ts`):
+- [ ] `applicationCreateSchema` — `{ jobId: string (uuid), coverLetter?: string (max 2000) }`
+- [ ] `applicationUpdateStatusSchema` — `{ status: ApplicationStatus }` (one of: pending, reviewed, accepted, rejected)
+- [ ] Export inferred types: `ApplicationCreateInput`, `ApplicationUpdateStatusInput`
+
+**Types** (`backend/src/types/applications.ts`):
+- [ ] `Application` — `{ id, userId, jobId, status, coverLetter, createdAt }`
+- [ ] `ApplicationQuery` — `{ jobId?, userId?, status?, limit?, offset? }`
+- [ ] `ApplicationWithDetails` — extends Application with joined `jobTitle`, `company`, `userName`, `userEmail`
+
+**Model** (`backend/src/models/application.ts`):
+- [ ] `getAll(filters)` — paginated, joins `jobs` + `user` for display data. Filters by `jobId` (recruiter view) or `userId` (seeker view)
+- [ ] `getById(id)` — single application with joins
+- [ ] `getByJobAndUser(jobId, userId)` — duplicate check (UNIQUE constraint)
+- [ ] `create(userId, jobId, coverLetter?)` — insert with `crypto.randomUUID()`, returns created application
+- [ ] `updateStatus(id, status)` — recruiter/admin updates status
+- [ ] `delete(id, userId)` — seeker withdraws (must own the application), admin can delete any
+- [ ] `getStats(jobId)` — count by status for a job (recruiter dashboard)
+
+**Controller** (`backend/src/controllers/application.ts`):
+- [ ] `getAll` — handles `?jobId=` (recruiter) and `?userId=` (seeker) query params
+- [ ] `getById` — single application
+- [ ] `create` — POST, checks duplicate via `getByJobAndUser` first
+- [ ] `updateStatus` — PATCH, recruiter/admin only
+- [ ] `withdraw` — DELETE, seeker only (must own)
+- [ ] `getStats` — GET `/stats?jobId=`, recruiter only
+
+**Routes** (`backend/src/routes/applications.ts`):
+- [ ] `POST /` — `requireSession`, `requireRoles(SEEKER)`, `validateSchemas(applicationCreateSchema)`
+- [ ] `GET /` — `requireSession` (role check in controller based on query params)
+- [ ] `GET /stats` — `requireSession`, `requireRoles(RECRUITER, ADMIN)`
+- [ ] `GET /:id` — `requireSession`
+- [ ] `PATCH /:id` — `requireSession`, `requireRoles(RECRUITER, ADMIN)`, `validateSchemas(applicationUpdateStatusSchema)`
+- [ ] `DELETE /:id` — `requireSession`, `requireRoles(SEEKER, ADMIN)`
+
+**API Registration** (`backend/src/routes/api.ts`):
+- [ ] Import and mount: `api.use('/applications', applicationsRouter)`
+
+#### 1c. Frontend — Components, Pages, Integration
+
+**Application Modal** (`frontend/src/components/ApplicationModal.jsx`):
+- [ ] Triggered from ApplyButton on JobsDetails page
+- [ ] Shows: job title (read-only), seeker's resume URL from profile (read-only, fetched via `GET /api/users/seeker-profile/:userId`), cover letter textarea (optional, max 2000 chars)
+- [ ] Submit: `POST /api/applications` with `{ jobId, coverLetter }`
+- [ ] Success: close modal, show "Applied" state
+- [ ] Error: inline error message
+
+**Wire ApplyButton** (`frontend/src/pages/Detail/JobsDetails.jsx`):
+- [ ] Replace `console.log` with: fetch seeker profile → open ApplicationModal
+- [ ] On mount, check if already applied: `GET /api/applications?jobId=X&userId=Y`
+- [ ] If already applied, show "Applied" (disabled) state
+
+**Status Badge** (`frontend/src/components/StatusBadge.jsx`):
+- [ ] Props: `status` (pending/reviewed/accepted/rejected)
+- [ ] Color-coded: pending=yellow, reviewed=blue, accepted=green, rejected=red
+- [ ] Used in My Applications and Applicant Dashboard
+
+**My Applications Page** (`frontend/src/pages/Applications/MyApplications.jsx`):
+- [ ] Fetches `GET /api/applications?userId=X`
+- [ ] Table/list: Job Title, Company, Applied Date, Status (badge), Withdraw button
+- [ ] Empty state when no applications
+- [ ] Withdraw: `DELETE /api/applications/:id` with confirmation
+
+**Applicant Dashboard** (`frontend/src/pages/Applications/ApplicantDashboard.jsx`):
+- [ ] Two views:
+  1. **Job list** — recruiter's posted jobs with application counts (from `/stats` endpoint)
+  2. **Applicants for a job** — `GET /api/applications?jobId=X`, shows applicant name, email, resume link, status
+- [ ] Status update: `PATCH /api/applications/:id` with dropdown (pending → reviewed → accepted/rejected)
+
+**Router & Navigation**:
+- [ ] Add route in `App.jsx`: `<Route path={ROUTES.MY_APPLICATIONS} element={<MyApplications />} />` inside `<ProtectedRoute>`
+- [ ] Add route: `<Route path={ROUTES.MY_JOBS} element={<ApplicantDashboard />} />` inside `<ProtectedRoute>`
+- [ ] Add "My Applications" link in `Header.jsx` (visible when logged in as seeker)
+- [ ] Add "My Jobs" link in `Header.jsx` (visible when logged in as recruiter/admin)
+
+**Constants** (`frontend/src/constants.js`):
+- [ ] Add UI text: `APPLYING`, `APPLICATION_SUBMITTED`, `WITHDRAW_APPLICATION`, `VIEW_APPLICANTS`, `NO_APPLICATIONS`, etc.
+
+#### 1d. Seed & Test Data
+
+- [ ] Add sample applications in `seed.js` (2-3 applications across different jobs/users)
+- [ ] Verify backend tests still pass (`pnpm --filter backend test`)
+- [ ] Manual testing: apply as seeker, view as recruiter, update status, withdraw
 
 ### Phase 2: Job Management for Recruiters (Priority: HIGH)
 
