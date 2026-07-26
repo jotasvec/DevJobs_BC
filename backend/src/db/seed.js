@@ -1,4 +1,4 @@
-import { db } from './database.js'
+import db from './database.js'
 import fs from 'fs'
 import path from 'path'
 
@@ -260,6 +260,11 @@ const categories = [
     { name: "Testing", description: "Testing frameworks and tools" },
     { name: "Tools", description: "Development tools and design software" },
     { name: "Languages", description: "Programming languages" },
+    { name: "AI/ML", description: "Artificial intelligence and machine learning" },
+    { name: "Security", description: "Security tools and practices" },
+    { name: "Data Science", description: "Data science and analytics" },
+    { name: "Architecture", description: "Software architecture patterns" },
+    { name: "Blockchain", description: "Blockchain and Web3 technologies" },
 ]
 
 // Seed categories

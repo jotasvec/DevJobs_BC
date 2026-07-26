@@ -7,7 +7,6 @@ const recruiterProfiles = [
     position: "Engineering Manager",
     phone: "+1-555-0101",
     department: "Engineering",
-    bio: "Leading a team of 12 engineers building cloud-native applications.",
   },
   {
     email: "recruiter@test.dev",
@@ -15,7 +14,6 @@ const recruiterProfiles = [
     position: "Technical Recruiter",
     phone: "+1-555-0102",
     department: "People & Culture",
-    bio: "Passionate about connecting talented engineers with great opportunities.",
   },
 ];
 
@@ -23,8 +21,8 @@ function seedRecruiterProfiles() {
   const getUser = db.prepare("SELECT id FROM user WHERE email = ?");
   const getCompany = db.prepare("SELECT id FROM company WHERE name = ?");
   const upsert = db.prepare(`
-    INSERT OR REPLACE INTO recruiter_profile (userId, companyId, position, phone, department, bio)
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT OR REPLACE INTO recruiter_profile (userId, companyId, position, phone, department)
+    VALUES (?, ?, ?, ?, ?)
   `);
 
   let created = 0;
@@ -43,8 +41,7 @@ function seedRecruiterProfiles() {
       companyId,
       profile.position,
       profile.phone,
-      profile.department,
-      profile.bio
+      profile.department
     );
     created++;
   }
