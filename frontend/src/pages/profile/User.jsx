@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useParams } from 'react-router';
 import { useRouter } from '../../hooks/useRouter';
 import { ROUTES, UI, API, ROLES } from '../../constants.js';
 import InputField from '../../components/InputField.jsx';
 import TextareaField from '../../components/TextareaField.jsx';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { userProfileSchema } from '../../schemas/userProfile.js';
-import { seekerProfileSchema } from '../../schemas/seekerProfile.js';
-import { recruiterProfileSchema } from '../../schemas/recruiterProfile.js';
-import Seeker from './Seeker.jsx';
 import Recruiter from './Recruiter.jsx';
+import Seeker from './Seeker.jsx';
 import { useSession } from '../../lib/auth-client.js';
+import useUserProfile from '../../hooks/useUserProfile.jsx';
+import { updateRecruiterProfile, updateSeekerProfile, updateUser } from '../../services/users.services.js';
+import { useCombinedSchema } from '../../hooks/useCombinedSchema.jsx';
+
 
 const SuccessIcon = () => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -48,98 +47,34 @@ const EditIcon = () => (
 
 const UserProfile = () => {
     const { userID } = useParams()
-    const [user, setUser] = useState({})
-    const [seekerProfile, setSeekerProfile] = useState(null)
-    const [recruiterProfile, setRecruiterProfile] = useState(null)
-    const [error, setError] = useState(null)
-    const [loading, setLoading] = useState(true)
     const [feedback, setFeedback] = useState(null)
+    
     const { navigateTo } = useRouter();
     const session = useSession()
     if (!session) navigateTo(ROUTES.HOME)
 
-    const combinedSchema = user ? userProfileSchema.merge(
-        user?.role === ROLES.SEEKER ? seekerProfileSchema : recruiterProfileSchema
-    ) : userProfileSchema;
+    const { user, profile, error, loading } = useUserProfile(userID)
 
     const {
         register,
         handleSubmit,
-        reset,
         formState: { errors, isSubmitting }
-    } = useForm({
-        resolver: zodResolver(combinedSchema),
-    });
+    } = useCombinedSchema(user, profile)
 
-    useEffect(() => {
-        if (!userID) return;
-
-        fetch(`${API.USERS}/${userID}`, { credentials: 'include' })
-            .then(res => {
-                if (!res.ok) throw new Error(`User not found: ${res.statusText}`);
-                return res.json();
-            })
-            .then(async (userDataRes) => {
-                const userData = userDataRes.data
-                if (userDataRes.success === true) {
-                    setUser(userData);
-                }
-                if (userData.role === ROLES.SEEKER) {
-                    const res = await fetch(`${API.USERS}/seeker-profile/${userID}`, { credentials: 'include' });
-                    if (res.ok) {
-                        const json = await res.json();
-                        setSeekerProfile(json.data);
-                        reset({ ...userData, ...json.data });
-                    } else {
-                        reset(userData);
-                    }
-                } else if (userData.role === ROLES.RECRUITER) {
-                    const res = await fetch(`${API.USERS}/recruiter-profile/${userID}`, { credentials: 'include' });
-                    if (res.ok) {
-                        const json = await res.json();
-                        setRecruiterProfile(json.data);
-                        reset({ ...userData, ...json.data });
-                    } else {
-                        reset(userData);
-                    }
-                } else {
-                    reset(userData);
-                }
-            })
-            .catch(err => setError(err.message))
-            .finally(() => setLoading(false));
-    }, [userID, reset]);
+    
 
     const onSubmit = async (data) => {
         setFeedback(null);
         try {
             const { name, lastName, bio, image, phone, ...profileFields } = data;
-
-            const userRes = await fetch(`${API.USERS}/${userID}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({ name, lastName, bio, image }),
-            });
-
-            if (!userRes.ok) throw new Error('Failed to update user data');
-
+            await updateUser(userID, {
+                name, lastName, bio, image, phone
+            })
+           
             if (user.role === ROLES.SEEKER) {
-                const profileRes = await fetch(`${API.USERS}/me/seeker-profile`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify(profileFields),
-                });
-                if (!profileRes.ok) throw new Error('Failed to update seeker profile');
-            } else if (user.role === ROLES.RECRUITER) {
-                const profileRes = await fetch(`${API.USERS}/me/recruiter-profile`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({ ...profileFields, phone }),
-                });
-                if (!profileRes.ok) throw new Error('Failed to update recruiter profile');
+                await updateSeekerProfile(profileFields)
+            } else if(user.role === ROLES.RECRUITER) {
+                await updateRecruiterProfile(profileFields)
             }
 
             setFeedback({ type: 'success', message: 'Profile saved successfully!' });
@@ -210,21 +145,21 @@ const UserProfile = () => {
                         </div>
                     </div>
                     <div className="profile-grid">
-                        <InputField label='Name' name='name' placeholder='John' defaultValue={user.name} register={register} error={errors?.name} />
-                        <InputField label='Last Name' name='lastName' placeholder='Doe' defaultValue={user.lastName} register={register} error={errors?.lastName} />
-                        <InputField label='Email' name='email' placeholder='user@johndoe.com' defaultValue={user.email} disabled />
+                        <InputField label='Name' name='name' placeholder='John' register={register} error={errors?.name} />
+                        <InputField label='Last Name' name='lastName' placeholder='Doe' register={register} error={errors?.lastName} />
+                        <InputField label='Email' name='email' placeholder='user@johndoe.com' register={register} disabled />
                         <InputField label='Telephone' name='phone' type='tel' placeholder='+1 234 567 890' register={register} error={errors?.phone} />
                         <div className="full-width">
-                            <TextareaField label='Biography' name='bio' placeholder="I'm a great engineer..." register={register} error={errors?.bio} rows={4} />
+                            <TextareaField className="overflow-hidden h-auto" label='Biography' name='bio' placeholder="I'm a great engineer..." defaultValue={user.bio} register={register} error={errors?.bio} />
                         </div>
                     </div>
                 </div>
 
                 {user.role === ROLES.SEEKER && (
-                    <Seeker profile={seekerProfile} register={register} errors={errors} />
+                    <Seeker profile={profile} register={register} errors={errors} />
                 )}
                 {user.role === ROLES.RECRUITER && (
-                    <Recruiter profile={recruiterProfile} register={register} errors={errors} />
+                    <Recruiter profile={profile} register={register} errors={errors} />
                 )}
 
                 <div className="profile-actions">

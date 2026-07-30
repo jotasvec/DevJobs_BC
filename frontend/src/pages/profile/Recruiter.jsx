@@ -68,25 +68,14 @@ const Recruiter = ({ profile, register, errors }) => {
                     label="Position"
                     name="position"
                     placeholder={profile?.position || "e.g. Senior Recruiter"}
-                    defaultValue={profile?.position}
                     register={register}
                     error={errors?.position}
-                />
-
-                <InputField
-                    label="Phone"
-                    name="phone"
-                    placeholder={profile?.phone || "+1 234 567 890"}
-                    defaultValue={profile?.phone}
-                    register={register}
-                    error={errors?.phone}
                 />
 
                 <InputField
                     label="Department"
                     name="department"
                     placeholder={profile?.department || "e.g. Engineering"}
-                    defaultValue={profile?.department}
                     register={register}
                     error={errors?.department}
                 />

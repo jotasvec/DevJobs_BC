@@ -4,6 +4,7 @@
 CREATE TABLE IF NOT EXISTS seeker_profile (
     userId TEXT PRIMARY KEY,
     resumeUrl TEXT,
+    coverLetter TEXT,
     linkedin TEXT,
     github TEXT,
     portfolio TEXT,
@@ -18,7 +19,6 @@ CREATE TABLE IF NOT EXISTS recruiter_profile (
     userId TEXT PRIMARY KEY,
     companyId TEXT,
     position TEXT,
-    phone TEXT,
     department TEXT,
     bio TEXT,
     FOREIGN KEY (userId) REFERENCES "user"(id) ON DELETE CASCADE,

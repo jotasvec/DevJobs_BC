@@ -4,6 +4,7 @@ const seekerProfiles = [
   {
     email: "seeker@test.com",
     resumeUrl: "https://drive.google.com/file/d/seeker-resume",
+    coverLetter: "",
     linkedin: "https://linkedin.com/in/seeker-user",
     github: "https://github.com/seeker-user",
     portfolio: "https://seeker-user.dev",
@@ -28,7 +29,7 @@ const seekerProfiles = [
 function seedSeekerProfiles() {
   const getUser = db.prepare("SELECT id FROM user WHERE email = ?");
   const upsert = db.prepare(`
-    INSERT OR REPLACE INTO seeker_profile (userId, resumeUrl, linkedin, github, portfolio, expectedSalary, modality, location, experienceYears)
+    INSERT OR REPLACE INTO seeker_profile (userId, resumeUrl, coverLetter, linkedin, github, portfolio, expectedSalary, modality, location, experienceYears)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
@@ -43,6 +44,7 @@ function seedSeekerProfiles() {
     upsert.run(
       user.id,
       profile.resumeUrl,
+      profile.coverLetter,
       profile.linkedin,
       profile.github,
       profile.portfolio,

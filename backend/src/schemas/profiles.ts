@@ -3,6 +3,7 @@ import { MODALITY } from "../constants.js";
 
 export const SeekerProfileSchema = z.object({
   resumeUrl: z.url().nullable().optional(),
+  coverLetter: z.string().nullable().optional(),
   linkedin: z.url().nullable().optional(),
   github: z.url().nullable().optional(),
   portfolio: z.url().nullable().optional(),
@@ -15,7 +16,6 @@ export const SeekerProfileSchema = z.object({
 export const RecruiterProfileSchema = z.object({
   companyId: z.string().uuid().nullable().optional(),
   position: z.string().nullable().optional(),
-  phone: z.string().nullable().optional(),
   department: z.string().nullable().optional(),
 });
 

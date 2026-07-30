@@ -1,6 +1,7 @@
 import React from 'react';
 import InputField from '../../components/InputField.jsx';
 import { MODALITY_OPTIONS, profileFields } from '../../constants.js';
+import TextareaField from '../../components/TextareaField.jsx';
 
 const SeekerIcon = () => (
     <svg viewBox="0 0 24 24" fill="none" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -37,7 +38,7 @@ const Seeker = ({ profile, register, errors }) => {
                     <InputField
                         label="Location"
                         name="location"
-                        placeholder="Madrid, Spain"
+                        placeholder="your location"
                         register={register}
                         error={errors?.location}
                     />
@@ -64,7 +65,6 @@ const Seeker = ({ profile, register, errors }) => {
                         name="experienceYears"
                         type="number"
                         placeholder={profile?.experienceYears || "0"}
-                        defaultValue={profile?.experienceYears}
                         register={register}
                         error={errors?.experienceYears}
                     />
@@ -74,7 +74,6 @@ const Seeker = ({ profile, register, errors }) => {
                         name="expectedSalary"
                         type="number"
                         placeholder={profile?.expectedSalary || "0"}
-                        defaultValue={profile?.expectedSalary}
                         register={register}
                         error={errors?.expectedSalary}
                     />
@@ -92,17 +91,20 @@ const Seeker = ({ profile, register, errors }) => {
                     </div>
                 </div>
                 <div className="profile-grid">
-                    {profileFields.map(field => (
+                    {profileFields.map(field => 
+                        field.name !== 'coverLetter' && (
                         <InputField
                             key={field.name}
                             name={field.name}
                             label={field.label}
                             placeholder={profile?.[field.name] || field.label}
-                            defaultValue={profile?.[field.name]}
                             register={register}
                             error={errors?.[field.name]}
                         />
                     ))}
+                </div>
+                <div className="full-width">
+                    <TextareaField className="overflow-hidden h-auto" label='Cover Letter' name='coverLetter' placeholder="I'm a great engineer..." register={register} error={errors?.coverLetter} />
                 </div>
             </div>
         </>

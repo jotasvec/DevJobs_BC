@@ -16,7 +16,7 @@ const AuthForm = ({
 }) => {
     return (
         <section className="flex justify-center items-center min-h-[70vh] px-6 py-8">
-            <div className="w-full max-w-[28rem]">
+            <div className="w-full max-w-md">
                 <div className="text-center mb-8">
                     <span className="font-mono text-xs font-medium tracking-widest uppercase text-accent mb-3 block">
                         {isSignUp ? UI.CREATE_ACCOUNT : UI.WELCOME_BACK}

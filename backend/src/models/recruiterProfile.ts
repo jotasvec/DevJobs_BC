@@ -4,7 +4,7 @@ import type { RecruiterProfile } from "../types/user.js";
 export class RecruiterProfileModel {
   static getByUserId(userId: string): RecruiterProfile | null {
     const profile = db.prepare(
-      "SELECT userId, companyId, position, phone, department FROM recruiter_profile WHERE userId = ?"
+      "SELECT userId, companyId, position, department FROM recruiter_profile WHERE userId = ?"
     ).get(userId) as RecruiterProfile | undefined;
 
     return profile || null;

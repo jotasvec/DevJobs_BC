@@ -2,7 +2,6 @@ import { Router } from "express";
 import { requireSession, requireRoles } from "../middlewares/auth.js";
 import { UsersController } from "../controllers/users.js";
 import { ROLES } from "../constants.js";
-import { validateSchemas } from "@/middlewares/validateSchemas.js";
 
 const usersRouter: Router = Router();
 

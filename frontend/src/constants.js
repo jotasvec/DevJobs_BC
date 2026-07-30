@@ -153,19 +153,26 @@ export const profileFields = [
     {
         name: "resumeUrl",
         label: "Resume",
+        type: "url"
     },
     {
       name: "linkedin",
       label: "LinkedIn",
+      type: "url"
     },
     {
       name: "github",
       label: "Github",
+      type: "url"
     },
     {
-        name: "portfolio",
-        label: "Portfolio",
+      name: "portfolio",
+      label: "Portfolio",
+      type: "url"
     },
-    
-    
+    {
+        name: "coverLetter",
+        label: "Cover Letter",
+        type: "text"
+    },
 ];

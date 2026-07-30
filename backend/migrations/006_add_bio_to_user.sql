@@ -1,1 +1,2 @@
 ALTER TABLE user ADD COLUMN bio TEXT;
+Alter TABLE user ADD COLUMN phone TEXT;

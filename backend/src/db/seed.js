@@ -78,7 +78,7 @@ db.exec(`
         id TEXT PRIMARY KEY,
         user_id TEXT NOT NULL REFERENCES user(id) ON DELETE CASCADE,
         job_id TEXT NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
-        status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'accepted', 'rejected')),
+        status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'accepted', 'rejected','reviewed')),
         cover_letter TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         UNIQUE(user_id, job_id)

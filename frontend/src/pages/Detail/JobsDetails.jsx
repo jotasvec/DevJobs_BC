@@ -2,9 +2,11 @@ import styles from './JobsDetails.module.css';
 import { Link } from '../../router/Link';
 import { useParams, useNavigate } from 'react-router';
 import { useEffect, useState } from 'react';
-import { useAuth } from '../../hooks/useAuth';
-import { useRouter } from '../../hooks/useRouter';
 import { ROUTES, UI, API } from '../../constants.js';
+import ApplicationForm from '../../components/ApplicationForm.jsx';
+import ApplyButton from '../../components/ApplyButton.jsx';
+import { useAuth } from '../../hooks/useAuth.jsx';
+//import { useRouter } from '../../hooks/useRouter.jsx';
 
 const CircleCheck = () => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -32,38 +34,14 @@ const JobSection = ({ title, content = "" }) => {
     )
 }
 
-const ApplyButton = ({ className = '' }) => {
-    const { isLoggedIn } = useAuth()
-    const { navigateTo } =  useRouter()
-
-    const handleClick = () => {
-        if(!isLoggedIn){
-            navigateTo(ROUTES.SIGNIN)
-        }else{
-            console.log('Congrats you have applied.')
-        }
-    } 
-    
-    return (
-        <button
-            className={`detail-apply-btn ${className} ${!isLoggedIn ? 'is-disabled' : ''}`}
-            disabled={!isLoggedIn}
-            onClick={handleClick }
-        >
-            {
-                    isLoggedIn
-                    ? UI.APPLY_NOW
-                    : UI.LOGIN_TO_APPLY
-            }
-        </button>
-    )
-}
-
 const JobsDetails = () => {
+    const { isLoggedIn } = useAuth()
+    //const { navigateTo } =  useRouter()
     const { jobID } = useParams();
     const [job, setJob] = useState({})
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
+    const [apply, setApply] = useState(false)
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -95,6 +73,27 @@ const JobsDetails = () => {
         )
     }
 
+    const actionButton = (
+        <ApplyButton
+            className={`${!isLoggedIn ? 'is-disabled' : ''}`}
+            disabled={!isLoggedIn}
+            onClick={ () => {
+                if (!isLoggedIn) {
+                    navigate(ROUTES.SIGNIN)
+                    return
+                }
+                setApply(true)                
+            }}
+        >
+            {
+                isLoggedIn
+                ? UI.APPLY_NOW
+                : UI.LOGIN_TO_APPLY
+            }
+
+        </ApplyButton>
+    )
+
     return (
         <>
             <div className={styles.jobsDetails}>
@@ -113,7 +112,7 @@ const JobsDetails = () => {
                             <span>{job.location}</span>
                         </div>
                     </div>
-                    <ApplyButton />
+                    {actionButton}
                 </section>
 
                 <JobSection title="Description" content={job.content?.description} />
@@ -123,8 +122,16 @@ const JobsDetails = () => {
             </div>
 
             <div className={styles.bottomButton}>
-                <ApplyButton />
+                {actionButton}
             </div>
+            {
+                apply && (
+                    <ApplicationForm 
+                        jobId={jobID}
+                        isLoggedIn={isLoggedIn}
+                    />
+                )
+            }
         </>
     )
 }

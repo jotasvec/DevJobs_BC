@@ -1,5 +1,4 @@
 import { RequestHandler } from "express";
-import { error } from "node:console";
 import { ZodError, ZodType } from "zod";
 
 export const validateSchemas  = (schema: ZodType) : RequestHandler => {

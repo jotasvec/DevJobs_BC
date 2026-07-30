@@ -8,9 +8,10 @@ import { HTTP_STATUS, ERROR_CODES, ROLES, MESSAGES } from "../constants.js";
 function toPublic(user: UserRow): UserPublic {
   return {
     id: user.id,
-    email: user.email,
     name: user.name,
     lastName: user.lastName,
+    email: user.email,
+    phone: user.phone,
     role: user.role as UserPublic["role"],
     image: user.image,
   };
@@ -75,14 +76,14 @@ export class UsersController {
 
   static update: RequestHandler<{ id: string }> = (req, res, next) => {
     try {
-      const { name, lastName, role, image, bio } = req.body;
+      const { name, lastName, role, image, bio, phone } = req.body;
       const user = UserModel.getById(req.params.id);
       
       let updated 
       if(user?.id === req.user?.id){
-        updated = UserModel.update(req.params.id, { name, lastName, bio, image });
+        updated = UserModel.update(req.params.id, { name, lastName, bio, image, phone });
       }else{
-        updated = UserModel.update(req.params.id, { name, lastName, role, bio, image });
+        updated = UserModel.update(req.params.id, { name, lastName, role, bio, image, phone });
       }
 
       if (!updated) {
@@ -108,7 +109,6 @@ export class UsersController {
   static partialUpdate: RequestHandler<{ id: string }> = (req, res, next) => {
     try {
       const fields: Record<string, unknown> = {};
-      console.log('entered')
       const user = UserModel.getById(req.params.id);
      
       const isSelf = user?.id === req.user?.id
@@ -116,8 +116,8 @@ export class UsersController {
       if(!isSelf && !isAdmin) return res.status(403).json({ error: "Cannot edit other users" })
 
       const allowedFields = isSelf 
-        ? ["name", "lastName", "image", "bio"]
-        : ["name", "lastName", "role", "image", "bio"]
+        ? ["name", "lastName", "image", "bio", "phone"]
+        : ["name", "lastName", "role", "image", "bio", "phone"]
 
       for (const key of allowedFields) {
         if (req.body[key] !== undefined) {

@@ -9,12 +9,13 @@ export const UserRoleSchema = z.enum([
 
 export const UserRowSchema = z.object({
   id: z.string(),
-  email: z.string(),
   name: z.string(),
   lastName: z.string(),
+  email: z.string(),
+  emailVerified: z.coerce.boolean(),
+  phone: z.string().nullable(),  
   role: UserRoleSchema,
   bio: z.string().nullable(),
-  emailVerified: z.coerce.boolean(),
   image: z.string().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
@@ -26,7 +27,7 @@ export const UserPublicSchema = z.object({
   name: z.string(),
   lastName: z.string(),
   role: UserRoleSchema,
-  image: z.string().nullable(),
+  image: z.string().nullable()
 });
 
 export type UserRole = z.infer<typeof UserRoleSchema>;

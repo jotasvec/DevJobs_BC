@@ -4,7 +4,7 @@ import type { SeekerProfile } from "../types/user.js";
 export class SeekerProfileModel {
   static getByUserId(userId: string): SeekerProfile | null {
     const profile = db.prepare(
-      "SELECT userId, resumeUrl, linkedin, github, portfolio, expectedSalary, modality, location, experienceYears FROM seeker_profile WHERE userId = ?"
+      "SELECT userId, resumeUrl, linkedin, github, portfolio, expectedSalary, modality, location, experienceYears, coverLetter FROM seeker_profile WHERE userId = ?"
     ).get(userId) as SeekerProfile | undefined;
 
     return profile || null;
