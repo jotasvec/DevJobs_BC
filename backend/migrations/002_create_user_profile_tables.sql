@@ -20,7 +20,6 @@ CREATE TABLE IF NOT EXISTS recruiter_profile (
     companyId TEXT,
     position TEXT,
     department TEXT,
-    bio TEXT,
     FOREIGN KEY (userId) REFERENCES "user"(id) ON DELETE CASCADE,
     FOREIGN KEY (companyId) REFERENCES company(id) ON DELETE SET NULL
 );

@@ -21,8 +21,8 @@ function seedRecruiterProfiles() {
   const getUser = db.prepare("SELECT id FROM user WHERE email = ?");
   const getCompany = db.prepare("SELECT id FROM company WHERE name = ?");
   const upsert = db.prepare(`
-    INSERT OR REPLACE INTO recruiter_profile (userId, companyId, position, phone, department)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT OR REPLACE INTO recruiter_profile (userId, companyId, position, department)
+    VALUES (?, ?, ?, ?)
   `);
 
   let created = 0;
@@ -40,7 +40,6 @@ function seedRecruiterProfiles() {
       user.id,
       companyId,
       profile.position,
-      profile.phone,
       profile.department
     );
     created++;

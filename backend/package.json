@@ -9,7 +9,12 @@
     "start": "node dist/app.js",
     "watch": "pnpm tsx watch src/app.ts",
     "test": "node --import tsx --test src/__tests__/*.test.ts",
-    "test:watch": "node --import tsx --test --watch src/__tests__/*.test.ts"
+    "test:watch": "node --import tsx --test --watch src/__tests__/*.test.ts",
+    "db:migrate": "node --import tsx migrations/migrate.js",
+    "seed": "node src/db/seed.js && node --import tsx src/db/seed-users.ts && node --import tsx src/db/seed-seeker.ts && node --import tsx src/db/seed-recruiter.ts",
+    "seed:users": "npx --import tsx src/db/seed-users.ts",
+    "seed:recruiter": "npx --import tsx src/db/seed-recruiter.ts",
+    "seed:seeker": "npx --import tsx src/db/seed-seeker.ts" 
   },
   "keywords": [],
   "author": "",

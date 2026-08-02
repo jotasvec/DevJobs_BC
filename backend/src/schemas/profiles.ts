@@ -14,7 +14,7 @@ export const SeekerProfileSchema = z.object({
 });
 
 export const RecruiterProfileSchema = z.object({
-  companyId: z.string().uuid().nullable().optional(),
+  companyId: z.uuid().nullable().optional(),
   position: z.string().nullable().optional(),
   department: z.string().nullable().optional(),
 });

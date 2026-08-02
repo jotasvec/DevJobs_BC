@@ -5,6 +5,7 @@ import { companiesRouter } from "./companies.js";
 import { jobsRouter } from "./jobs.js";
 import { technologiesRouter } from "./technologies.js";
 import { usersRouter } from "./users.js";
+import { applicationsRouter } from "./applications.js";
 
 
 const api: Router = Router();
@@ -23,5 +24,7 @@ api.use('/users', usersRouter);
 // Profile routes (mounted on /users to share the /users prefix)
 api.use('/users', seekerProfileRouter);
 api.use('/users', recruiterProfileRouter);
+//Applications router
+api.use('/applications', applicationsRouter)
 
 export default api;
