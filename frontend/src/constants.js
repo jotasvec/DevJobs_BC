@@ -15,6 +15,8 @@ export const APPLICATION_STATUS = {
   REVIEWED: 'reviewed',
   ACCEPTED: 'accepted',
   REJECTED: 'rejected',
+  SHORTLISTED:  'shortlisted', 
+  WITHDRAWN:  'withdrawn'
 }
 
 // ===========================

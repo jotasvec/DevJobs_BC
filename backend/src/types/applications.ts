@@ -1,16 +1,17 @@
-export interface ApplicationQuery {
-    userId: string; 
-    jobId : string; 
-    contact_email: string;
-    contact_phone: string;
-    resume_url: string;
-    portfolio_url: string;
-    cover_letter: string;
+export interface ApplicationFilters {
+    userId?: string;
+    jobId?: string;
     status?: string;
-    recruiter_notes?: string;
-    reviewed_at?: string;
-    recruiter_archived_at?: string;
-    seeker_archived_at?: string;
-    created_at?: string;
-    updated_at?: string;
+    limit?: number;
+    offset?: number;
+}
+
+export interface ApplicationStats {
+    pending: number;
+    reviewed: number;
+    shortlisted: number;
+    accepted: number;
+    rejected: number;
+    withdrawn: number;
+    total: number;
 }

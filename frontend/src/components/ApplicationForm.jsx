@@ -5,8 +5,10 @@ import ApplyButton from './ApplyButton'
 import { useAuth } from '../hooks/useAuth'
 import useUserProfile from '../hooks/useUserProfile'
 import { useCombinedSchema } from '../hooks/useCombinedSchema'
+import { createApplication } from '../services/applications.services'
+import Loading from "../components/Loading";
 
-const ApplicationForm = ({ jobId, isLoggedIn }) => {
+const ApplicationForm = ({ jobId, isLoggedIn, onSuccess }) => {
     const { user: userSession } = useAuth()
     const { user, profile, loading } = useUserProfile(userSession?.id)
     
@@ -16,13 +18,33 @@ const ApplicationForm = ({ jobId, isLoggedIn }) => {
         formState: { errors, isSubmitting }
      } = useCombinedSchema(user, profile)
 
-    const onSubmit = (data) => {
-        console.log('hey! you have applied', data, jobId )
+    const onSubmit = async (data) => {
+        if (!data) return
+        
+        const body = {
+            job_id: jobId,
+            contact_email: data.email,
+            contact_phone: data.phone,
+            resume_url: data.resumeUrl,
+            portfolio_url: data.portfolio,
+            cover_letter: data.coverLetter
+        }
+        try {
+            await createApplication(body)
+            onSuccess()
+
+        } catch (error) {
+            console.error("Error submitting application:", error);
+        }
+               
+
     }
 
     
+    
     if (loading) {
-        return <div className="page-loading"><span>{UI.LOADING_PROFILE}</span></div>
+        //return  <div className="page-loading"><span>{UI.LOADING_PROFILE}</span></div>
+        return <Loading isLoading={loading} />
     }
 
   return (

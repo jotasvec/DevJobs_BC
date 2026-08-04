@@ -27,7 +27,9 @@ export const UserPublicSchema = z.object({
   name: z.string(),
   lastName: z.string(),
   role: UserRoleSchema,
-  image: z.string().nullable()
+  image: z.string().nullable(),
+  bio: z.string().nullable(),
+
 });
 
 export type UserRole = z.infer<typeof UserRoleSchema>;

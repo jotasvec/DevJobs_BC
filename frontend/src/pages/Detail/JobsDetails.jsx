@@ -6,6 +6,7 @@ import { ROUTES, UI, API } from '../../constants.js';
 import ApplicationForm from '../../components/ApplicationForm.jsx';
 import ApplyButton from '../../components/ApplyButton.jsx';
 import { useAuth } from '../../hooks/useAuth.jsx';
+import { getJobById } from '../../services/jobs.services.js';
 //import { useRouter } from '../../hooks/useRouter.jsx';
 
 const CircleCheck = () => (
@@ -42,18 +43,27 @@ const JobsDetails = () => {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
     const [apply, setApply] = useState(false)
+    const [hasApplied, setHasApplied] = useState(false);
     const navigate = useNavigate()
 
     useEffect(() => {
-        fetch(`${API.JOBS}/${jobID}`)
-            .then(response => {
-                if (!response.ok) throw new Error(`Job Not Found \n Status: ${response.statusText} `);
-                return response.json()
-            })
-            .then(json => setJob(json.data))
-            .catch(err => setError(err.message))
-            .finally(() => setLoading(false))
+        const fetchJob = async (id) => {
+            setLoading(true)
+            try {
+                const { data } = await getJobById(id)
+                setJob(data)
+            } catch (err) {
+                console.error(err);
+                setError(err)
+            } finally {
+                setLoading(false)
+            }
+        }
+        if(jobID) {
+            fetchJob(jobID)
+        }
     }, [jobID])
+
 
     if (error || !job) {
         return (
@@ -63,6 +73,14 @@ const JobsDetails = () => {
                 <button className="auth-submit" onClick={() => navigate(ROUTES.HOME)}>{UI.GO_HOME}</button>
             </div>
         )
+    }
+
+    const handleApplicationSuccess = () =>{
+        setApply(false)
+        setHasApplied(true)
+        // hide bar after 5 seconds
+        setTimeout(() => setHasApplied(false), 5000);
+
     }
 
     if (loading) {
@@ -124,11 +142,17 @@ const JobsDetails = () => {
             <div className={styles.bottomButton}>
                 {actionButton}
             </div>
+            {hasApplied && (
+                    <div className='bg-green-600 text-white p-3 rounded mb-4'>
+                        <p>🎉 Has applied successfully!</p>
+                    </div>
+            )}
             {
                 apply && (
                     <ApplicationForm 
                         jobId={jobID}
                         isLoggedIn={isLoggedIn}
+                        onSuccess={handleApplicationSuccess}
                     />
                 )
             }
