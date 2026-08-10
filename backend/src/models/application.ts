@@ -60,6 +60,7 @@ export class ApplicationModel {
             recruiter_archived_at: row.recruiter_archived_at,
             seeker_archived_at: row.seeker_archived_at,
             updated_at: row.updated_at,
+            created_at: row.created_at,
             status: row.status,
             seeker: row.seeker ? JSON.parse(row.seeker) : null,
             job: row.job ? JSON.parse(row.job) : null

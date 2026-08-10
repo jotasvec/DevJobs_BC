@@ -26,6 +26,9 @@ const SignUp = lazy(()=> import('./pages/signUp/SeekerSignUp.jsx'))
 const RecruitersSignUp = lazy(()=> import('./pages/signUp/RecruiterSignUp.jsx'))
 const NotFound = lazy(()=> import('./pages/NotFound.jsx'))
 const UserProfile = lazy(()=> import('./pages/profile/User.jsx'))
+const MyApplications = lazy(()=> import('./pages/applications/MyApplications.jsx'))
+const MyJobs = lazy(()=> import('./pages/applications/ApplicationsPerJob.jsx'))
+const SidebarLayout = lazy(() => import('./components/SidebarLayout.jsx'))
 
 
 
@@ -52,7 +55,11 @@ function App() {
               <Route path={ROUTES.SIGNUP_RECRUITER} element={<RecruitersSignUp />} />
               {/* protected routes */}
               <Route element={<ProtectedRoute/> } >
-                <Route path={`${ROUTES.PROFILE}/:userID`}element={<UserProfile />} />
+                <Route element={ <SidebarLayout /> } >
+                  <Route path={`${ROUTES.PROFILE}/:userID`}element={<UserProfile />} />
+                  <Route path={`${ROUTES.MY_APPLICATIONS}`}element={<MyApplications />} />
+                  <Route path={`${ROUTES.MY_JOBS}`}element={<MyJobs />} />
+                </Route>
               </Route>
             </Routes>
         </Suspense>

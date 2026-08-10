@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const signUpSchema = z.object({
-    name: z.string().nonempty().min(10, "Name is required"),
+    name: z.string().nonempty().min(1, "Name is required"),
     email: z
         .string()
         .email("Invalid email")

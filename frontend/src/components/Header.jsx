@@ -2,7 +2,7 @@ import Avatar from './Avatar';
 import { Link, NavLink } from '../router/Link.jsx';
 import { useAuth } from '../hooks/useAuth.jsx';
 import { useRouter } from '../hooks/useRouter.jsx';
-import { ROUTES, UI } from '../constants.js';
+import { ROLES, ROUTES, UI } from '../constants.js';
 
 const Header = () => {
     const { isLoggedIn, user, logout } = useAuth();
@@ -32,6 +32,9 @@ const Header = () => {
                         ? (
                             <div>
                                 <Avatar username={user?.email?.split('@')[0] || 'user'} />
+                                {user?.role === ROLES.SEEKER && (
+                                    <NavLink href={ROUTES.MY_APPLICATIONS}>Applications</NavLink>
+                                )}
                                 <NavLink href={`${ROUTES.PROFILE}/${user.id}`}>{user?.name || user?.email}</NavLink>
                                 <button onClick={handleLogOut}>{UI.LOGOUT}</button>
                             </div>

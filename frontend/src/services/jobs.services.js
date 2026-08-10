@@ -13,5 +13,10 @@ export const getJobById = async (id) => {
     return res;
 }
 
+export const getJobsbyUserId = async (id) => {
+    const res = await http.get(`${API.JOBS}/${id}`)
+    if(!res.success) throw new Error(`Job Not Found \n Status: ${res.message} `);
+    return res;
+}
 
 

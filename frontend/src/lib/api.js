@@ -31,4 +31,8 @@ export const put = async (url, data) => api(url,{
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
 })
-//export const del = async (url) => api(url)
+
+export const del = async (url) => api(url,{
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+})

@@ -9,7 +9,7 @@ const TextareaField = ({
     disabled = false,
     error,
     defaultValue,
-    rows = 4,
+    rows = 6,
     textareaCN = "",
     labelCN = "",
     ...textareaProps

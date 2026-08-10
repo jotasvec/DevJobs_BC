@@ -63,6 +63,8 @@ export const ROUTES = {
   MY_APPLICATIONS: '/my-applications',
   MY_JOBS: '/my-jobs',
   CREATE_JOB: '/create-job',
+  SAVED_JOBS: '/saved-jobs',
+  COMPANY_PROFILE: '/company-profile',
 }
 
 // ===========================
@@ -153,9 +155,9 @@ export const ERRORS = {
 
 export const profileFields = [
     {
-        name: "resumeUrl",
-        label: "Resume",
-        type: "url"
+      name: "resumeUrl",
+      label: "Resume",
+      type: "url"
     },
     {
       name: "linkedin",
@@ -178,3 +180,12 @@ export const profileFields = [
         type: "text"
     },
 ];
+
+export const APPLICATION_TABLE_HEADER = [
+  "Company",
+  "Job Title",
+  "status",
+  "Location",
+  "Last Update",
+  "Applied On"
+]; 

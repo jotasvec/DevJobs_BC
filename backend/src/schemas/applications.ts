@@ -70,6 +70,7 @@ export const ApplicationWithSeekerSchema = UserPublicSchema.omit({
 export const ApplicationWithJobSchema = z.object({
     title: z.string(),
     company: z.string(),
+    location: z.string(),
 });
 
 export const ApplicationRowBaseSchema = ApplicationDBSchema.omit({
@@ -77,7 +78,6 @@ export const ApplicationRowBaseSchema = ApplicationDBSchema.omit({
     portfolio_url: true,
     cover_letter: true,
     recruiter_notes: true,
-    created_at: true,
     reviewed_at: true
 }).extend({
     seeker: ApplicationWithSeekerSchema.optional(),
