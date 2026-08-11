@@ -1,20 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import InputField from '../../components/InputField.jsx';
 import { API } from '../../constants.js';
-
-const BuildingIcon = () => (
-    <svg viewBox="0 0 24 24" fill="none" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M0 0h24v24H0z" fill="none" />
-        <path d="M4 21v-17a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v17" />
-        <path d="M9 21v-6a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v6" />
-        <path d="M10 7l-2 0l0 -2" />
-        <path d="M14 7l2 0l0 -2" />
-        <path d="M10 11l-2 0l0 -2" />
-        <path d="M14 11l2 0l0 -2" />
-        <path d="M10 15l-2 0l0 -2" />
-        <path d="M14 15l2 0l0 -2" />
-    </svg>
-)
+import { Building2 } from 'lucide-react';
 
 const Recruiter = ({ profile, register, errors }) => {
     const [companies, setCompanies] = useState([]);
@@ -34,7 +21,7 @@ const Recruiter = ({ profile, register, errors }) => {
         <div className="profile-section">
             <div className="profile-section-header">
                 <div className="profile-section-icon">
-                    <BuildingIcon />
+                    <Building2 size={16} />
                 </div>
                 <div>
                     <h2>Recruiter Details</h2>

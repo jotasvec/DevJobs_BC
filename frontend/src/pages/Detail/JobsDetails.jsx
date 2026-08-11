@@ -7,15 +7,7 @@ import ApplicationForm from '../../components/ApplicationForm.jsx';
 import ApplyButton from '../../components/ApplyButton.jsx';
 import { useAuth } from '../../hooks/useAuth.jsx';
 import { getJobById } from '../../services/jobs.services.js';
-//import { useRouter } from '../../hooks/useRouter.jsx';
-
-const CircleCheck = () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M0 0h24v24H0z" fill="none" />
-        <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-        <path d="M9 12l2 2l4 -4" />
-    </svg>
-)
+import { CheckCircle2 } from 'lucide-react';
 
 const JobSection = ({ title, content = "" }) => {
     const list = content.split('\n')
@@ -27,7 +19,7 @@ const JobSection = ({ title, content = "" }) => {
                     ? <p>{content}</p>
                     : <ul>
                         {list.map((element, id) => (
-                            <li key={id}><CircleCheck /> {element.replace('- ', '')}</li>
+                            <li key={id}><CheckCircle2 size={18} /> {element.replace('- ', '')}</li>
                         ))}
                     </ul>
             }

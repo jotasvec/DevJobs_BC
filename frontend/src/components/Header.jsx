@@ -3,6 +3,7 @@ import { Link, NavLink } from '../router/Link.jsx';
 import { useAuth } from '../hooks/useAuth.jsx';
 import { useRouter } from '../hooks/useRouter.jsx';
 import { ROLES, ROUTES, UI } from '../constants.js';
+import { Code } from 'lucide-react';
 
 const Header = () => {
     const { isLoggedIn, user, logout } = useAuth();
@@ -17,7 +18,7 @@ const Header = () => {
         <header>
             <Link href="/" style={{ textDecoration: 'none' }}>
                 <h2>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-code"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M7 8l-4 4l4 4" /><path d="M17 8l4 4l-4 4" /><path d="M14 4l-4 16" /></svg>
+                    <Code size={24} className="text-accent" />
                     {UI.APP_NAME}
                 </h2>
             </Link>
@@ -31,9 +32,12 @@ const Header = () => {
                     isLoggedIn
                         ? (
                             <div>
-                                <Avatar username={user?.email?.split('@')[0] || 'user'} />
+                                <Avatar username={user?.email?.split('@')[0] || user.name} />
                                 {user?.role === ROLES.SEEKER && (
                                     <NavLink href={ROUTES.MY_APPLICATIONS}>Applications</NavLink>
+                                )}
+                                {user?.role === ROLES.RECRUITER && (
+                                    <NavLink href={ROUTES.MY_JOBS}>My Jobs</NavLink>
                                 )}
                                 <NavLink href={`${ROUTES.PROFILE}/${user.id}`}>{user?.name || user?.email}</NavLink>
                                 <button onClick={handleLogOut}>{UI.LOGOUT}</button>

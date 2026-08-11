@@ -50,6 +50,24 @@ export const LEVEL_OPTIONS = [
 ]
 
 // ===========================
+// Modality badge colors
+// ===========================
+export const MODALITY_COLORS = {
+  remote: 'bg-emerald-500/15 text-emerald-400',
+  onsite: 'bg-purple-500/15 text-purple-400',
+  hybrid: 'bg-sky-500/15 text-sky-400',
+}
+
+// ===========================
+// Level badge colors
+// ===========================
+export const LEVEL_COLORS = {
+  junior: 'bg-amber-500/15 text-amber-400',
+  mid: 'bg-lime-500/15 text-lime-400',
+  senior: 'bg-rose-500/15 text-rose-400',
+}
+
+// ===========================
 // Routes
 // ===========================
 export const ROUTES = {

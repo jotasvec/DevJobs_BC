@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useRouter } from '../hooks/useRouter'
 import { ROUTES, UI, MODALITY, LEVEL } from '../constants.js'
+import { Search, Briefcase, Users, TrendingUp } from 'lucide-react'
 
 const Home = () => {
     const { navigateTo } = useRouter()
@@ -30,12 +31,7 @@ const Home = () => {
 
                     <div className="hero-search-wrapper">
                         <form className="hero-search" onSubmit={handleSearchOnSubmit}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
-                                <path d="M21 21l-6 -6" />
-                            </svg>
+                            <Search size={20} />
                             <input
                                 type="text"
                                 placeholder="Search jobs, companies, or technologies..."
@@ -85,42 +81,21 @@ const Home = () => {
                     <div className="home-features-grid">
                         <article className="home-feature-card">
                             <div className="home-feature-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                    strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M0 0h24v24H0z" fill="none" />
-                                    <path d="M3 7m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" />
-                                    <path d="M8 7v-2a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v2" />
-                                    <path d="M12 12l0 .01" />
-                                    <path d="M3 13a20 20 0 0 0 18 0" />
-                                </svg>
+                                <Briefcase size={24} />
                             </div>
                             <h3>Smart Matching</h3>
                             <p>Jobs curated for your tech stack. No more wading through irrelevant listings.</p>
                         </article>
                         <article className="home-feature-card">
                             <div className="home-feature-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                    strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M0 0h24v24H0z" fill="none" />
-                                    <path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
-                                    <path d="M8 21v-1a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v1" />
-                                    <path d="M15 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
-                                    <path d="M17 10h2a2 2 0 0 1 2 2v1" />
-                                    <path d="M5 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
-                                    <path d="M3 13v-1a2 2 0 0 1 2 -2h2" />
-                                </svg>
+                                <Users size={24} />
                             </div>
                             <h3>Radical Transparency</h3>
                             <p>Salary ranges, tech stacks, and culture fit &mdash; know before you apply.</p>
                         </article>
                         <article className="home-feature-card">
                             <div className="home-feature-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                    strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M0 0h24v24H0z" fill="none" />
-                                    <path d="M3 3v18h18" />
-                                    <path d="M7 16l4 -8l4 4l4 -8" />
-                                </svg>
+                                <TrendingUp size={24} />
                             </div>
                             <h3>Market Insights</h3>
                             <p>Real-time salary data and market trends. Negotiate with confidence.</p>

@@ -1,5 +1,6 @@
 import Pagination from './Pagination.jsx'
 import JobCard from './JobCard.jsx';
+import { Search } from 'lucide-react';
 
 const JobsList = ({ filteredList, currentPage, setPage }) => {
     const totalArticles = filteredList.total
@@ -23,11 +24,7 @@ const JobsList = ({ filteredList, currentPage, setPage }) => {
             <div className="flex flex-col gap-4">
                 {totalArticles === 0 && (
                     <div className="flex flex-col items-center gap-3 py-16 px-8 text-center">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-text-muted mb-2">
-                            <path d="M0 0h24v24H0z" fill="none" />
-                            <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
-                            <path d="M21 21l-6 -6" />
-                        </svg>
+                        <Search size={48} className="text-text-muted mb-2" />
                         <p className="text-text-secondary text-base">No jobs match your search criteria.</p>
                         <span className="text-sm text-text-muted">Try adjusting your filters or search terms.</span>
                     </div>
