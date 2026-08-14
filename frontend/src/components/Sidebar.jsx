@@ -19,7 +19,7 @@ const menuItems = {
   [ROLES.SEEKER]: [
     { to: ROUTES.MY_APPLICATIONS, label: 'My Applications', icon: FileText },
     { to: ROUTES.SAVED_JOBS, label: 'Saved Jobs', icon: Bookmark },
-    { to: `${ROUTES.PROFILE}/`, label: 'My Profile', icon: UserCircle },
+    { to: ROUTES.PROFILE, label: 'My Profile', icon: UserCircle },
   ],
   [ROLES.RECRUITER]: [
     { to: ROUTES.MY_JOBS, label: 'Job Postings', icon: Briefcase },
@@ -49,8 +49,12 @@ const Sidebar = ({ isOpen, onToggle, collapsed, onToggleCollapse }) => {
         {/* Header with logo */}
         <div className="sidebar-header">
           <div className="sidebar-logo">
-            <Code size={20} />
-            {!collapsed && <span className="sidebar-logo-text">DevJobs</span>}
+            {!collapsed && (
+                <div className='flex'>
+                    <Code size={20} />
+                    <span className="sidebar-logo-text">DevJobs</span>
+                </div>
+            )}
           </div>
           <button
             className="sidebar-collapse-btn"
@@ -71,7 +75,7 @@ const Sidebar = ({ isOpen, onToggle, collapsed, onToggleCollapse }) => {
             return (
               <NavLink
                 key={item.to}
-                href={item.to}
+                href={item.to === ROUTES.PROFILE ? `${ROUTES.PROFILE}/${user.id}` : item.to}
                 className="sidebar-link"
               >
                 <Icon size={18} />

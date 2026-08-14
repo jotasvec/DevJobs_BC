@@ -2,54 +2,13 @@ import crypto from 'node:crypto'
 import db from '../db/database.js'
 import { DEFAULTS } from '../config.js'
 import { JobInput } from '../schemas/jobs.js'
-import { Job, JobQuery } from '../types/jobs.js'
+import { JobCompanySchema, JobContentSchema } from '../schemas/profiles.js'
+import { Job, JobQuery, JobRow, UpdateResult } from '../types/jobs.js'
+import { getZodKeysAsJsonObject } from '../utils/zodUtils.js'
 
-interface JobTechnologyResult {
-    id: string
-    title: string
-    company: string
-    created_by: string
-    location: string
-    description: string
-    created_at: string
-    level: string
-    modality: string
-    technologies: string
-    content: string
-}
 
-interface UpdateResult {
-    success: boolean
-    changes?: number
-    fields?: string[]
-    error?: string
-    unknownTechnologies?: string[]
-    message?: string
-    updates?: {
-        job: UpdateResult
-        jobContent: UpdateResult
-        jobTechnologies: UpdateResult
-    }
-    totalChanges?: number
-}
-
-interface PartialJobInput {
-    title?: string
-    company?: string
-    location?: string
-    description?: string
-    data?: {
-        technology?: string[]
-        level?: string
-        modality?: string
-    }
-    content?: {
-        description?: string
-        responsibilities?: string
-        requirements?: string
-        about?: string
-    }
-}
+const COMPANY_JSON = getZodKeysAsJsonObject(JobCompanySchema, 'c')
+const CONTENT_JSON = getZodKeysAsJsonObject(JobContentSchema, 'jc')
 
 export class JobModel {
     static #resolveTechnologyId(techNameOrId: string): string | null {
@@ -72,16 +31,13 @@ export class JobModel {
         let query = `
             SELECT j.*,
                 json_group_array(t.name) as technologies,
-                json_object (
-                    'description', jc.description, 
-                    'responsibilities', jc.responsibilities,
-                    'requirements', jc.requirements,
-                    'about', jc.about
-                    ) as content
+                json_object(${CONTENT_JSON}) as content,
+                json_object(${COMPANY_JSON}) as company
             FROM jobs j
             LEFT JOIN job_technologies jt ON j.id = jt.job_id
             LEFT JOIN technologies t ON jt.technology_id = t.id
             LEFT JOIN job_contents jc ON j.id = jc.job_id
+            LEFT JOIN company c ON j.companyId = c.id
         `
 
         const params: (string | number)[] = []
@@ -121,7 +77,7 @@ export class JobModel {
             query += ' WHERE ' + conditions.join(' AND ')
         }
 
-        const total = db.prepare(query + ' GROUP BY j.id ').all(...params) as JobTechnologyResult[]
+        const total = db.prepare(query + ' GROUP BY j.id ').all(...params) as JobRow[]
         
         const limitNumber = Number(limit)
         const offsetNumber = Number(offset)
@@ -129,16 +85,16 @@ export class JobModel {
         query += ' GROUP BY j.id LIMIT ? OFFSET ? '
         params.push(limitNumber, offsetNumber)
     
-        const jobs = db.prepare(query).all(...params) as JobTechnologyResult[]
+        const jobs = db.prepare(query).all(...params) as JobRow[]
         
         const resultData = jobs.map(job => ({
             id: job.id,
             title: job.title,
-            company: job.company,
             created_by: job.created_by,
             location: job.location,
             description: job.description,
             created_at: job.created_at,
+            company: job.company ? JSON.parse(job.company) : null,
             data: {
                 level: job.level as 'junior' | 'mid' | 'senior',
                 modality: job.modality as 'remote' | 'onsite' | 'hybrid',
@@ -160,29 +116,26 @@ export class JobModel {
         const query = `
             SELECT j.*,
                 json_group_array(t.name) as technologies,
-                json_object (
-                    'description', jc.description, 
-                    'responsibilities', jc.responsibilities,
-                    'requirements', jc.requirements,
-                    'about', jc.about
-                    ) as content
+                json_object(${CONTENT_JSON}) as content,
+                json_object(${COMPANY_JSON}) as company
             FROM jobs j
             LEFT JOIN job_technologies jt ON j.id = jt.job_id
             LEFT JOIN job_contents jc ON j.id = jc.job_id
             LEFT JOIN technologies t ON jt.technology_id = t.id
+            LEFT JOIN company c ON j.companyId = c.id
             WHERE j.id = ?
             GROUP BY j.id
         `    
-        const job = db.prepare(query).get(id) as JobTechnologyResult | undefined 
+        const job = db.prepare(query).get(id) as JobRow | undefined 
 
         return !job ? null : {
             id: job.id,
             title: job.title,
-            company: job.company,
             created_by: job.created_by,
             location: job.location,
             description: job.description,
             created_at: job.created_at,
+            company: job.company ? JSON.parse(job.company) : null,
             data: {
                 level: job.level as 'junior' | 'mid' | 'senior',
                 modality: job.modality as 'remote' | 'onsite' | 'hybrid',
@@ -194,7 +147,7 @@ export class JobModel {
 
     static create(input: {
         title: string;
-        company: string;
+        companyId: string;
         location: string;
         description: string;
         modality?: string;
@@ -203,13 +156,13 @@ export class JobModel {
         content?: JobInput['content'];
         createdBy?: string;
     }): Job {
-        const { title, company, location, description, modality, level, technologies, content, createdBy } = input
+        const { title, companyId, location, description, modality, level, technologies, content, createdBy } = input
 
         const id = crypto.randomUUID()
         const createdAt = new Date().toISOString()
 
         const insertJob = db.prepare(`
-            INSERT INTO jobs (id, title, company, location, description, modality, level, created_at, created_by)
+            INSERT INTO jobs (id, title, companyId, location, description, modality, level, created_at, created_by)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         `)
         const insertJobTechnology = db.prepare(`
@@ -240,7 +193,7 @@ export class JobModel {
         }
 
         const transaction = db.transaction(() => {
-            insertJob.run(id, title, company, location, description, modality, level, createdAt, createdBy)
+            insertJob.run(id, title, companyId, location, description, modality, level, createdAt, createdBy)
 
             if (content) {
                 insertContent.run(
@@ -293,7 +246,7 @@ export class JobModel {
     }
 
     static partialUpdateJob(id: string, fields: Partial<JobInput>): UpdateResult {
-        const { title, company, location, description, data, content } = fields
+        const { title, companyId, location, description, data, content } = fields
 
         const partialUpdateDetails = {
             job: { success: false, changes: 0, fields: [] as string[] },
@@ -303,7 +256,7 @@ export class JobModel {
 
         const jobFields: Record<string, string> = {}
         if (title) jobFields.title = title
-        if (company) jobFields.company = company
+        if (companyId) jobFields.companyId = companyId
         if (location) jobFields.location = location
         if (description) jobFields.description = description
         if (data?.level) jobFields.level = data.level

@@ -14,7 +14,7 @@ companiesRouter.get("/", CompanyController.getAll);
 companiesRouter.get("/:id", CompanyController.getById);
 
 // Admin only: create company
-companiesRouter.post("/", requireSession, requireRoles(ROLES.ADMIN), validateSchemas(CompanySchema), CompanyController.create);
+companiesRouter.post("/", requireSession, requireRoles(ROLES.ADMIN, ROLES.RECRUITER), validateSchemas(CompanySchema), CompanyController.create);
 
 // Admin only: update company
 companiesRouter.patch("/:id", requireSession, requireRoles(ROLES.ADMIN), validateSchemas(PartialCompanySchema), CompanyController.update);

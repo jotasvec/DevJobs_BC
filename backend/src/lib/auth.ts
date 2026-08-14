@@ -1,9 +1,11 @@
 import { betterAuth } from "better-auth";
 import db from '../db/database'
 import type { Database } from "better-sqlite3"
+import { ROLES } from "@/constants";
+import { SeekerProfileModel } from "@/models/seekerProfile";
+import { RecruiterProfileModel } from "@/models/recruiterProfile";
 
 export const auth = betterAuth({
-
     database: db as Database,
     secret: process.env.BETTER_AUTH_SECRET,
     baseURL: process.env.BETTER_AUTH_URL,
@@ -52,5 +54,23 @@ export const auth = betterAuth({
     advanced: {
         disableCSRFCheck: process.env.NODE_ENV === "test",
     },
+    databaseHooks:{ // creates "empty" profiles after signup
+        user:{
+            create:{
+                after: async (user) => {
+                    try {
+                        if (user.role === ROLES.SEEKER) {
+                            SeekerProfileModel.upsert(user.id, {})
+                        }else if(user.role === ROLES.RECRUITER){
+                            RecruiterProfileModel.upsert(user.id, {})
+                        }
+                    } catch (error) {
+                        console.error("Failed to create profile after signup:", error);
+                        
+                    }
+                }
+            }
+        }
+    }
 
 })

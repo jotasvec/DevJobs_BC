@@ -14,7 +14,7 @@ export const getJobById = async (id) => {
 }
 
 export const getJobsbyUserId = async (id) => {
-    const res = await http.get(`${API.JOBS}/${id}`)
+    const res = await http.get(`${API.JOBS}/jobs?createdBy=${id}`)
     if(!res.success) throw new Error(`Job Not Found \n Status: ${res.message} `);
     return res;
 }

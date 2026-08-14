@@ -35,3 +35,22 @@ export type SeekerProfileInput = z.infer<typeof SeekerProfileSchema>;
 export type RecruiterProfileInput = z.infer<typeof RecruiterProfileSchema>;
 export type CompanyInput = z.infer<typeof CompanySchema>;
 export type PartialCompanyInput = z.infer<typeof PartialCompanySchema>;
+
+// Subset schemas for SQL json_object() generation via getZodKeysAsJsonObject()
+export const JobCompanySchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  logo: z.string().nullable().optional(),
+  industry: z.string().nullable().optional(),
+  location: z.string().nullable().optional(),
+});
+
+export const JobContentSchema = z.object({
+  description: z.string().nullable().optional(),
+  responsibilities: z.string().nullable().optional(),
+  requirements: z.string().nullable().optional(),
+  about: z.string().nullable().optional(),
+});
+
+export type JobCompany = z.infer<typeof JobCompanySchema>;
+export type JobContent = z.infer<typeof JobContentSchema>;

@@ -117,7 +117,7 @@ const JobsDetails = () => {
                     <div>
                         <h1>{job.title}</h1>
                         <div className={styles.jobHeaderMeta}>
-                            <span>{job.company}</span>
+                            <span>{job.company.name}</span>
                             <span className={styles.metaDot}></span>
                             <span>{job.location}</span>
                         </div>

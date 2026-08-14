@@ -16,8 +16,8 @@ const JobCard = ({ card }) => {
                     </h3>
                 </Link>
                 <div className="flex items-center gap-2 text-sm text-text-secondary mb-2.5">
-                    <span>{card.company}</span>
-                    <span className="w-[3px] h-[3px] rounded-full bg-text-muted"></span>
+                    <span>{card.company.name}</span>
+                    <span className="w-0.75 h-0.75 rounded-full bg-text-muted"></span>
                     <span>{card.location}</span>
                 </div>
                 <p className="text-sm text-text-muted leading-relaxed mb-3 line-clamp-2">

@@ -90,11 +90,13 @@ const ApplicationForm = ({ jobId, isLoggedIn, onSuccess }) => {
                 {profileFields.map(field => 
                     field.name === "coverLetter" 
                         ? (
-                            <div key={field.name} className='flex flex-col gap-1 mt-4'>
-                                <label htmlFor={field.name} >Cover Letter</label>
+                            <div key={field.name} className='auth-field'>
+                                <label htmlFor={field.name}>Cover Letter</label>
                                 <textarea 
                                     name={field.name} 
                                     id={field.name} 
+                                    rows={5}
+                                    placeholder="Tell us why you're a great fit..."
                                     {...register('coverLetter')}
                                 />
                             </div>

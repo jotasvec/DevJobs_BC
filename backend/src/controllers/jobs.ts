@@ -93,12 +93,12 @@ export class JobsController{
         JobInput
     > = (req, res, next) => {
         const { id } = req.params;
-        const { title, company, location, description, data, content } = req.body;
+        const { title, companyId, location, description, data, content } = req.body;
 
-        if (!title || !company || !location || !description || !data || !content) return res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, error: MESSAGES.MISSING_REQUIRED_FIELDS})
+        if (!title || !companyId || !location || !description || !data || !content) return res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, error: MESSAGES.MISSING_REQUIRED_FIELDS})
         
         try {
-            const updateJob = JobModel.partialUpdateJob(id, { title, company, location, description, data, content })
+            const updateJob = JobModel.partialUpdateJob(id, { title, companyId, location, description, data, content })
             
             return res.status(HTTP_STATUS.OK).json({
                 success: true,

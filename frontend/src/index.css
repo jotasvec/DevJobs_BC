@@ -181,9 +181,7 @@
   justify-content: center;
   width: 28px;
   height: 28px;
-  border-radius: 6px;
   background: transparent;
-  border: 1px solid var(--border);
   color: var(--text-muted);
   cursor: pointer;
   transition: all 0.15s ease;
@@ -197,9 +195,9 @@
   border-color: rgba(255, 255, 255, 0.15);
 }
 
-.sidebar--collapsed .sidebar-collapse-btn {
+/* .sidebar--collapsed .sidebar-collapse-btn {
   display: none;
-}
+} */
 
 /* ---- Navigation ---- */
 .sidebar-nav {
@@ -395,7 +393,7 @@
 .sidebar-content {
   flex: 1;
   min-width: 0;
-  padding: 1.5rem 2rem;
+  padding: 1.5rem;
   transition: padding 0.2s ease;
   background: var(--background);
 }
@@ -670,10 +668,13 @@ header > div{
 }
 
 main{
-    margin: auto;
-    max-width: 80rem;
     width: 100%;
     min-height: 85vh;
+}
+
+main:has(.sidebar-layout) {
+    margin: 0;
+    max-width: none;
 }
 
 select,
@@ -779,7 +780,7 @@ footer {
 .profile-page {
     max-width: 56rem;
     margin: 0 auto;
-    padding: 2rem 2rem 4rem;
+    padding: 1.5rem 1rem 3rem;
 }
 
 .profile-header {
