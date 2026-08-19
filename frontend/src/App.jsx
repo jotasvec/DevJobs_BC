@@ -5,8 +5,8 @@ import { Route, Routes } from "react-router";
 import Footer from './components/Footer.jsx'
 import Header from './components/Header.jsx'
 import Loading from './components/Loading.jsx';
-import { ProtectedRoute } from './router/ProtectedRoute.jsx';
-import { ROUTES } from './constants.js';
+import { ProtectedRole, ProtectedRoute } from './router/ProtectedRoute.jsx';
+import { ROLES, ROUTES } from './constants.js';
 /* import Home from './pages/Home.jsx'
 import Jobs from './pages/Jobs/index.jsx';
 import JobsDetails from './pages/Detail/JobsDetails.jsx'
@@ -29,9 +29,9 @@ const UserProfile = lazy(()=> import('./pages/profile/User.jsx'))
 const MyApplications = lazy(()=> import('./pages/applications/MyApplications.jsx'))
 const MyJobs = lazy(()=> import('./pages/applications/ApplicationsPerJob.jsx'))
 const SidebarLayout = lazy(() => import('./components/SidebarLayout.jsx'))
-
-
-
+const CreateJob = lazy(() => import('./pages/createJobs/index.jsx'))
+const CompanyProfile = lazy(() => import('./pages/companies/CompanyProfile.jsx'))
+const SavedJobs = lazy(() => import('./pages/savedJobs/index.jsx'))
 
 function App() {
   return (
@@ -56,9 +56,19 @@ function App() {
               {/* protected routes */}
               <Route element={<ProtectedRoute/> } >
                 <Route element={ <SidebarLayout /> } >
-                  <Route path={`${ROUTES.PROFILE}/:userID`}element={<UserProfile />} />
-                  <Route path={`${ROUTES.MY_APPLICATIONS}`}element={<MyApplications />} />
-                  <Route path={`${ROUTES.MY_JOBS}`}element={<MyJobs />} />
+                   {/* together */}
+                  <Route path={`${ROUTES.PROFILE}/:userID`} element={<UserProfile />} />
+                  {/* seeker */}
+                  <Route element={<ProtectedRole roles={ROLES.SEEKER} />} >
+                    <Route path={`${ROUTES.MY_APPLICATIONS}`} element={<MyApplications />} />
+                    <Route path={ROUTES.SAVED_JOBS} element={<SavedJobs />} />
+                  </Route>
+                  {/* Recruiter */}
+                  <Route element={<ProtectedRole roles={ROLES.RECRUITER} />} >
+                    <Route path={`${ROUTES.MY_JOBS}`} element={<MyJobs />} />
+                    <Route path={`${ROUTES.CREATE_JOB}`} element={<CreateJob />} />
+                    <Route path={`${ROUTES.COMPANY_PROFILE}`} element={<CompanyProfile />} />
+                  </Route>
                 </Route>
               </Route>
             </Routes>

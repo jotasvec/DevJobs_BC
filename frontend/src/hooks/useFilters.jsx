@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router'
 import { PAGINATION, API } from '../constants.js'
+import { getAllJobs } from '../services/jobs.services.js'
 
 
 
 const useFilters = () => {
     const [searchParams, setSearchParams] = useSearchParams()
-
+    const [error, setError] = useState(null)
     // total - limit and offset for pagination
     const limit = PAGINATION.FRONTEND_LIMIT;
     const page = Number(searchParams.get('page') || 1)
@@ -90,11 +91,13 @@ const useFilters = () => {
             if (filters.level) params.set('level', filters.level)
 
             //const response = await fetch(`https://jscamp-api.vercel.app/api/jobs?${params.toString()}`)
-            const response = await fetch(`${API.JOBS}?${params.toString()}`)
+            //const response = await fetch(`${API.JOBS}?${params.toString()}`)
+            const response = await getAllJobs(params.toString())
             const data = await response.json()
             setJobs(data.data)
         } catch (error) {
             console.error('Error fetching jobs: ', error)
+            setError(error)
         } finally{
             setLoading(false)
         }
@@ -126,10 +129,11 @@ const useFilters = () => {
         page,
         limit,
         rawSearchText,
+        error,
         updateField,
         handleSearchChange,
         setPage,
-        clearFilters
+        clearFilters,
         /* filteredJobs */
     };
 }

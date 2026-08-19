@@ -40,10 +40,15 @@ export class ApplicationModel {
             SELECT 
                 ${getZodKeysWithPrefix(ApplicationRowBaseSchema.omit({seeker: true, job: true}), 'a')},
                 json_object (${getZodKeysAsJsonObject(ApplicationWithSeekerSchema, 'u')} ) as seeker,
-                json_object (${getZodKeysAsJsonObject(ApplicationWithJobSchema, 'j')} ) as job
+                json_object(
+                    'title', j.title,
+                    'location', j.location,
+                    'company', json_object('id', c.id, 'name', c.name, 'industry', c.industry, 'location', c.location)
+                ) as job
             FROM applications a
             LEFT JOIN user u ON a.user_id = u.id
             LEFT JOIN jobs j ON a.job_id = j.id
+            LEFT JOIN company c ON j.companyId = c.id
             WHERE 1=1 ${clause}
             ORDER BY a.created_at DESC
             LIMIT ? OFFSET ?
@@ -80,10 +85,15 @@ export class ApplicationModel {
             SELECT 
                 ${getZodKeysWithPrefix(ApplicationDBSchema, 'a')},
                 json_object(${getZodKeysAsJsonObject(ApplicationWithSeekerSchema, 'u')}) as seeker,
-                json_object(${getZodKeysAsJsonObject(ApplicationWithJobSchema, 'j')}) as job
+                json_object(
+                    'title', j.title,
+                    'location', j.location,
+                    'company', json_object('id', c.id, 'name', c.name, 'industry', c.industry, 'location', c.location)
+                ) as job
             FROM applications a
             LEFT JOIN user u ON a.user_id = u.id
             LEFT JOIN jobs j ON a.job_id = j.id
+            LEFT JOIN company c ON j.companyId = c.id
             WHERE id = ?
             ORDER BY a.created_at DESC
         `

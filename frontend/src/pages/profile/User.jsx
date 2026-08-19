@@ -116,8 +116,8 @@ const UserProfile = () => {
                         <InputField label='Last Name' name='lastName' placeholder='Doe' register={register} error={errors?.lastName} />
                         <InputField label='Email' name='email' placeholder='user@johndoe.com' register={register} disabled />
                         <InputField label='Telephone' name='phone' type='tel' placeholder='+1 234 567 890' register={register} error={errors?.phone} />
-                        <div className="full-width">
-                            <TextareaField className="overflow-hidden h-auto" label='Biography' name='bio' placeholder="I'm a great engineer..." defaultValue={user.bio} register={register} error={errors?.bio} />
+                        <div className="full-width h-auto">
+                            <TextareaField className="overflow-hidden min-h-max " label='Biography' name='bio' placeholder="I'm a great engineer..." defaultValue={user.bio} register={register} error={errors?.bio} />
                         </div>
                     </div>
                 </div>

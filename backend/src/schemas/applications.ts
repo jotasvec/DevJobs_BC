@@ -69,7 +69,8 @@ export const ApplicationWithSeekerSchema = UserPublicSchema.omit({
 
 export const ApplicationWithJobSchema = z.object({
     title: z.string(),
-    company: z.string(),
+    //company: z.string(),
+    company_id: z.string().nullable().optional(),
     location: z.string(),
 });
 

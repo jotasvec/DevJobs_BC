@@ -14,9 +14,10 @@ const InputField = ({
     labelCN="",
     ...inputProps
 }) => {
+    const capLabel = (value) => value.charAt(0).toUpperCase() + value.slice(1)
     return (
         <div className='auth-field'>
-            <label htmlFor={name} className={labelCN}> {label} </label>
+            <label htmlFor={name} className={labelCN}> { capLabel(label) } </label>
             <input 
                 type={type}
                 id={name}

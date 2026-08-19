@@ -10,7 +10,7 @@ export async function api(url, option={}) {
     return res.json()
 }
 
-export const get = async (url) => api(url)
+export const get = async (url, options = {}) => api(url, options)
 
 export const post = async (url, body) => api(url,{
     method: "POST",

@@ -1,8 +1,8 @@
 import * as http from "../lib/api";
 import { API } from "../constants";
 
-export const getAllJobs = async () => {
-    const req = await http.get(API.JOBS)
+export const getAllJobs = async (params) => {
+    const req = await http.get(`${API.JOBS}?${params}`)
     if(!req.success) throw new Error("Error listing jobs");
     return req;
 }
@@ -14,9 +14,15 @@ export const getJobById = async (id) => {
 }
 
 export const getJobsbyUserId = async (id) => {
-    const res = await http.get(`${API.JOBS}/jobs?createdBy=${id}`)
+    const res = await http.get(`${API.JOBS}?createdBy=${id}`)
     if(!res.success) throw new Error(`Job Not Found \n Status: ${res.message} `);
     return res;
+}
+
+export const createJob = async (body) => {
+    const res = await http.post(API.JOBS, body)
+    if(!res.success) throw new Error(`Create Job Failed: ${res.message} `);
+    return res
 }
 
 

@@ -87,7 +87,7 @@ const Seeker = ({ profile, register, errors }) => {
                     ))}
                 </div>
                 <div className="full-width">
-                    <TextareaField className="overflow-hidden h-auto" label='Cover Letter' name='coverLetter' placeholder="I'm a great engineer..." register={register} error={errors?.coverLetter} />
+                    <TextareaField className="overflow-hidden min-h-max" label='Cover Letter' name='coverLetter' placeholder="I'm a great engineer..." register={register} error={errors?.coverLetter} />
                 </div>
             </div>
         </>

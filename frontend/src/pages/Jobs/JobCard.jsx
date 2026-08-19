@@ -16,7 +16,7 @@ const JobCard = ({ card }) => {
                     </h3>
                 </Link>
                 <div className="flex items-center gap-2 text-sm text-text-secondary mb-2.5">
-                    <span>{card.company.name}</span>
+                    <span>{card.company?.name}</span>
                     <span className="w-0.75 h-0.75 rounded-full bg-text-muted"></span>
                     <span>{card.location}</span>
                 </div>

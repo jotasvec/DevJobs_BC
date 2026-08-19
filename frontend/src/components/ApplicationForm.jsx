@@ -92,6 +92,7 @@ const ApplicationForm = ({ jobId, isLoggedIn, onSuccess }) => {
                         ? (
                             <div key={field.name} className='auth-field'>
                                 <label htmlFor={field.name}>Cover Letter</label>
+                                
                                 <textarea 
                                     name={field.name} 
                                     id={field.name} 
