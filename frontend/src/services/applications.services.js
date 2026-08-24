@@ -40,3 +40,9 @@ export const withdrawApplication = async (id) => {
     return del;
 }
 
+export const getRecruiterStats = async () => {
+    const res = await http.get(`${API.APPLICATIONS}/stats/recruiter`);
+    if (!res.success) throw new Error("Error getting recruiter stats");
+    return res;
+}
+

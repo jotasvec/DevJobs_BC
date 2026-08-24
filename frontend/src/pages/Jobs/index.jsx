@@ -2,18 +2,22 @@ import JobsList from './JobsList'
 import SearchField from '../../components/SearchField'
 import { useFilters } from "../../hooks/useFilters";
 import { LEVEL, UI } from '../../constants.js';
+import useJobs from '../../hooks/useJobs.jsx';
 
 const Jobs = () => {
     const {
         filters,
-        loading,
-        jobs,
         page,
+        limit,
         rawSearchText,
         updateField,
         handleSearchChange,
         setPage,
         clearFilters } = useFilters()
+
+    const { 
+        loading,
+        jobs } = useJobs({page, filters, limit})
 
     return (
         <>

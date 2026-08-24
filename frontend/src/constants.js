@@ -1,3 +1,5 @@
+import { Users, Clock, Eye, Star, CheckCircle, XCircle, Archive } from 'lucide-react'
+
 // ===========================
 // Roles
 // ===========================
@@ -18,6 +20,31 @@ export const APPLICATION_STATUS = {
   SHORTLISTED:  'shortlisted', 
   WITHDRAWN:  'withdrawn'
 }
+
+// ===========================
+// Application status colors (for StatusBadge)
+// ===========================
+export const APPLICATION_STATUS_COLORS = {
+  pending:    { bg: 'bg-amber-500',  text: 'text-amber-800'  },
+  reviewed:   { bg: 'bg-blue-500',   text: 'text-blue-800'   },
+  shortlisted:{ bg: 'bg-purple-500', text: 'text-purple-800' },
+  accepted:   { bg: 'bg-green-500',  text: 'text-green-800'  },
+  rejected:   { bg: 'bg-red-500',    text: 'text-red-800'    },
+  withdrawn:  { bg: 'bg-gray-500',   text: 'text-gray-800'   },
+}
+
+// ===========================
+// Application stat cards (for dashboards)
+// ===========================
+export const APPLICATION_STAT_CARDS = [
+    { key: 'total', label: 'Total', icon: Users, color: 'text-text', bg: 'bg-surface' },
+    { key: 'pending', label: 'Pending', icon: Clock, color: 'text-amber-500', bg: 'bg-amber-500/10' },
+    { key: 'reviewed', label: 'Reviewed', icon: Eye, color: 'text-blue-500', bg: 'bg-blue-500/10' },
+    { key: 'shortlisted', label: 'Shortlisted', icon: Star, color: 'text-purple-500', bg: 'bg-purple-500/10' },
+    { key: 'accepted', label: 'Accepted', icon: CheckCircle, color: 'text-green-500', bg: 'bg-green-500/10' },
+    { key: 'rejected', label: 'Rejected', icon: XCircle, color: 'text-red-500', bg: 'bg-red-500/10' },
+    { key: 'withdrawn', label: 'Withdrawn', icon: Archive, color: 'text-gray-500', bg: 'bg-gray-500/10' },
+]
 
 // ===========================
 // Job modality
@@ -83,6 +110,7 @@ export const ROUTES = {
   CREATE_JOB: '/create-job',
   SAVED_JOBS: '/saved-jobs',
   COMPANY_PROFILE: '/company-profile',
+  DASHBOARD: '/dashboard',
 }
 
 // ===========================

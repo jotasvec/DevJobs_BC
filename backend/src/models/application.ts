@@ -247,4 +247,19 @@ export class ApplicationModel {
         const job = db.prepare('SELECT created_by FROM jobs WHERE id = ?').get(jobId) as { created_by: string } | undefined;
         return job?.created_by ?? null;
     }
+
+    static getStatsByRecruiter = (userId: string): ApplicationStats => {
+        const cases = Object.values(APPLICATION_STATUS)
+            .map(element => `SUM(CASE WHEN a.status = '${element}' THEN 1 ELSE 0 END) as ${element}`)
+            .join(',');
+        const sql = `
+            SELECT 
+                ${cases},
+                COUNT(*) as total
+            FROM applications a
+            LEFT JOIN jobs j ON a.job_id = j.id
+            WHERE j.created_by = ?
+        `
+        return db.prepare(sql).get(userId) as ApplicationStats
+    }
 }

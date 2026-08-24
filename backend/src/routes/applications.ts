@@ -10,6 +10,7 @@ const applicationsRouter : Router = Router()
 
 //private endopints, 
 applicationsRouter.get('/', requireSession, ApplicationsController.getAll)
+applicationsRouter.get('/stats/recruiter', requireSession, requireRoles(ROLES.RECRUITER, ROLES.ADMIN), ApplicationsController.getRecruiterStats)
 applicationsRouter.get('/stats', requireSession, requireRoles(ROLES.RECRUITER, ROLES.ADMIN), ApplicationsController.getStats)
 
 applicationsRouter.get('/:id', requireSession, ApplicationsController.getById)

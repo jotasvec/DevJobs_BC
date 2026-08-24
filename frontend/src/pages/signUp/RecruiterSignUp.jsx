@@ -19,6 +19,7 @@ const SignUp = () => {
       try {
         const res = await signUp.email({
           name: data.name,
+          lastName: data.lastName,
           email: data.email, 
           password: data.password,
           role: ROLES.RECRUITER

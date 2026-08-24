@@ -13,6 +13,7 @@ import {
   ChevronRight,
   LogOut,
   Code,
+  LayoutDashboard,
 } from 'lucide-react'
 
 const menuItems = {
@@ -22,6 +23,7 @@ const menuItems = {
     { to: ROUTES.PROFILE, label: 'My Profile', icon: UserCircle },
   ],
   [ROLES.RECRUITER]: [
+    { to: ROUTES.DASHBOARD, label: 'Dashboard', icon: LayoutDashboard },
     { to: ROUTES.MY_JOBS, label: 'Job Postings', icon: Briefcase },
     { to: ROUTES.CREATE_JOB, label: 'Post a Job', icon: FileText },
     { to: ROUTES.COMPANY_PROFILE, label: 'Company Profile', icon: Building2 },

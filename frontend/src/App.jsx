@@ -27,7 +27,9 @@ const RecruitersSignUp = lazy(()=> import('./pages/signUp/RecruiterSignUp.jsx'))
 const NotFound = lazy(()=> import('./pages/NotFound.jsx'))
 const UserProfile = lazy(()=> import('./pages/profile/User.jsx'))
 const MyApplications = lazy(()=> import('./pages/applications/MyApplications.jsx'))
-const MyJobs = lazy(()=> import('./pages/applications/ApplicationsPerJob.jsx'))
+const MyJobs = lazy(()=> import('./pages/applications/JobsPosted.jsx'))
+const JobApplicants = lazy(()=> import('./pages/applications/ApplicationsPerJob.jsx'))
+const ApplicantDashboard = lazy(()=> import('./pages/applications/ApplicantDashboard.jsx'))
 const SidebarLayout = lazy(() => import('./components/SidebarLayout.jsx'))
 const CreateJob = lazy(() => import('./pages/createJobs/index.jsx'))
 const CompanyProfile = lazy(() => import('./pages/companies/CompanyProfile.jsx'))
@@ -65,7 +67,9 @@ function App() {
                   </Route>
                   {/* Recruiter */}
                   <Route element={<ProtectedRole roles={ROLES.RECRUITER} />} >
+                    <Route path={`${ROUTES.DASHBOARD}`} element={<ApplicantDashboard />} />
                     <Route path={`${ROUTES.MY_JOBS}`} element={<MyJobs />} />
+                    <Route path={`${ROUTES.MY_JOBS}/:jobId/applicants`} element={<JobApplicants />} />
                     <Route path={`${ROUTES.CREATE_JOB}`} element={<CreateJob />} />
                     <Route path={`${ROUTES.COMPANY_PROFILE}`} element={<CompanyProfile />} />
                   </Route>

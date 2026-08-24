@@ -1,51 +1,37 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getApplications, withdrawApplication } from '../../services/applications.services'
 import Loading from '../../components/Loading'
-import { APPLICATION_TABLE_HEADER, ROUTES, UI } from "../../constants.js";
+import { ROUTES, UI } from "../../constants.js";
 import StatusBadge from '../../components/StatusBadge.jsx';
 import { useNavigate } from 'react-router';
 import DataTable from '../../components/DataTable.jsx';
 
 const MyApplications = () => {
-    const [applicationList, setApplicationList] = useState([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(null)
     const [withdrawError, setWithdrawError] = useState(null)
     const navigate = useNavigate()
+    const queryClient = useQueryClient()
 
+    const { data, isLoading, error } = useQuery({
+        queryKey: ['my-applications'],
+        queryFn: () => getApplications(new URLSearchParams()),
+    })
 
-
-    useEffect(() => {
-        const params = new URLSearchParams()
-        const fetchApplications = async (params) => {
-            setLoading(true)    
-            try {
-                const { data } = await getApplications(params)
-                setApplicationList(data.data)
-            } catch (err) {
-                console.error(err);
-                setError(err)
-                
-            }  finally{
-                setLoading(false)
-            }
-        }
-        
-        fetchApplications(params);
-    },[])
-
-    const handleWithdraw = async (id) => {
-        try {
-            await withdrawApplication(id)
-            setApplicationList(prev => prev.filter(app => app.id !== id))
-        } catch (err) {
+    const withdrawMutation = useMutation({
+        mutationFn: (id) => withdrawApplication(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries(['my-applications'])
+        },
+        onError: (err) => {
             setWithdrawError(`Failed to withdraw application. Please try again. \n${err}`)
         }
-    }
+    })
 
-    if (loading) return <Loading isLoading={loading} />
+    if (isLoading) return <Loading isLoading={isLoading} />
 
-    if (error || !applicationList) {
+    const applicationList = data?.data?.data || []
+
+    if (error || !applicationList.length) {
         return (
             <div className="page-header">
                 <h1>Application Not Found</h1>
@@ -68,8 +54,9 @@ const MyApplications = () => {
             render: (row) => (
                 row.status !== 'withdrawn' ? (
                     <button
-                        onClick={() => handleWithdraw(row.id)}
-                        className="text-xs text-text-muted hover:text-red-400 transition-colors"
+                        onClick={() => withdrawMutation.mutate(row.id)}
+                        disabled={withdrawMutation.isPending}
+                        className="text-xs text-text-muted hover:text-red-400 transition-colors disabled:opacity-50"
                     >
                         Withdraw
                     </button>
@@ -86,8 +73,7 @@ const MyApplications = () => {
                     {withdrawError}
                 </div>
             )}
-            <DataTable 
-                loading={loading}
+            <DataTable
                 columns={columns}
                 data={applicationList}
                 emptyMessage="You haven't applied to any jobs yet."
@@ -95,6 +81,5 @@ const MyApplications = () => {
         </div>
     )
 }
-
 
 export default MyApplications

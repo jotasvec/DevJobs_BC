@@ -1,18 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 import InputField from '../../components/InputField.jsx';
-import { API } from '../../constants.js';
+import { getAllCompanies } from '../../services/company.services.js';
 import { Building2 } from 'lucide-react';
 
 const Recruiter = ({ profile, register, errors }) => {
-    const [companies, setCompanies] = useState([]);
+    const { data: companiesData, isLoading } = useQuery({
+        queryKey: ['companies'],
+        queryFn: () => getAllCompanies(new URLSearchParams()),
+    })
 
-    useEffect(() => {
-        fetch(`${API.COMPANIES}`, { credentials: 'include' })
-            .then(res => res.ok ? res.json() : { data: [] })
-            .then(json => setCompanies(json.data || []))
-            .catch(() => setCompanies([]));
-    }, []);
-
+    const companies = companiesData?.data || []
     const company = profile?.companyId && companies.length > 0
         ? companies.find(c => c.id === profile.companyId)
         : null;

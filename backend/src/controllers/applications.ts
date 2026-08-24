@@ -268,4 +268,27 @@ export class ApplicationsController {
         }
 
     }
+
+    static getRecruiterStats : RequestHandler<
+        Record<string, never>,
+        ApiResponse<ApplicationStats>
+    > = (req, res, next) => {
+        const user = req.user
+
+        if(!user || (user.role !== ROLES.RECRUITER && user.role !== ROLES.ADMIN)) return res.status(HTTP_STATUS.FORBIDDEN).json({
+            success: false,
+            error: ERROR_CODES.FORBIDDEN,
+            message: "Not Authorized",
+        });
+
+        try {
+            const stats = ApplicationModel.getStatsByRecruiter(user.id)
+            return res.status(HTTP_STATUS.OK).json({
+                success: true,
+                data: stats,
+            });
+        } catch (err: unknown) {
+            handleHttpError(err, req, res, next)
+        }
+    }
 }

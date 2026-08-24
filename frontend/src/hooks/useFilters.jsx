@@ -1,25 +1,37 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router'
-import { PAGINATION, API } from '../constants.js'
-import { getAllJobs } from '../services/jobs.services.js'
+import { PAGINATION } from '../constants.js'
 
 
 
 const useFilters = () => {
     const [searchParams, setSearchParams] = useSearchParams()
-    const [error, setError] = useState(null)
+    
     // total - limit and offset for pagination
     const limit = PAGINATION.FRONTEND_LIMIT;
     const page = Number(searchParams.get('page') || 1)
 
 
-    const filters = useMemo(() => ({
+/*     const filters = useMemo(() => ({
         search: searchParams.get('search') ?? "",
         technology: searchParams.get('technology') ?? "",
         location: searchParams.get('location') ?? "",
         modality: searchParams.get('modality') ?? "",
         level: searchParams.get('level') ?? "",
-    }), [searchParams]) 
+    }), [searchParams])  */
+    // generic filters.
+    const filters = useMemo(() => {
+        const {
+            page: _p,
+            limit: _l,
+            offset: _o,
+            ...rest
+        } = Object.fromEntries(searchParams.entries())
+        return rest
+    }, [searchParams])
+
+      // Search on Submit
+    const [rawSearchText, setRawSearchText] = useState(filters.search ?? "")
 
     const updateParams = useCallback((newParams) => {
         setSearchParams(prev => {
@@ -33,34 +45,36 @@ const useFilters = () => {
         }, {replace: true} )
     },[setSearchParams]);
 
-    // Search on Submit
-    const [rawSearchText, setRawSearchText] = useState(filters.search)
-
+  
     // Filter change
-    const updateField = (event) =>{
+    const updateField = useCallback((event) =>{
         const { name, value } = event.target;
         updateParams({
-            [name]: value.toLowerCase(),
-            page: 1
+            [name]: value.toLowerCase() || undefined,
+            page: undefined
         })
-    }
+    },[updateParams])
 
-    const setPage = (page) => updateParams({ page: page})
+    // === Set Page ===
+    const setPage = useCallback((page) => {
+        updateParams({ page: String(page)})
+    },[updateParams])
 
     // === Clear Filters ===
     const clearFilters = () => {
         setRawSearchText("");
-        setSearchParams({ page: 1 });
+        setSearchParams({ page: 1 },{replace: true});
     };
+
     const handleSearchChange = (event) =>setRawSearchText(event.target.value.toLowerCase())
     
     //=== Debounced ===
     useEffect(() => {
-        if (rawSearchText === filters.search) return;
+        if ((rawSearchText || "") === (filters.search || "")) return;
         const handlerTimeOut = setTimeout(() =>{
             updateParams({
                 search: rawSearchText.toLowerCase() || undefined,
-                page: 1
+                page: undefined
             })
         }, 400);
     
@@ -69,7 +83,7 @@ const useFilters = () => {
       };
     }, [rawSearchText, updateParams, filters.search ]);
     
-
+/* 
     // === Fetching === 
     // jobs list 
     const [jobs, setJobs] = useState({})
@@ -92,9 +106,8 @@ const useFilters = () => {
 
             //const response = await fetch(`https://jscamp-api.vercel.app/api/jobs?${params.toString()}`)
             //const response = await fetch(`${API.JOBS}?${params.toString()}`)
-            const response = await getAllJobs(params.toString())
-            const data = await response.json()
-            setJobs(data.data)
+            const { data }= await getAllJobs(params.toString())
+            setJobs(data)
         } catch (error) {
             console.error('Error fetching jobs: ', error)
             setError(error)
@@ -103,7 +116,7 @@ const useFilters = () => {
         }
       }    
       fetchJobs();
-    }, [filters, page, limit])
+    }, [filters, page, limit]) */
 
 
     /* const filteredJobs = useMemo(() => {
@@ -124,17 +137,13 @@ const useFilters = () => {
     
     return {
         filters,
-        loading,
-        jobs,
         page,
         limit,
         rawSearchText,
-        error,
         updateField,
         handleSearchChange,
         setPage,
         clearFilters,
-        /* filteredJobs */
     };
 }
 

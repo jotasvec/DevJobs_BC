@@ -1,78 +1,52 @@
-import React, { useEffect, useState } from 'react'
-import { getApplications, updateApplicationStatus } from '../../services/applications.services'
-import { getJobsbyUserId } from '../../services/jobs.services'
+import React from 'react'
+import { useParams, useNavigate } from 'react-router'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { getApplications, updateApplicationStatus, getApplicationByStats } from '../../services/applications.services'
+import { getJobById } from '../../services/jobs.services'
 import Loading from '../../components/Loading'
 import StatusBadge from '../../components/StatusBadge.jsx'
 import DataTable from '../../components/DataTable.jsx'
-import { useAuth } from '../../hooks/useAuth'
-import { ChevronRight } from 'lucide-react'
+import StatsCards from '../../components/StatsCards.jsx'
+import { APPLICATION_STAT_CARDS, ROUTES } from '../../constants'
+import { ArrowLeft } from 'lucide-react'
 
 const ApplicationsPerJob = () => {
-    const { user } = useAuth()
-    const [jobs, setJobs] = useState([])
-    const [selectedJob, setSelectedJob] = useState(null)
-    const [applications, setApplications] = useState([])
-    //const [stats, setStats] = useState(null)
-    const [loading, setLoading] = useState(true)
-    const [loadingApps, setLoadingApps] = useState(false)
-    const [error, setError] = useState(null)
+    const { jobId } = useParams()
+    const navigate = useNavigate()
+    const queryClient = useQueryClient()
 
-    useEffect(() => {
-        const fetchJobs = async () => {
-            try {
-                const res = await getJobsbyUserId(user.id)
-                setJobs(res.data?.data || [])
-            } catch (err) {
-                setError(err.message)
-            } finally {
-                setLoading(false)
-            }
+    const { data: jobData, isLoading: isLoadingJob } = useQuery({
+        queryKey: ['job', jobId],
+        queryFn: () => getJobById(jobId),
+        enabled: !!jobId
+    })
+
+    const { data: appsData, isLoading: isLoadingApps } = useQuery({
+        queryKey: ['job-applications', jobId],
+        queryFn: () => getApplications(new URLSearchParams({ jobId })),
+        enabled: !!jobId
+    })
+
+    const { data: statsData, isLoading: isLoadingStats } = useQuery({
+        queryKey: ['job-stats', jobId],
+        queryFn: () => getApplicationByStats(new URLSearchParams({ jobId })),
+        enabled: !!jobId
+    })
+
+    const updateStatusMutation = useMutation({
+        mutationFn: ({ applicationId, newStatus }) =>
+            updateApplicationStatus(applicationId, { status: newStatus }),
+        onSuccess: () => {
+            queryClient.invalidateQueries(['job-applications', jobId])
+            queryClient.invalidateQueries(['job-stats', jobId])
         }
-        if (user?.id) fetchJobs()
-    }, [user?.id])
+    })
 
-    const fetchApplications = async (job) => {
-        setSelectedJob(job)
-        setLoadingApps(true)
-        try {
-            const params = new URLSearchParams({ jobId: job.id })
-            const res = await getApplications(params)
-            setApplications(res.data?.data || [])
-        } catch (err) {
-            setError(err.message)
-        } finally {
-            setLoadingApps(false)
-        }
-    }
+    if (isLoadingJob) return <Loading isLoading={isLoadingJob} />
 
-    const handleStatusChange = async (applicationId, newStatus) => {
-        try {
-            await updateApplicationStatus(applicationId, { status: newStatus })
-            setApplications(prev =>
-                prev.map(app => app.id === applicationId ? { ...app, status: newStatus } : app)
-            )
-        } catch (err) {
-            setError(err.message)
-        }
-    }
-
-    if (loading) return <Loading isLoading={loading} />
-
-    const jobColumns = [
-        { key: 'title', label: 'Job Title', render: (row) => row.title },
-        { key: 'company', label: 'Company', render: (row) => row.company?.name || '-' },
-        { key: 'location', label: 'Location', render: (row) => row.location || '-' },
-        {
-            key: 'actions', label: '', render: (row) => (
-                <button
-                    onClick={() => fetchApplications(row)}
-                    className="flex items-center gap-1 text-xs text-accent hover:text-accent/80 transition-colors"
-                >
-                    View Applicants <ChevronRight size={14} />
-                </button>
-            )
-        },
-    ]
+    const job = jobData?.data
+    const applications = appsData?.data?.data || []
+    const jobStats = statsData?.data || null
 
     const applicationColumns = [
         { key: 'name', label: 'Applicant', render: (row) => row.seeker?.name || '-' },
@@ -85,14 +59,16 @@ const ApplicationsPerJob = () => {
                     {row.status === 'pending' && (
                         <>
                             <button
-                                onClick={() => handleStatusChange(row.id, 'shortlisted')}
-                                className="text-xs text-emerald-400 hover:text-emerald-300"
+                                onClick={() => updateStatusMutation.mutate({ applicationId: row.id, newStatus: 'shortlisted' })}
+                                disabled={updateStatusMutation.isPending}
+                                className="text-xs text-emerald-400 hover:text-emerald-300 disabled:opacity-50"
                             >
                                 Shortlist
                             </button>
                             <button
-                                onClick={() => handleStatusChange(row.id, 'rejected')}
-                                className="text-xs text-red-400 hover:text-red-300"
+                                onClick={() => updateStatusMutation.mutate({ applicationId: row.id, newStatus: 'rejected' })}
+                                disabled={updateStatusMutation.isPending}
+                                className="text-xs text-red-400 hover:text-red-300 disabled:opacity-50"
                             >
                                 Reject
                             </button>
@@ -100,8 +76,9 @@ const ApplicationsPerJob = () => {
                     )}
                     {row.status === 'shortlisted' && (
                         <button
-                            onClick={() => handleStatusChange(row.id, 'accepted')}
-                            className="text-xs text-emerald-400 hover:text-emerald-300"
+                            onClick={() => updateStatusMutation.mutate({ applicationId: row.id, newStatus: 'accepted' })}
+                            disabled={updateStatusMutation.isPending}
+                            className="text-xs text-emerald-400 hover:text-emerald-300 disabled:opacity-50"
                         >
                             Accept
                         </button>
@@ -113,43 +90,41 @@ const ApplicationsPerJob = () => {
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
+            <button
+                onClick={() => navigate(ROUTES.MY_JOBS)}
+                className="flex items-center gap-2 text-text-muted hover:text-text text-sm mb-6 transition-colors"
+            >
+                <ArrowLeft size={16} />
+                Back to My Jobs
+            </button>
+
             <div className="mb-6">
-                <h1 className="font-heading text-2xl font-bold text-text mb-1">My Jobs</h1>
-                <p className="text-text-muted text-sm">Manage your posted jobs and review applicants.</p>
+                <h1 className="font-heading text-2xl font-bold text-text mb-1">
+                    Applicants for: {job?.title || 'Loading...'}
+                </h1>
+                <p className="text-text-muted text-sm">
+                    {job?.company?.name && `${job.company.name} · `}{job?.location}
+                </p>
             </div>
 
-            {error && (
-                <div className="bg-red-500/10 border border-red-500/30 text-red-500 rounded-lg px-4 py-3 mb-4 text-sm">
-                    {error}
+            {jobStats && !isLoadingStats && (
+                <div className="mb-6">
+                    <StatsCards
+                        cards={APPLICATION_STAT_CARDS.filter(c => c.key !== 'withdrawn')}
+                        stats={jobStats}
+                        columns={6}
+                    />
                 </div>
             )}
 
-            {/* Job list */}
-            <div className="mb-8">
-                <h2 className="font-heading text-lg font-semibold text-text mb-3">Posted Jobs</h2>
+            {isLoadingApps ? (
+                <Loading isLoading={isLoadingApps} />
+            ) : (
                 <DataTable
-                    columns={jobColumns}
-                    data={jobs}
-                    emptyMessage="You haven't posted any jobs yet."
+                    columns={applicationColumns}
+                    data={applications}
+                    emptyMessage="No applications received yet."
                 />
-            </div>
-
-            {/* Applications for selected job */}
-            {selectedJob && (
-                <div>
-                    <h2 className="font-heading text-lg font-semibold text-text mb-3">
-                        Applicants for: {selectedJob.title}
-                    </h2>
-                    {loadingApps ? (
-                        <Loading isLoading={loadingApps} />
-                    ) : (
-                        <DataTable
-                            columns={applicationColumns}
-                            data={applications}
-                            emptyMessage="No applications received yet."
-                        />
-                    )}
-                </div>
             )}
         </div>
     )
