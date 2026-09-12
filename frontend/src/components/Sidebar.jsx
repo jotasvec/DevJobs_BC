@@ -27,6 +27,8 @@ const menuItems = {
     { to: ROUTES.MY_JOBS, label: 'Job Postings', icon: Briefcase },
     { to: ROUTES.CREATE_JOB, label: 'Post a Job', icon: FileText },
     { to: ROUTES.COMPANY_PROFILE, label: 'Company Profile', icon: Building2 },
+    { to: ROUTES.PROFILE, label: 'My Profile', icon: UserCircle },
+    
   ],
 }
 

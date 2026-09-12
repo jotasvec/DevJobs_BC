@@ -71,35 +71,39 @@ const UserProfile = () => {
     }
 
     return (
-        <div className="profile-page">
-            <div className="profile-header">
-                <h1>Welcome, {user.name}</h1>
-                <p>Manage your account settings and preferences</p>
+        <div className="max-w-[56rem] mx-auto px-4 max-sm:px-4 py-6 pb-12">
+            <div className="text-center mb-10">
+                <h1 className="font-heading text-[1.75rem] font-bold text-text mb-1">Welcome, {user.name}</h1>
+                <p className="text-[0.95rem] text-text-secondary">Manage your account settings and preferences</p>
             </div>
 
             {feedback && (
-                <div className={`profile-feedback ${feedback.type}`}>
-                    {feedback.type === 'success' ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
+                <div className={`flex items-center gap-2 px-4 py-3 rounded-lg text-sm mb-5 animate-[feedbackSlideIn_0.2s_ease-out] ${
+                    feedback.type === 'success'
+                        ? 'bg-success/10 border border-success/20 text-success'
+                        : 'bg-error/10 border border-error/20 text-error'
+                }`}>
+                    {feedback.type === 'success' ? <CheckCircle2 size={16} className="shrink-0" /> : <AlertCircle size={16} className="shrink-0" />}
                     {feedback.message}
                 </div>
             )}
 
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="profile-section">
-                    <div className="profile-avatar-section">
-                        <div className="profile-avatar-wrapper">
+                    <div className="flex items-center gap-6 mb-6 pb-6 border-b border-white/[0.06]">
+                        <div className="relative w-20 h-20 shrink-0">
                             <img
                                 src={`https://unavatar.io/github/${user?.email?.split('@')[0] || 'user'}`}
                                 alt={user.name}
-                                className="profile-avatar"
+                                className="w-20 h-20 rounded-full border-[3px] border-accent/30"
                             />
-                            <button type="button" className="profile-avatar-edit" title="Edit profile picture">
+                            <button type="button" className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-accent text-[#080c14] border-2 border-card flex items-center justify-center cursor-pointer transition-all hover:scale-110 hover:opacity-90" title="Edit profile picture">
                                 <Pencil size={14} />
                             </button>
                         </div>
-                        <div className="profile-avatar-info">
-                            <h3>{user.name} {user.lastName}</h3>
-                            <p>{user.email}</p>
+                        <div>
+                            <h3 className="font-heading text-xl font-semibold text-text mb-1">{user.name} {user.lastName}</h3>
+                            <p className="text-sm text-text-secondary">{user.email}</p>
                         </div>
                     </div>
                     <div className="profile-section-header">
@@ -116,7 +120,7 @@ const UserProfile = () => {
                         <InputField label='Last Name' name='lastName' placeholder='Doe' register={register} error={errors?.lastName} />
                         <InputField label='Email' name='email' placeholder='user@johndoe.com' register={register} disabled />
                         <InputField label='Telephone' name='phone' type='tel' placeholder='+1 234 567 890' register={register} error={errors?.phone} />
-                        <div className="full-width h-auto">
+                        <div className="col-span-full">
                             <TextareaField className="overflow-hidden min-h-max " label='Biography' name='bio' placeholder="I'm a great engineer..." defaultValue={user.bio} register={register} error={errors?.bio} />
                         </div>
                     </div>
@@ -129,8 +133,8 @@ const UserProfile = () => {
                     <Recruiter profile={profile} register={register} errors={errors} />
                 )}
 
-                <div className="profile-actions">
-                    <button type="submit" className="profile-save-btn" disabled={isSubmitting}>
+                <div className="flex justify-end mt-6">
+                    <button type="submit" className="px-8 py-[0.7rem] bg-accent text-[#080c14] font-semibold text-[0.95rem] rounded-lg border-none cursor-pointer transition-all hover:opacity-90 hover:-translate-y-px min-w-[140px] disabled:opacity-50 disabled:cursor-not-disabled disabled:transform-none active:scale-[0.98]" disabled={isSubmitting}>
                         {isSubmitting ? 'Saving...' : UI.SAVE_CHANGES}
                     </button>
                 </div>

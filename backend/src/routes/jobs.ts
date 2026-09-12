@@ -56,7 +56,7 @@ jobsRouter.patch('/:id', requireSession, requireRoles(ROLES.RECRUITER, ROLES.ADM
 // replace resource
 jobsRouter.put('/:id', requireSession, requireRoles(ROLES.RECRUITER, ROLES.ADMIN), JobsController.updateJob)
 //Delete
-jobsRouter.delete('/:id', requireSession, requireRoles(ROLES.ADMIN), JobsController.deleteJob)
+jobsRouter.delete('/:id', requireSession, requireRoles(ROLES.ADMIN, ROLES.RECRUITER), JobsController.deleteJob)
 
 export { jobsRouter }
 

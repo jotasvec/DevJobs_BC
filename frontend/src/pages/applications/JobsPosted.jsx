@@ -1,26 +1,27 @@
 import React from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { getJobsbyUserId } from '../../services/jobs.services'
 import Loading from '../../components/Loading'
 import DataTable from '../../components/DataTable.jsx'
 import { useAuth } from '../../hooks/useAuth'
+import { useRecruiterJobs } from '../../hooks/useRecruiterJobs'
 import { ROUTES } from '../../constants'
 import { useNavigate } from 'react-router'
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight, Trash2 } from 'lucide-react'
+import ConfirmDialog from '../../components/ConfirmDialog.jsx'
+import { useConfirm } from '../../hooks/useConfirm.jsx'
 
 const JobsPosted = () => {
     const { user } = useAuth()
     const navigate = useNavigate()
-
-    const { data: jobsData, isLoading, error } = useQuery({
-        queryKey: ['recruiter-jobs', user?.id],
-        queryFn: () => getJobsbyUserId(user.id),
-        enabled: !!user?.id
-    })
+    const {
+        jobs,
+        isLoading,
+        error,
+        deleteJob,
+        isDeleting
+    } = useRecruiterJobs(user?.id)
+    const { open, isOpen, close, target } = useConfirm()
 
     if (isLoading) return <Loading isLoading={isLoading} />
-
-    const jobs = jobsData?.data?.data || []
 
     const jobColumns = [
         { key: 'title', label: 'Job Title', render: (row) => row.title },
@@ -36,12 +37,24 @@ const JobsPosted = () => {
                 </button>
             )
         },
+        {
+            key: 'removal', label: '', render: (row) => (
+                <Trash2
+                    className={`transition-colors ${
+                        isDeleting
+                            ? 'opacity-40 pointer-events-none'
+                            : 'cursor-pointer text-text-muted hover:text-error'
+                    }`}
+                    onClick={() => open(row)}
+                />
+            )
+        }
     ]
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
             <div className="mb-6">
-                <h1 className="font-heading text-2xl font-bold text-text mb-1">My Jobs</h1>
+                <h1 className="font-heading text-2xl font-bold text-text mb-1">Jobs Posted</h1>
                 <p className="text-text-muted text-sm">Manage your posted jobs and review applicants.</p>
             </div>
 
@@ -56,6 +69,15 @@ const JobsPosted = () => {
                 data={jobs}
                 emptyMessage="You haven't posted any jobs yet."
             />
+
+            <ConfirmDialog
+                isOpen={isOpen}
+                close={close}
+                title="Delete Job"
+                onConfirm={() => deleteJob(target?.id)}
+            >
+                {`Are you sure you want to delete "${target?.title}"? This change cannot be undone.`}
+            </ConfirmDialog>
         </div>
     )
 }

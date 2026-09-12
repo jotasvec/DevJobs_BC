@@ -143,7 +143,7 @@ export class JobsController{
         try {
             const deleted = JobModel.deleteJob(id);
             if (deleted) {
-                return res.status(HTTP_STATUS.NO_CONTENT).json({
+                return res.status(HTTP_STATUS.OK).json({
                     success: true,
                     message: MESSAGES.JOB_DELETED,
                 })

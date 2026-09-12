@@ -25,4 +25,10 @@ export const createJob = async (body) => {
     return res
 }
 
+export const deleteJob = async (id) => {
+    const res = await http.del(`${API.JOBS}/${id}`)
+    if(!res.success) throw new Error("Job couldn't be deleted");
+    return res
+}
+
 
