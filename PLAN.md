@@ -1,7 +1,7 @@
 # PLAN.md - DevJobs Implementation Roadmap
 
 ### Project: DevJobs
-### Last Updated: 2026-07-21
+### Last Updated: 2026-10-03
 ### Stack: Express 5 + TypeScript (backend) | React 19 + Vite 7 + Tailwind CSS v4 + JavaScript (frontend)
 
 ---
@@ -21,9 +21,10 @@ backend/          Express 5 + TypeScript  (tsx dev, tsc build)
   src/routes/users.ts            Users CRUD (self-update + admin)
   src/routes/seekerProfile.ts    Seeker profile (GET/PUT own, GET by userId)
   src/routes/recruiterProfile.ts Recruiter profile (GET/PUT own, GET by userId)
-  src/routes/companies.ts        Companies CRUD (public read, admin write)
-  src/controllers/               jobs, technologies, users, seekerProfile, recruiterProfile, company
-  src/models/                    job, technology, user, seekerProfile, recruiterProfile, company
+  src/routes/companies.ts        Companies CRUD (public read, admin/recruiter write)
+  src/routes/applications.ts     Applications CRUD (apply, status updates, stats)
+  src/controllers/               jobs, technologies, users, seekerProfile, recruiterProfile, company, application
+  src/models/                    job, technology, user, seekerProfile, recruiterProfile, company, application
   src/schemas/                   jobs, technologies, users, profiles (Zod)
   src/types/                     TypeScript interfaces
   src/constants.ts               ROLES, HTTP_STATUS, ERROR_CODES, MESSAGES, TABLES, PAGINATION
@@ -35,11 +36,15 @@ frontend/         React 19 + Vite 7 + Tailwind CSS v4 + JavaScript (no TS)
   src/context/AuthContext.jsx    AuthContext (createContext)
   src/context/AuthProvider.jsx   Session provider (useSession, signOut, refetch)
   src/lib/auth-client.js         better-auth client (signIn, signUp, signOut, useSession)
-  src/hooks/                     useAuth, useRouter, useFilters
+  src/hooks/                     useAuth, useRouter, useFilters, useUserProfile, useCombinedSchema, useConfirm, useRecruiterJobs
   src/schemas/                   signUp.js, userProfile.js, seekerProfile.js, recruiterProfile.js, users.js
   src/router/                    Link, NavLink, ProtectedRoute (with isPending guard)
-  src/components/                AuthForm, InputField, Header, Footer, Avatar, Loading, SearchField
-  src/pages/                     Home, Jobs, JobDetail, SignIn, SignUp (Seeker/Recruiter), Profile (User/Seeker/Recruiter), Companies, NotFound
+  src/components/                AuthForm, InputField, TextareaField, Header, Footer, Avatar, Loading, SearchField, Modal, ConfirmDialog, StatusBadge, DataTable, Sidebar
+  src/components/UI/             Modal.jsx (compound: Header, Body, Footer)
+  src/pages/                     Home, Jobs, JobsDetails, SignIn, SignUp (Seeker/Recruiter), Profile (User/Seeker/Recruiter), Companies, NotFound
+  src/pages/applications/        MyApplications, JobsPosted, ApplicantDashboard, ApplicationsPerJob
+  src/pages/Detail/              JobsDetails
+  src/services/                  jobs.services.js, users.services.js, company.services.js, applications.services.js, technologies.services.js
   src/constants.js               ROLES, MODALITY, LEVEL, ROUTES, API (all /api/... prefixed), PAGINATION, UI, ERRORS, profileFields
   vite.config.js                 Dynamic proxy — derives from API constants, proxies all /api/* to backend
 ```
@@ -61,11 +66,12 @@ frontend/         React 19 + Vite 7 + Tailwind CSS v4 + JavaScript (no TS)
 | Users CRUD | ✅ | Self-update via PATCH (session-based), admin-only PUT/DELETE, role-based field filtering |
 | Seeker Profile | ✅ | GET/PUT own profile, GET by userId, Zod validation |
 | Recruiter Profile | ✅ | GET/PUT own profile, GET by userId, Zod validation |
-| Companies | ✅ | Public read, admin write (CRUD), FK to jobs |
+| Companies | ✅ | Public read, admin/recruiter write (CRUD), FK to jobs |
+| Applications | ✅ | Full CRUD — apply, withdraw, status updates, stats |
 | Zod validation | ✅ | Schemas for jobs, technologies, users, profiles |
 | Database | ✅ | SQLite with 13 tables + `_migrations`, WAL mode |
 | Migrations system | ✅ | Numbered .sql files (001-005) + migrate.js runner |
-| Tests | ✅ | 21/21 passing |
+| Tests | ✅ | 39/39 passing |
 | TypeScript build | ✅ | `tsc` compiles clean |
 
 ### 2.2 Frontend - Fully Working
@@ -78,25 +84,31 @@ frontend/         React 19 + Vite 7 + Tailwind CSS v4 + JavaScript (no TS)
 | SignIn page | ✅ | `signIn.email()`, post-login redirect via `state.from` |
 | SignUp (Seeker) | ✅ | `useForm` + `zodResolver`, `signUp.email({ role: "seeker" })`, auto-login |
 | SignUp (Recruiter) | ✅ | Same pattern, `role: "recruiter"` |
-| Header | ✅ | Auth-aware, profile link with user.id, logout |
+| Header | ✅ | Auth-aware, profile link with user.id, logout, Avatar with `user.image` |
 | Vite proxy | ✅ | Dynamic — derives proxy routes from API constants, `/api/*` → backend |
 | Zod schemas (frontend) | ✅ | signUp.js, userProfile.js, seekerProfile.js, recruiterProfile.js |
 | InputField component | ✅ | Reusable, supports react-hook-form `register` |
 | AuthForm component | ✅ | Sign-in/sign-up modes, error display |
 | Tailwind CSS v4 | ✅ | Installed with @tailwindcss/vite, theme configured |
+| Modal component | ✅ | Compound (Header/Body/Footer), auto-focus confirm, Escape key, cleanup |
+| ConfirmDialog | ✅ | Composed on Modal, used for delete confirmations |
+| useConfirm hook | ✅ | State manager for confirmation flows |
+| useRecruiterJobs hook | ✅ | React-query wrapper for recruiter jobs + delete mutation |
 
 ### 2.3 Pages Working
 
 | Page | Route | Status |
 |------|-------|--------|
-| Home | `/` | ✅ Hero, search, quick filters |
+| Home | `/` | ✅ Hero, search, quick filters, features grid (Tailwind) |
 | Jobs | `/jobs` | ✅ Filterable list with pagination, debounced search |
-| Job Detail | `/jobs/:jobID` | ✅ Full detail view, ApplyButton (placeholder) |
-| Companies | `/companies` | ✅ Company listing page (placeholder) |
+| Job Detail | `/jobs/:jobID` | ✅ Full detail view, ApplyButton wired to applications |
+| Companies | `/companies` | ✅ Company listing page |
 | SignIn | `/signin` | ✅ Auth wired, redirect back |
 | SignUp (Seeker) | `/signup` | ✅ Zod + useForm + auto-login |
 | SignUp (Recruiter) | `/r_signup` | ✅ Same pattern |
-| Profile | `/profile/:userID` | ✅ Protected (isPending guard), fetches user + role-specific profile, combined Zod schema, save via PATCH + PUT |
+| Profile | `/profile/:userID` | ✅ Protected, combined Zod schema, save feedback, company create-new |
+| My Applications | `/my-applications` | ✅ Seeker's applications with status badges, withdraw |
+| My Jobs | `/my-jobs` | ✅ Recruiter's job postings with ConfirmDialog delete |
 | 404 | `*` | ✅ Not found page |
 
 ---
@@ -121,7 +133,7 @@ All backend routes are prefixed with `/api` (mounted via `api.ts`).
 | `POST /api/jobs` | ✅ | recruiter, admin |
 | `PATCH /api/jobs/:id` | ✅ | recruiter, admin |
 | `PUT /api/jobs/:id` | ✅ | recruiter, admin |
-| `DELETE /api/jobs/:id` | ✅ | admin |
+| `DELETE /api/jobs/:id` | ✅ | admin, recruiter |
 
 ### Users (`/api/users`)
 | Endpoint | Auth | Role |
@@ -135,15 +147,15 @@ All backend routes are prefixed with `/api` (mounted via `api.ts`).
 ### Seeker Profile (`/api/users`)
 | Endpoint | Auth | Role |
 |----------|------|------|
-| `GET /api/users/me/seeker-profile` | ✅ | seeker (own) |
-| `PUT /api/users/me/seeker-profile` | ✅ | seeker (own), Zod validated |
+| `GET /api/users/me/seeker-profile` | ✅ | any authenticated (no role gate) |
+| `PUT /api/users/me/seeker-profile` | ✅ | any authenticated, Zod validated |
 | `GET /api/users/seeker-profile/:userId` | ✅ | any authenticated |
 
 ### Recruiter Profile (`/api/users`)
 | Endpoint | Auth | Role |
 |----------|------|------|
-| `GET /api/users/me/recruiter-profile` | ✅ | recruiter (own) |
-| `PUT /api/users/me/recruiter-profile` | ✅ | recruiter (own), Zod validated |
+| `GET /api/users/me/recruiter-profile` | ✅ | any authenticated (no role gate) |
+| `PUT /api/users/me/recruiter-profile` | ✅ | any authenticated, Zod validated |
 | `GET /api/users/recruiter-profile/:userId` | ✅ | any authenticated |
 
 ### Companies (`/api/companies`)
@@ -151,9 +163,19 @@ All backend routes are prefixed with `/api` (mounted via `api.ts`).
 |----------|------|------|
 | `GET /api/companies` | ❌ | Public |
 | `GET /api/companies/:id` | ❌ | Public |
-| `POST /api/companies` | ✅ | admin |
+| `POST /api/companies` | ✅ | admin, recruiter |
 | `PATCH /api/companies/:id` | ✅ | admin |
 | `DELETE /api/companies/:id` | ✅ | admin |
+
+### Applications (`/api/applications`)
+| Endpoint | Auth | Role |
+|----------|------|------|
+| `POST /api/applications` | ✅ | seeker |
+| `GET /api/applications` | ✅ | any authenticated (role check via query params) |
+| `GET /api/applications/stats` | ✅ | recruiter, admin |
+| `GET /api/applications/:id` | ✅ | any authenticated |
+| `PATCH /api/applications/:id` | ✅ | recruiter, admin |
+| `DELETE /api/applications/:id` | ✅ | seeker (own), admin |
 
 ### Technologies (`/api/technologies`)
 | Endpoint | Auth | Role |
@@ -209,142 +231,54 @@ _migrations     (id, name, applied_at)
 
 ---
 
-## 5. What's Next
+## 5. Implementation Status
 
-### Phase 0: Frontend Redesign with Tailwind (Priority: HIGH - IN PROGRESS)
+### Phase 0: Frontend Redesign with Tailwind — ✅ COMPLETE
 
 - [x] Install Tailwind CSS v4 + @tailwindcss/vite
 - [x] Configure theme tokens matching existing colors
-- [ ] Migrate Header component to Tailwind utilities
-- [ ] Migrate Job cards to Tailwind utilities
-- [ ] Migrate Auth forms (SignIn, SignUp) to Tailwind utilities
-- [ ] Migrate Profile page to Tailwind utilities
-- [ ] Remove unused CSS from index.css
+- [x] Migrate Header component to Tailwind utilities
+- [x] Migrate Home page to Tailwind utilities (hero, search, features)
+- [x] Migrate Profile/User page to Tailwind utilities
+- [x] Migrate Avatar component to Tailwind utilities
+- [x] Remove unused CSS from index.css (~1392 → 779 lines, -44%)
 
-### Phase 1: Applications System (Priority: HIGH)
+**Not migrated (deferred):** Auth forms (SignIn/SignUp), Job cards, Sidebar (~370 lines complex state CSS)
 
-The `applications` table exists in the DB but has no API or UI.
-**Known DB issue:** The `applications` table CHECK constraint in `seed.js` only allows `('pending', 'accepted', 'rejected')` — missing `'reviewed'`. Must be fixed via migration 006.
+### Phase 1: Applications System — ✅ COMPLETE
 
-#### 1a. Migration 006 — Fix DB constraint
+- [x] Applications backend: schema, types, model, controller, routes
+- [x] ApplyButton wired to application flow
+- [x] My Applications page (seeker view)
+- [x] Applicant Dashboard (recruiter view)
+- [x] StatusBadge component
+- [x] ApplicationsPerJob page
+- [x] Routes + navigation wired
 
-- [ ] Create `backend/migrations/006_fix_applications_status_check.sql`
-  - Recreate `applications` table with correct CHECK: `('pending', 'reviewed', 'accepted', 'rejected')`
-  - Wrap in a transaction (SQLite doesn't support `ALTER COLUMN`)
-- [ ] Update `seed.js` CHECK constraint to match (for fresh databases)
+### Phase 2: Job Management for Recruiters — ✅ COMPLETE
 
-#### 1b. Backend — Schema, Types, Model, Controller, Routes
+- [x] JobsPosted page — list, delete own jobs
+- [x] useRecruiterJobs hook (react-query wrapper)
+- [x] ConfirmDialog integration for delete confirmation
+- [x] Backend: recruiter can now delete own jobs
 
-**Schema** (`backend/src/schemas/applications.ts`):
-- [ ] `applicationCreateSchema` — `{ jobId: string (uuid), coverLetter?: string (max 2000) }`
-- [ ] `applicationUpdateStatusSchema` — `{ status: ApplicationStatus }` (one of: pending, reviewed, accepted, rejected)
-- [ ] Export inferred types: `ApplicationCreateInput`, `ApplicationUpdateStatusInput`
+### Phase 3: Profile Polish — ✅ COMPLETE
 
-**Types** (`backend/src/types/applications.ts`):
-- [ ] `Application` — `{ id, userId, jobId, status, coverLetter, createdAt }`
-- [ ] `ApplicationQuery` — `{ jobId?, userId?, status?, limit?, offset? }`
-- [ ] `ApplicationWithDetails` — extends Application with joined `jobTitle`, `company`, `userName`, `userEmail`
+- [x] Profile save success/error feedback (inline banner with animation)
+- [x] reset() calls verified correct (useUserProfile unwraps API response)
+- [x] Recruiter profile: company dropdown with "Create new company" option (Modal)
+- [x] Avatar: uses `user.image` when available, falls back to unavatar.io
 
-**Model** (`backend/src/models/application.ts`):
-- [ ] `getAll(filters)` — paginated, joins `jobs` + `user` for display data. Filters by `jobId` (recruiter view) or `userId` (seeker view)
-- [ ] `getById(id)` — single application with joins
-- [ ] `getByJobAndUser(jobId, userId)` — duplicate check (UNIQUE constraint)
-- [ ] `create(userId, jobId, coverLetter?)` — insert with `crypto.randomUUID()`, returns created application
-- [ ] `updateStatus(id, status)` — recruiter/admin updates status
-- [ ] `delete(id, userId)` — seeker withdraws (must own the application), admin can delete any
-- [ ] `getStats(jobId)` — count by status for a job (recruiter dashboard)
+### Phase 4: Polish & Cleanup — ✅ COMPLETE
 
-**Controller** (`backend/src/controllers/application.ts`):
-- [ ] `getAll` — handles `?jobId=` (recruiter) and `?userId=` (seeker) query params
-- [ ] `getById` — single application
-- [ ] `create` — POST, checks duplicate via `getByJobAndUser` first
-- [ ] `updateStatus` — PATCH, recruiter/admin only
-- [ ] `withdraw` — DELETE, seeker only (must own)
-- [ ] `getStats` — GET `/stats?jobId=`, recruiter only
+- [x] Header Avatar: uses `user.name` + `user.image` (no hardcoded username)
+- [x] Header nav links: all have real routes (no empty `<a href="">`)
+- [x] NotFound.jsx: consistent English text via UI constants
+- [x] AGENTS.md: architecture section updated to reflect current state
+- [x] Test coverage: 21 → 39 tests (profiles, self-update, companies)
+- [x] Fixed stale test expectations (API prefix, role gates, job schema)
 
-**Routes** (`backend/src/routes/applications.ts`):
-- [ ] `POST /` — `requireSession`, `requireRoles(SEEKER)`, `validateSchemas(applicationCreateSchema)`
-- [ ] `GET /` — `requireSession` (role check in controller based on query params)
-- [ ] `GET /stats` — `requireSession`, `requireRoles(RECRUITER, ADMIN)`
-- [ ] `GET /:id` — `requireSession`
-- [ ] `PATCH /:id` — `requireSession`, `requireRoles(RECRUITER, ADMIN)`, `validateSchemas(applicationUpdateStatusSchema)`
-- [ ] `DELETE /:id` — `requireSession`, `requireRoles(SEEKER, ADMIN)`
-
-**API Registration** (`backend/src/routes/api.ts`):
-- [ ] Import and mount: `api.use('/applications', applicationsRouter)`
-
-#### 1c. Frontend — Components, Pages, Integration
-
-**Application Modal** (`frontend/src/components/ApplicationModal.jsx`):
-- [ ] Triggered from ApplyButton on JobsDetails page
-- [ ] Shows: job title (read-only), seeker's resume URL from profile (read-only, fetched via `GET /api/users/seeker-profile/:userId`), cover letter textarea (optional, max 2000 chars)
-- [ ] Submit: `POST /api/applications` with `{ jobId, coverLetter }`
-- [ ] Success: close modal, show "Applied" state
-- [ ] Error: inline error message
-
-**Wire ApplyButton** (`frontend/src/pages/Detail/JobsDetails.jsx`):
-- [ ] Replace `console.log` with: fetch seeker profile → open ApplicationModal
-- [ ] On mount, check if already applied: `GET /api/applications?jobId=X&userId=Y`
-- [ ] If already applied, show "Applied" (disabled) state
-
-**Status Badge** (`frontend/src/components/StatusBadge.jsx`):
-- [ ] Props: `status` (pending/reviewed/accepted/rejected)
-- [ ] Color-coded: pending=yellow, reviewed=blue, accepted=green, rejected=red
-- [ ] Used in My Applications and Applicant Dashboard
-
-**My Applications Page** (`frontend/src/pages/Applications/MyApplications.jsx`):
-- [ ] Fetches `GET /api/applications?userId=X`
-- [ ] Table/list: Job Title, Company, Applied Date, Status (badge), Withdraw button
-- [ ] Empty state when no applications
-- [ ] Withdraw: `DELETE /api/applications/:id` with confirmation
-
-**Applicant Dashboard** (`frontend/src/pages/Applications/ApplicantDashboard.jsx`):
-- [ ] Two views:
-  1. **Job list** — recruiter's posted jobs with application counts (from `/stats` endpoint)
-  2. **Applicants for a job** — `GET /api/applications?jobId=X`, shows applicant name, email, resume link, status
-- [ ] Status update: `PATCH /api/applications/:id` with dropdown (pending → reviewed → accepted/rejected)
-
-**Router & Navigation**:
-- [ ] Add route in `App.jsx`: `<Route path={ROUTES.MY_APPLICATIONS} element={<MyApplications />} />` inside `<ProtectedRoute>`
-- [ ] Add route: `<Route path={ROUTES.MY_JOBS} element={<ApplicantDashboard />} />` inside `<ProtectedRoute>`
-- [ ] Add "My Applications" link in `Header.jsx` (visible when logged in as seeker)
-- [ ] Add "My Jobs" link in `Header.jsx` (visible when logged in as recruiter/admin)
-
-**Constants** (`frontend/src/constants.js`):
-- [ ] Add UI text: `APPLYING`, `APPLICATION_SUBMITTED`, `WITHDRAW_APPLICATION`, `VIEW_APPLICANTS`, `NO_APPLICATIONS`, etc.
-
-#### 1d. Seed & Test Data
-
-- [ ] Add sample applications in `seed.js` (2-3 applications across different jobs/users)
-- [ ] Verify backend tests still pass (`pnpm --filter backend test`)
-- [ ] Manual testing: apply as seeker, view as recruiter, update status, withdraw
-
-### Phase 2: Job Management for Recruiters (Priority: HIGH)
-
-**Backend:**
-- [ ] Add `GET /api/jobs?createdBy=` filter (recruiter sees own jobs)
-
-**Frontend:**
-- [ ] Job creation form (recruiter) with technology multi-select from `/api/technologies`
-- [ ] Job edit form (recruiter)
-- [ ] "My Jobs" dashboard (recruiter) — list, edit, delete own jobs
-
-### Phase 3: Profile Polish (Priority: MEDIUM)
-
-**Frontend:**
-- [ ] Profile save success/error feedback (toast or inline message)
-- [ ] Clean `reset()` calls — spread `userData.data` not `userData`
-- [ ] Recruiter profile: company dropdown with create-new option
-- [ ] Avatar upload or integration with external service
-
-### Phase 4: Polish & Cleanup (Priority: LOW)
-
-- [ ] Fix Header: hardcoded Avatar username → `user.name` or `user.email`
-- [ ] Fix Header: empty `<a href="">` for Companies/Salaries → disabled or real routes
-- [ ] Fix `NotFound.jsx` — ensure consistent English text
-- [ ] Social auth providers (GitHub, Google) — currently commented out in `auth.ts`
-- [ ] Add missing test coverage (profile endpoints, PATCH self-update)
-- [ ] Update AGENTS.md — architecture section is stale (doesn't mention profiles, companies, migrations)
+**Deferred:** Social auth providers (GitHub, Google) — commented out in auth.ts
 
 ---
 
@@ -368,7 +302,7 @@ pnpm install                      # Install all workspaces (root)
 pnpm --filter backend dev         # Backend dev server (tsx watch)
 pnpm --filter frontend dev        # Frontend dev server (vite)
 pnpm --filter backend build       # TypeScript compile
-pnpm --filter backend test        # Run tests
+pnpm --filter backend test        # Run tests (39/39 passing)
 
 # Database
 cd backend && node --import tsx migrations/migrate.js   # Run pending migrations
@@ -377,14 +311,6 @@ pnpm --filter backend seed:users  # Seed users via better-auth
 pnpm --filter backend seed:companies  # Seed companies
 pnpm --filter backend seed:seeker # Seed seeker profiles
 pnpm --filter backend seed:recruiter # Seed recruiter profiles
-
-# Opencode custom commands
-opencode /verify-backend           # Build + test backend
-opencode /verify-frontend          # Build frontend
-opencode /migrate                  # Run migrations
-opencode /seed                     # Seed all data
-opencode /db-status                # Check migration status
-opencode /db-reset                 # Reset DB (drop + migrate + seed)
 ```
 
 ---
@@ -403,4 +329,4 @@ opencode /db-reset                 # Reset DB (drop + migrate + seed)
 - Tailwind CSS v4 with custom theme tokens (`--color-*`, `--font-*`)
 - Theme colors: `background`, `surface`, `card`, `accent`, `text`, `text-secondary`, `text-muted`, `border`, `success`, `error`
 - Prefer Tailwind utilities over inline styles or CSS modules for new components
-- Existing CSS in `index.css` (~1500 lines) will be migrated gradually
+- Existing CSS in `index.css` migrated gradually (779 lines remaining, mostly sidebar + shared)
