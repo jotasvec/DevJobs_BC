@@ -37,15 +37,43 @@ import { auth } from "../lib/auth.js";     // ✅ correct
 
 ```
 backend/          Express 5 + TypeScript  (tsx dev, tsc build)
-  src/lib/auth.ts       better-auth instance
-  src/middlewares/auth.ts  requireSession, requireRoles
-  src/routes/           auth, jobs, technologies, users
-  src/controllers/      jobs, technologies
-  src/models/           job, technology
+  src/lib/auth.ts                better-auth instance
+  src/middlewares/auth.ts        requireSession, requireRoles
+  src/middlewares/cors.ts        CORS with credentials
+  src/middlewares/validateSchemas.ts  Zod validation wrapper
+  src/routes/api.ts              Central API router — all routes under /api
+  src/routes/auth.ts             better-auth handler at /api/auth
+  src/routes/jobs.ts             Jobs CRUD
+  src/routes/technologies.ts     Technologies CRUD
+  src/routes/users.ts            Users CRUD (self-update + admin)
+  src/routes/seekerProfile.ts    Seeker profile (GET/PUT own, GET by userId)
+  src/routes/recruiterProfile.ts Recruiter profile (GET/PUT own, GET by userId)
+  src/routes/companies.ts        Companies CRUD (public read, admin/recruiter write)
+  src/routes/applications.ts     Applications CRUD (apply, status updates, stats)
+  src/controllers/               jobs, technologies, users, seekerProfile, recruiterProfile, company, application
+  src/models/                    job, technology, user, seekerProfile, recruiterProfile, company, application
+  src/schemas/                   jobs, technologies, users, profiles (Zod)
+  src/types/                     TypeScript interfaces
+  src/constants.ts               ROLES, HTTP_STATUS, ERROR_CODES, MESSAGES, TABLES, PAGINATION
+  src/db/                        database.ts, seed.js, seed-users.ts, seed-companies.ts, seed-seeker.ts, seed-recruiter.ts
+  migrations/                    001-005 .sql files + migrate.js runner
+  src/__tests__/                 setup.ts, api.test.ts
 
 frontend/         React 19 + Vite 7 + Tailwind CSS v4 + JavaScript (no TS)
-  src/context/AuthContext.jsx  Auth provider (better-auth/react client)
-  src/lib/auth-client.js     better-auth client instance
+  src/context/AuthContext.jsx    AuthContext (createContext)
+  src/context/AuthProvider.jsx   Session provider (useSession, signOut, refetch)
+  src/lib/auth-client.js         better-auth client (signIn, signUp, signOut, useSession)
+  src/hooks/                     useAuth, useRouter, useFilters, useUserProfile, useCombinedSchema, useConfirm, useRecruiterJobs
+  src/schemas/                   signUp.js, userProfile.js, seekerProfile.js, recruiterProfile.js, users.js
+  src/router/                    Link, NavLink, ProtectedRoute (with isPending guard)
+  src/components/                AuthForm, InputField, TextareaField, Header, Footer, Avatar, Loading, SearchField, Modal, ConfirmDialog, StatusBadge, DataTable, Sidebar
+  src/components/UI/             Modal.jsx (compound: Header, Body, Footer)
+  src/pages/                     Home, Jobs, JobsDetails, SignIn, SignUp (Seeker/Recruiter), Profile (User/Seeker/Recruiter), Companies, NotFound
+  src/pages/applications/        MyApplications, JobsPosted, ApplicantDashboard, ApplicationsPerJob
+  src/pages/Detail/              JobsDetails
+  src/services/                  jobs.services.js, users.services.js, company.services.js, applications.services.js, technologies.services.js
+  src/constants.js               ROLES, MODALITY, LEVEL, ROUTES, API (all /api/... prefixed), PAGINATION, UI, ERRORS, profileFields
+  vite.config.js                 Dynamic proxy — derives from API constants, proxies all /api/* to backend
 ```
 
 ## Auth State
