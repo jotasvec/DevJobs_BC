@@ -93,9 +93,9 @@ const UserProfile = () => {
                     <div className="flex items-center gap-6 mb-6 pb-6 border-b border-white/[0.06]">
                         <div className="relative w-20 h-20 shrink-0">
                             <img
-                                src={`https://unavatar.io/github/${user?.email?.split('@')[0] || 'user'}`}
+                                src={user.image || `https://unavatar.io/github/${user?.email?.split('@')[0] || 'user'}`}
                                 alt={user.name}
-                                className="w-20 h-20 rounded-full border-[3px] border-accent/30"
+                                className="w-20 h-20 rounded-full border-[3px] border-accent/30 object-cover"
                             />
                             <button type="button" className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-accent text-[#080c14] border-2 border-card flex items-center justify-center cursor-pointer transition-all hover:scale-110 hover:opacity-90" title="Edit profile picture">
                                 <Pencil size={14} />

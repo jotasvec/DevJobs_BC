@@ -28,7 +28,7 @@ const Header = () => {
             <div className="flex gap-2 items-center shrink-0">
                 {isLoggedIn ? (
                     <>
-                        <Avatar username={user?.email?.split('@')[0] || user.name} />
+                        <Avatar username={user?.email?.split('@')[0] || user.name} src={user?.image} />
                         {user?.role === ROLES.SEEKER && (
                             <NavLink href={ROUTES.MY_APPLICATIONS} className="px-4 py-2 bg-primary-light/20 rounded-lg text-text text-sm font-bold transition-colors hover:bg-primary-light/30">Applications</NavLink>
                         )}
